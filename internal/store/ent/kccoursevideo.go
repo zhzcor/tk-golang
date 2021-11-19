@@ -4,8 +4,8 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/kccoursevideo"
 	"strings"
+	"tkserver/internal/store/ent/kccoursevideo"
 
 	"entgo.io/ent/dialect/sql"
 )

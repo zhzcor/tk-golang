@@ -6,9 +6,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gserver/internal/store/ent/admin"
-	"gserver/internal/store/ent/adminloginlog"
 	"time"
+	"tkserver/internal/store/ent/admin"
+	"tkserver/internal/store/ent/adminloginlog"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"

@@ -6,7 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gserver/internal/store/ent/kccoursevideo"
+	"tkserver/internal/store/ent/kccoursevideo"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"

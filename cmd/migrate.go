@@ -5,10 +5,10 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/spf13/cobra"
-	"gserver/internal/config"
-	"gserver/internal/store"
-	"gserver/pkg/log"
 	"os"
+	"tkserver/internal/config"
+	"tkserver/internal/store"
+	"tkserver/pkg/log"
 )
 
 func MgRun() *cobra.Command {

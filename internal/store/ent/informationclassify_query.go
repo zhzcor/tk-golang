@@ -6,9 +6,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gserver/internal/store/ent/informationclassify"
-	"gserver/internal/store/ent/predicate"
 	"math"
+	"tkserver/internal/store/ent/informationclassify"
+	"tkserver/internal/store/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

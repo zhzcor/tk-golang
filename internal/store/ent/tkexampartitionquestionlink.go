@@ -4,11 +4,11 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/tkexampaperpartition"
-	"gserver/internal/store/ent/tkexampartitionquestionlink"
-	"gserver/internal/store/ent/tkquestion"
 	"strings"
 	"time"
+	"tkserver/internal/store/ent/tkexampaperpartition"
+	"tkserver/internal/store/ent/tkexampartitionquestionlink"
+	"tkserver/internal/store/ent/tkquestion"
 
 	"entgo.io/ent/dialect/sql"
 )

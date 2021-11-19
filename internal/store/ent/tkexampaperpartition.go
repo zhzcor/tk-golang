@@ -4,10 +4,10 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/tkexampaper"
-	"gserver/internal/store/ent/tkexampaperpartition"
 	"strings"
 	"time"
+	"tkserver/internal/store/ent/tkexampaper"
+	"tkserver/internal/store/ent/tkexampaperpartition"
 
 	"entgo.io/ent/dialect/sql"
 )

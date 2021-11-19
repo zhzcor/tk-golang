@@ -6,8 +6,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gserver/internal/store/ent/tkexampapersimulation"
 	"time"
+	"tkserver/internal/store/ent/tkexampapersimulation"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"

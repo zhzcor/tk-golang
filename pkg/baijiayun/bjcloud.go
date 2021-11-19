@@ -8,9 +8,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"gserver/internal/config"
-	"gserver/internal/store"
-	"gserver/pkg/log"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
@@ -18,6 +15,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"tkserver/internal/config"
+	"tkserver/internal/store"
+	"tkserver/pkg/log"
 )
 
 //const (

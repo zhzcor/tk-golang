@@ -5,12 +5,12 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gserver/internal/store/ent/city"
-	"gserver/internal/store/ent/kcclass"
-	"gserver/internal/store/ent/kccourse"
-	"gserver/internal/store/ent/predicate"
-	"gserver/internal/store/ent/user"
 	"time"
+	"tkserver/internal/store/ent/city"
+	"tkserver/internal/store/ent/kcclass"
+	"tkserver/internal/store/ent/kccourse"
+	"tkserver/internal/store/ent/predicate"
+	"tkserver/internal/store/ent/user"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

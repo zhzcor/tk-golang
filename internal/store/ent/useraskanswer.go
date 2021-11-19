@@ -4,11 +4,11 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/teacher"
-	"gserver/internal/store/ent/user"
-	"gserver/internal/store/ent/useraskanswer"
 	"strings"
 	"time"
+	"tkserver/internal/store/ent/teacher"
+	"tkserver/internal/store/ent/user"
+	"tkserver/internal/store/ent/useraskanswer"
 
 	"entgo.io/ent/dialect/sql"
 )

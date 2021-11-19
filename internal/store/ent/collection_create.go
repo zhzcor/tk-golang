@@ -6,9 +6,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gserver/internal/store/ent/collection"
-	"gserver/internal/store/ent/tkquestion"
 	"time"
+	"tkserver/internal/store/ent/collection"
+	"tkserver/internal/store/ent/tkquestion"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"

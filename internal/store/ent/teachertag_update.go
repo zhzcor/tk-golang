@@ -5,10 +5,10 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gserver/internal/store/ent/predicate"
-	"gserver/internal/store/ent/teacher"
-	"gserver/internal/store/ent/teachertag"
 	"time"
+	"tkserver/internal/store/ent/predicate"
+	"tkserver/internal/store/ent/teacher"
+	"tkserver/internal/store/ent/teachertag"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

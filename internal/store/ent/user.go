@@ -4,11 +4,11 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/city"
-	"gserver/internal/store/ent/itemcategory"
-	"gserver/internal/store/ent/user"
 	"strings"
 	"time"
+	"tkserver/internal/store/ent/city"
+	"tkserver/internal/store/ent/itemcategory"
+	"tkserver/internal/store/ent/user"
 
 	"entgo.io/ent/dialect/sql"
 )

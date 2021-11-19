@@ -4,10 +4,10 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/activity"
-	"gserver/internal/store/ent/activityapplyinfo"
 	"strings"
 	"time"
+	"tkserver/internal/store/ent/activity"
+	"tkserver/internal/store/ent/activityapplyinfo"
 
 	"entgo.io/ent/dialect/sql"
 )

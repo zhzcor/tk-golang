@@ -4,11 +4,11 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/admin"
-	"gserver/internal/store/ent/attachment"
-	"gserver/internal/store/ent/kccoursesmallcategory"
 	"strings"
 	"time"
+	"tkserver/internal/store/ent/admin"
+	"tkserver/internal/store/ent/attachment"
+	"tkserver/internal/store/ent/kccoursesmallcategory"
 
 	"entgo.io/ent/dialect/sql"
 )

@@ -11,9 +11,9 @@ import (
 	"github.com/go-playground/validator/v10"
 	zhTranslations "github.com/go-playground/validator/v10/translations/zh"
 
-	"gserver/internal/store"
-	"gserver/pkg/log"
 	"time"
+	"tkserver/internal/store"
+	"tkserver/pkg/log"
 )
 
 var (

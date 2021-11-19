@@ -5,13 +5,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
-	"gserver/httpapi/admin"
-	"gserver/httpapi/appapi"
-	"gserver/internal/app"
-	"gserver/internal/errorno"
-	"gserver/pkg/log"
 	"net/http"
 	"strings"
+	"tkserver/httpapi/admin"
+	"tkserver/httpapi/appapi"
+	"tkserver/internal/app"
+	"tkserver/internal/errorno"
+	"tkserver/pkg/log"
 )
 
 type H func(ctx *gin.Context) (interface{}, error)
@@ -24,25 +24,24 @@ func Use(engine *gin.Engine) {
 	ugroup.POST("/register", ResponseToJSON(appapi.UserRegister))
 	/*	ugroup.POST("/login", ResponseToJSON(appapi.UserLogin))
 	 */ /*************appApi接口******************************************************/
-	 //app首页接不要验证
+	//app首页接不要验证
 	appIndexRoute := engine.Group("/api/auth")
 	appIndexRoute.POST("/get_index_info", ResponseToJSON(appapi.GetIndexInfo))
 	//公开课体验课不用验证
-	appIndexRoute.POST("/get_live_open_courses", ResponseToJSON(appapi.GetLiveOpenCourses))               //公开课
-	appIndexRoute.POST("/get_record_courses", ResponseToJSON(appapi.GetRecordCourses))                    //精品课程
+	appIndexRoute.POST("/get_live_open_courses", ResponseToJSON(appapi.GetLiveOpenCourses)) //公开课
+	appIndexRoute.POST("/get_record_courses", ResponseToJSON(appapi.GetRecordCourses))      //精品课程
 	appIndexRoute.POST("/get_cate_small_detail", ResponseToJSON(appapi.GetCateSmallDetail)) //小节课程详情
 	appIndexRoute.POST("/get_course_details", ResponseToJSON(appapi.GetCourseDetails))      //获取课程详情目录课时
-
 
 	apiRoute := engine.Group("/api")
 	apiRoute.POST("/sms_login", ResponseToJSON(appapi.UserSmsLogin))
 	apiRoute.POST("/pwd_login", ResponseToJSON(appapi.UserPwdLogin))
-	apiRoute.POST("/user_check_code", ResponseToJSON(appapi.UserCheckCode))//验证验证码
+	apiRoute.POST("/user_check_code", ResponseToJSON(appapi.UserCheckCode)) //验证验证码
 	apiRoute.POST("/send_sms", ResponseToJSON(appapi.SendSms))
 	apiRoute.POST("/set_pwd", ResponseToJSON(appapi.SetPwd))
 	apiRoute.POST("/get_app_agreement", ResponseToJSON(appapi.GetAppAgreement)) //协议
 	apiRoute.POST("/get_app_version", ResponseToJSON(appapi.GetAppVersion))     //版本
-	/*apiRoute.POST("/get_index_info", ResponseToJSON(appapi.GetIndexInfo))      */                      //app首页
+	/*apiRoute.POST("/get_index_info", ResponseToJSON(appapi.GetIndexInfo))      */ //app首页
 
 	apiRouteLogin := apiRoute.Group("/auth").Use(AuthMiddleware())
 
@@ -54,13 +53,13 @@ func Use(engine *gin.Engine) {
 	apiRouteLogin.POST("/get_course_question_bank_info", ResponseToJSON(appapi.GetCourseQuestionBankInfo)) //题库首页
 	apiRouteLogin.POST("/get_question_bank_exam_list", ResponseToJSON(appapi.GetQuestionBankExamList))     //题库试卷分类下列表
 
-	apiRouteLogin.POST("/get_exa_question_list", ResponseToJSON(appapi.GetQuestionList))                   //试卷分类下列表
-	apiRouteLogin.POST("/get_tk_cs_question_list", ResponseToJSON(appapi.GetTkCsQuestionList))             //章节下题目
-	apiRouteLogin.POST("/add_user_question_recode", ResponseToJSON(appapi.AddUserQuestionRecode))          //提交试卷题目
-	apiRouteLogin.POST("/get_user_answer_sheet", ResponseToJSON(appapi.GetUserAnswerSheet))                //答题报告
-	apiRouteLogin.POST("/get_user_wrong_question_list", ResponseToJSON(appapi.GetUserWrongQuestionList))   //错题本首页
-	apiRouteLogin.POST("/get_wrong_detail", ResponseToJSON(appapi.GetWrongList))                           //错题题目详情
-	apiRouteLogin.POST("/get_question_detail", ResponseToJSON(appapi.GetQuestionDetail))                   //题目详情
+	apiRouteLogin.POST("/get_exa_question_list", ResponseToJSON(appapi.GetQuestionList))                 //试卷分类下列表
+	apiRouteLogin.POST("/get_tk_cs_question_list", ResponseToJSON(appapi.GetTkCsQuestionList))           //章节下题目
+	apiRouteLogin.POST("/add_user_question_recode", ResponseToJSON(appapi.AddUserQuestionRecode))        //提交试卷题目
+	apiRouteLogin.POST("/get_user_answer_sheet", ResponseToJSON(appapi.GetUserAnswerSheet))              //答题报告
+	apiRouteLogin.POST("/get_user_wrong_question_list", ResponseToJSON(appapi.GetUserWrongQuestionList)) //错题本首页
+	apiRouteLogin.POST("/get_wrong_detail", ResponseToJSON(appapi.GetWrongList))                         //错题题目详情
+	apiRouteLogin.POST("/get_question_detail", ResponseToJSON(appapi.GetQuestionDetail))                 //题目详情
 
 	apiRouteLogin.POST("/get_question_list_detail", ResponseToJSON(appapi.GetQuestionListDetail))          //批量题目详情
 	apiRouteLogin.POST("/add_wrong_question", ResponseToJSON(appapi.AddWrongQuestion))                     //记录单个错题
@@ -82,14 +81,10 @@ func Use(engine *gin.Engine) {
 
 	apiRouteLogin.POST("/add_user_course_appraise", ResponseToJSON(appapi.AddUserCourseAppraise))         //学员提交评价
 	apiRouteLogin.POST("/get_user_course_appraiseList", ResponseToJSON(appapi.GetUserCourseAppraiseList)) //获取课程评价
-	apiRouteLogin.POST("/get_pc_index_info", ResponseToJSON(appapi.GetPcIndex))                            //pc首页
+	apiRouteLogin.POST("/get_pc_index_info", ResponseToJSON(appapi.GetPcIndex))                           //pc首页
 	apiRouteLogin.POST("/get_mess_info", ResponseToJSON(appapi.GetMessInfo))                              //消息
 	apiRouteLogin.POST("/add_video_record", ResponseToJSON(appapi.AddVideoRecord))                        //添加观看记录
 	apiRouteLogin.POST("/get_video_record", ResponseToJSON(appapi.GetVideoRecord))                        //查看观看记录
-
-
-
-
 
 	apiRouteLogin.POST("/oss", ResponseToJSON(appapi.AuthOss))
 

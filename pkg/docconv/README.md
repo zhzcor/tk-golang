@@ -89,7 +89,7 @@ import (
 	"fmt"
 	"log"
 
-	"gserver/pkg/docconv"
+	"tkserver/pkg/docconv"
 )
 
 func main() {
@@ -110,7 +110,7 @@ import (
 	"fmt"
 	"log"
 
-	"gserver/pkg/docconv/client"
+	"tkserver/pkg/docconv/client"
 )
 
 func main() {

@@ -4,9 +4,9 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/permission"
 	"strings"
 	"time"
+	"tkserver/internal/store/ent/permission"
 
 	"entgo.io/ent/dialect/sql"
 )

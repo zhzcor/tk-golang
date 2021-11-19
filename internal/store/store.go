@@ -7,11 +7,11 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"fmt"
 	"github.com/pkg/errors"
-	"gserver/internal/store/ent"
-	_ "gserver/internal/store/ent/runtime"
-	"gserver/pkg/log"
 	"io/ioutil"
 	"runtime/debug"
+	"tkserver/internal/store/ent"
+	_ "tkserver/internal/store/ent/runtime"
+	"tkserver/pkg/log"
 )
 
 //go:generate rm -rf ent

@@ -5,8 +5,8 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gserver/internal/store/ent/predicate"
-	"gserver/internal/store/ent/tkknowledgepoint"
+	"tkserver/internal/store/ent/predicate"
+	"tkserver/internal/store/ent/tkknowledgepoint"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

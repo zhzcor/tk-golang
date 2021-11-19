@@ -4,10 +4,10 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/itemcategory"
-	"gserver/internal/store/ent/kcclass"
 	"strings"
 	"time"
+	"tkserver/internal/store/ent/itemcategory"
+	"tkserver/internal/store/ent/kcclass"
 
 	"entgo.io/ent/dialect/sql"
 )

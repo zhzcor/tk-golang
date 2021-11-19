@@ -5,7 +5,7 @@ package hook
 import (
 	"context"
 	"fmt"
-	"gserver/internal/store/ent"
+	"tkserver/internal/store/ent"
 )
 
 // The ActivityFunc type is an adapter to allow the use of ordinary

@@ -5,11 +5,11 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gserver/internal/store/ent/predicate"
-	"gserver/internal/store/ent/tkquestionbank"
-	"gserver/internal/store/ent/tkuserquestionbankrecord"
-	"gserver/internal/store/ent/user"
 	"time"
+	"tkserver/internal/store/ent/predicate"
+	"tkserver/internal/store/ent/tkquestionbank"
+	"tkserver/internal/store/ent/tkuserquestionbankrecord"
+	"tkserver/internal/store/ent/user"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

@@ -3,8 +3,8 @@ package config
 import (
 	"github.com/jinzhu/configor"
 	"go.uber.org/zap"
-	"gserver/pkg/log"
-	"gserver/pkg/version"
+	"tkserver/pkg/log"
+	"tkserver/pkg/version"
 )
 
 // config like bash> export gserver_ServerPort=8080;gserver_Database_Driver=sqlite3;gserver_Database_DSN=file:ent?mode=memory&cache=shared&_fk=1

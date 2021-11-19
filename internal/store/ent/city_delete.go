@@ -5,8 +5,8 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gserver/internal/store/ent/city"
-	"gserver/internal/store/ent/predicate"
+	"tkserver/internal/store/ent/city"
+	"tkserver/internal/store/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

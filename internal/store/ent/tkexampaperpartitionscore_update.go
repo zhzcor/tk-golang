@@ -5,10 +5,10 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gserver/internal/store/ent/predicate"
-	"gserver/internal/store/ent/tkexampaperpartition"
-	"gserver/internal/store/ent/tkexampaperpartitionscore"
 	"time"
+	"tkserver/internal/store/ent/predicate"
+	"tkserver/internal/store/ent/tkexampaperpartition"
+	"tkserver/internal/store/ent/tkexampaperpartitionscore"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

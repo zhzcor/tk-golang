@@ -1,8 +1,8 @@
 package response
 
 import (
-	"gserver/internal/store/ent"
 	"time"
+	"tkserver/internal/store/ent"
 )
 
 //课程列表（分页）

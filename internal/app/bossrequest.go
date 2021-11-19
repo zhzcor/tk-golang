@@ -3,10 +3,10 @@ package app
 import (
 	"bytes"
 	"encoding/json"
-	"gserver/internal/errorno"
 	"io/ioutil"
 	"net/http"
 	"time"
+	"tkserver/internal/errorno"
 )
 
 type BossRequest struct {
@@ -20,7 +20,7 @@ type UserInfoDetail struct {
 	Username   string `json:"username"`
 }
 
-func (b *BossRequest) BossUserByPhone(p string,bossHost string) (*UserInfoDetail,error) {
+func (b *BossRequest) BossUserByPhone(p string, bossHost string) (*UserInfoDetail, error) {
 	resDetail := UserInfoDetail{}
 
 	reqDetail := make(map[string]string)
@@ -37,7 +37,7 @@ func (b *BossRequest) BossUserByPhone(p string,bossHost string) (*UserInfoDetail
 	}
 	requestInfo.Header.Set("Content-Type", "application/json;charset=UTF-8")
 	client := http.Client{
-		Timeout: time.Second *3,
+		Timeout: time.Second * 3,
 	}
 	resp, err := client.Do(requestInfo)
 	if err != nil {

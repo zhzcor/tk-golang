@@ -2,12 +2,12 @@ package app
 
 import (
 	"context"
-	"gserver/internal/errorno"
-	"gserver/internal/store"
-	"gserver/internal/store/ent/activitytype"
-	"gserver/internal/store/ent/hotsearch"
-	"gserver/internal/store/ent/informationclassify"
-	"gserver/internal/store/ent/messagetype"
+	"tkserver/internal/errorno"
+	"tkserver/internal/store"
+	"tkserver/internal/store/ent/activitytype"
+	"tkserver/internal/store/ent/hotsearch"
+	"tkserver/internal/store/ent/informationclassify"
+	"tkserver/internal/store/ent/messagetype"
 )
 
 type Community struct {

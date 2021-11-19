@@ -4,9 +4,9 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/tkexampapersimulation"
 	"strings"
 	"time"
+	"tkserver/internal/store/ent/tkexampapersimulation"
 
 	"entgo.io/ent/dialect/sql"
 )

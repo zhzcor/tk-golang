@@ -5,11 +5,11 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gserver/internal/store/ent/kccoursesmallcategory"
-	"gserver/internal/store/ent/kcsmallcategoryquestion"
-	"gserver/internal/store/ent/predicate"
-	"gserver/internal/store/ent/tkquestion"
 	"time"
+	"tkserver/internal/store/ent/kccoursesmallcategory"
+	"tkserver/internal/store/ent/kcsmallcategoryquestion"
+	"tkserver/internal/store/ent/predicate"
+	"tkserver/internal/store/ent/tkquestion"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

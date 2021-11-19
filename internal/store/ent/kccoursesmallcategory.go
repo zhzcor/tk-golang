@@ -4,13 +4,13 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/attachment"
-	"gserver/internal/store/ent/kccourse"
-	"gserver/internal/store/ent/kccoursechapter"
-	"gserver/internal/store/ent/kccoursesection"
-	"gserver/internal/store/ent/kccoursesmallcategory"
 	"strings"
 	"time"
+	"tkserver/internal/store/ent/attachment"
+	"tkserver/internal/store/ent/kccourse"
+	"tkserver/internal/store/ent/kccoursechapter"
+	"tkserver/internal/store/ent/kccoursesection"
+	"tkserver/internal/store/ent/kccoursesmallcategory"
 
 	"entgo.io/ent/dialect/sql"
 )

@@ -2,15 +2,15 @@ package app
 
 import (
 	"context"
-	"gserver/httpapi/admin/request"
-	"gserver/internal/errorno"
-	"gserver/internal/store"
-	"gserver/internal/store/ent"
-	"gserver/internal/store/ent/useraskanswer"
-	"gserver/internal/store/ent/useraskanswerattachment"
-	"gserver/internal/store/ent/usercourseappraise"
-	app "gserver/pkg/requestparam"
 	"time"
+	"tkserver/httpapi/admin/request"
+	"tkserver/internal/errorno"
+	"tkserver/internal/store"
+	"tkserver/internal/store/ent"
+	"tkserver/internal/store/ent/useraskanswer"
+	"tkserver/internal/store/ent/useraskanswerattachment"
+	"tkserver/internal/store/ent/usercourseappraise"
+	app "tkserver/pkg/requestparam"
 )
 
 type UserManager struct{}

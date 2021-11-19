@@ -5,8 +5,8 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gserver/internal/store/ent/adminoperationlog"
-	"gserver/internal/store/ent/predicate"
+	"tkserver/internal/store/ent/adminoperationlog"
+	"tkserver/internal/store/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

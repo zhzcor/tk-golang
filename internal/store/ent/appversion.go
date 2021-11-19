@@ -4,9 +4,9 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/appversion"
 	"strings"
 	"time"
+	"tkserver/internal/store/ent/appversion"
 
 	"entgo.io/ent/dialect/sql"
 )

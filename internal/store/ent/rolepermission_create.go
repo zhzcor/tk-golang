@@ -5,8 +5,8 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gserver/internal/store/ent/role"
-	"gserver/internal/store/ent/rolepermission"
+	"tkserver/internal/store/ent/role"
+	"tkserver/internal/store/ent/rolepermission"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"

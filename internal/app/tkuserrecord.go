@@ -2,10 +2,10 @@ package app
 
 import (
 	"context"
-	"gserver/internal/store"
-	"gserver/internal/store/ent"
-	"gserver/internal/store/ent/tkuserexamscorerecord"
-	"gserver/internal/store/ent/tkuserquestionbankrecord"
+	"tkserver/internal/store"
+	"tkserver/internal/store/ent"
+	"tkserver/internal/store/ent/tkuserexamscorerecord"
+	"tkserver/internal/store/ent/tkuserquestionbankrecord"
 )
 
 type UserRecode struct {
@@ -48,7 +48,7 @@ func (u *UserRecode) GetUserChapterRecode(ctx context.Context, id int, ids []int
 		if err != nil {
 			return nil, err
 		}
-		var data =map[int]int{}
+		var data = map[int]int{}
 
 		for _, v := range list {
 			data[v.SectionID] = v.TotalCount - v.NoAnswerCount

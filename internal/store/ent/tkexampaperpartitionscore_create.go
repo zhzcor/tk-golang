@@ -6,9 +6,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gserver/internal/store/ent/tkexampaperpartition"
-	"gserver/internal/store/ent/tkexampaperpartitionscore"
 	"time"
+	"tkserver/internal/store/ent/tkexampaperpartition"
+	"tkserver/internal/store/ent/tkexampaperpartitionscore"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"

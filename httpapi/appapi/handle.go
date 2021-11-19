@@ -3,11 +3,11 @@ package appapi
 import (
 	"context"
 	"github.com/gin-gonic/gin"
-	"gserver/httpapi/appapi/request"
-	"gserver/httpapi/appapi/response"
-	"gserver/internal/app"
-	"gserver/internal/store"
-	"gserver/pkg/log"
+	"tkserver/httpapi/appapi/request"
+	"tkserver/httpapi/appapi/response"
+	"tkserver/internal/app"
+	"tkserver/internal/store"
+	"tkserver/pkg/log"
 )
 
 func Pong(ctx *gin.Context) (interface{}, error) {
@@ -33,7 +33,7 @@ func UserRegister(ctx *gin.Context) (interface{}, error) {
 	}
 	uc := app.UserCenter{}
 	err = store.WithTx(ctx, func(ctx context.Context) error {
-		uid, err,user := uc.Create(ctx, req.Phone, req.Password)
+		uid, err, user := uc.Create(ctx, req.Phone, req.Password)
 		if err != nil {
 			_ = user
 			return err

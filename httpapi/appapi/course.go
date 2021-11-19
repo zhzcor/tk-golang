@@ -6,39 +6,39 @@ import (
 	"encoding/json"
 	sql2 "entgo.io/ent/dialect/sql"
 	"github.com/gin-gonic/gin"
-	"gserver/httpapi/appapi/request"
-	"gserver/httpapi/appapi/response"
-	"gserver/internal/app"
-	"gserver/internal/cache"
-	"gserver/internal/config"
-	"gserver/internal/errorno"
-	"gserver/internal/store"
-	"gserver/internal/store/ent"
-	"gserver/internal/store/ent/advertise"
-	"gserver/internal/store/ent/kcclass"
-	"gserver/internal/store/ent/kccourse"
-	"gserver/internal/store/ent/kccoursesmallcategory"
-	"gserver/internal/store/ent/kccourseteacher"
-	"gserver/internal/store/ent/kcsmallcategoryattachment"
-	"gserver/internal/store/ent/kcsmallcategoryexampaper"
-	"gserver/internal/store/ent/kcsmallcategoryquestion"
-	"gserver/internal/store/ent/kcuserclass"
-	"gserver/internal/store/ent/kcusercourse"
-	"gserver/internal/store/ent/message"
-	"gserver/internal/store/ent/teacher"
-	"gserver/internal/store/ent/tkexampaper"
-	"gserver/internal/store/ent/tkuserexamscorerecord"
-	"gserver/internal/store/ent/tkuserquestionbankrecord"
-	"gserver/internal/store/ent/useraskanswer"
-	"gserver/internal/store/ent/usercourseappraise"
-	"gserver/internal/store/ent/videorecord"
-	"gserver/pkg/baijiayun"
-	app2 "gserver/pkg/requestparam"
 	"math"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
+	"tkserver/httpapi/appapi/request"
+	"tkserver/httpapi/appapi/response"
+	"tkserver/internal/app"
+	"tkserver/internal/cache"
+	"tkserver/internal/config"
+	"tkserver/internal/errorno"
+	"tkserver/internal/store"
+	"tkserver/internal/store/ent"
+	"tkserver/internal/store/ent/advertise"
+	"tkserver/internal/store/ent/kcclass"
+	"tkserver/internal/store/ent/kccourse"
+	"tkserver/internal/store/ent/kccoursesmallcategory"
+	"tkserver/internal/store/ent/kccourseteacher"
+	"tkserver/internal/store/ent/kcsmallcategoryattachment"
+	"tkserver/internal/store/ent/kcsmallcategoryexampaper"
+	"tkserver/internal/store/ent/kcsmallcategoryquestion"
+	"tkserver/internal/store/ent/kcuserclass"
+	"tkserver/internal/store/ent/kcusercourse"
+	"tkserver/internal/store/ent/message"
+	"tkserver/internal/store/ent/teacher"
+	"tkserver/internal/store/ent/tkexampaper"
+	"tkserver/internal/store/ent/tkuserexamscorerecord"
+	"tkserver/internal/store/ent/tkuserquestionbankrecord"
+	"tkserver/internal/store/ent/useraskanswer"
+	"tkserver/internal/store/ent/usercourseappraise"
+	"tkserver/internal/store/ent/videorecord"
+	"tkserver/pkg/baijiayun"
+	app2 "tkserver/pkg/requestparam"
 )
 
 //1：视频，2：音频，3：直播，4：资料下载
@@ -842,7 +842,7 @@ func GetClassCourseList(ctx *gin.Context) (interface{}, error) {
 		}).WithCourseChapters(func(query *ent.KcCourseChapterQuery) {
 			query.WithChapterSections()
 		}).WithCourseSmallCategorys(func(query *ent.KcCourseSmallCategoryQuery) {
-			query.SoftDelete().Select("id","course_id")
+			query.SoftDelete().Select("id", "course_id")
 		})
 	}).AllX(ctx)
 
@@ -961,7 +961,7 @@ func GetCateSmallDetail(ctx *gin.Context) (interface{}, error) {
 		return nil, errorno.NewInternalErr(err)
 	}
 	uid, _ := ctx.Get("uid")
-	if uid == nil{
+	if uid == nil {
 		uid = 0
 	}
 
@@ -1024,7 +1024,7 @@ func GetCateSmallDetail(ctx *gin.Context) (interface{}, error) {
 	}
 
 	//记录观看记录
-	if uid !=0{
+	if uid != 0 {
 		query := s.VideoRecord.Query().Where(videorecord.UserID(uid.(int)), videorecord.SmallID(req.SmallId))
 		data := query.FirstX(ctx)
 		if data != nil {
@@ -1295,8 +1295,8 @@ func UserAskAnswer(ctx *gin.Context) (interface{}, error) {
 		err = json.Unmarshal([]byte(imgIds), &req.ImgIds)
 	}
 
-	if len(req.ImgIds)==0 && req.AskDesc == ""{
-		return nil,errorno.NewParamErr(err)
+	if len(req.ImgIds) == 0 && req.AskDesc == "" {
+		return nil, errorno.NewParamErr(err)
 	}
 	uid, _ := ctx.Get("uid")
 	err = store.WithTx(ctx, func(ctx context.Context) error {
@@ -1340,7 +1340,7 @@ func AddUserCourseAppraise(ctx *gin.Context) (interface{}, error) {
 	}
 
 	req.CompositeScore = float64(math.Floor((req.TeachAtmosphereScore+req.TeachContentScore+req.TeachAttitudeScore)/3 + 0.5))
-		/*strconv.ParseFloat(fmt.Sprintf("%.1f",(req.TeachAtmosphereScore+req.TeachContentScore+req.TeachAttitudeScore)/3),64)*/
+	/*strconv.ParseFloat(fmt.Sprintf("%.1f",(req.TeachAtmosphereScore+req.TeachContentScore+req.TeachAttitudeScore)/3),64)*/
 
 	err = store.WithTx(ctx, func(ctx context.Context) error {
 		s.UserCourseAppraise.Create().
@@ -1430,15 +1430,14 @@ func GetUserCourseAppraiseList(ctx *gin.Context) (interface{}, error) {
 			}
 			re.Time = v.CreatedAt.Format("2006-01-02 15:04:05")
 
-
 			res = append(res, re)
 
 		}
 
 		var data = map[string]interface{}{
-			"is_report":info,//是否评价过 1 是 0否
-			"list": res,
-			"total": page.Total,
+			"is_report": info, //是否评价过 1 是 0否
+			"list":      res,
+			"total":     page.Total,
 		}
 
 		return data, nil
@@ -1647,8 +1646,9 @@ func GetRecordCourses(ctx *gin.Context) (interface{}, error) {
 	return nil, nil
 
 }
+
 //pc端首页
-func GetPcIndex(ctx *gin.Context)(interface{},error){
+func GetPcIndex(ctx *gin.Context) (interface{}, error) {
 	s := store.WithContext(ctx)
 	bannerList := s.Advertise.Query().SoftDelete().Where(advertise.Status(1), advertise.Position(4)).WithAttachment(func(query *ent.AttachmentQuery) {
 		query.SoftDelete().Select("id", "filename")
@@ -1669,7 +1669,7 @@ func GetPcIndex(ctx *gin.Context)(interface{},error){
 		resBanner = append(resBanner, &rb)
 	}
 
-	return resBanner,nil
+	return resBanner, nil
 }
 
 //首页

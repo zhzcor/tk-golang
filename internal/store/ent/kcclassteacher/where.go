@@ -3,7 +3,7 @@
 package kcclassteacher
 
 import (
-	"gserver/internal/store/ent/predicate"
+	"tkserver/internal/store/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

@@ -1,4 +1,4 @@
-package docconv // import "gserver/pkg/docconv"
+package docconv // import "tkserver/pkg/docconv"
 
 import (
 	"encoding/json"

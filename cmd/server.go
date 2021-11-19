@@ -5,13 +5,13 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/spf13/cobra"
-	"gserver/httpapi"
-	_ "gserver/internal/app"
-	"gserver/internal/config"
-	"gserver/internal/store"
-	"gserver/pkg/asynctask"
-	"gserver/pkg/log"
 	"os"
+	"tkserver/httpapi"
+	_ "tkserver/internal/app"
+	"tkserver/internal/config"
+	"tkserver/internal/store"
+	"tkserver/pkg/asynctask"
+	"tkserver/pkg/log"
 )
 
 func ServerRun() *cobra.Command {
@@ -50,7 +50,7 @@ func ServerRun() *cobra.Command {
 			return httpapi.Run(ctx, addr)
 		},
 	}
-	runServerCmd.Flags().StringVarP(&addr, "listen", "l", ":8080", "gpush server listen addr")
+	runServerCmd.Flags().StringVarP(&addr, "listen", "l", ":8070", "gpush server listen addr")
 	runServerCmd.Flags().StringVarP(&configFile, "cfile", "f", "", "gpush load server config file ")
 	loggerOption.AttachCobraFlags(runServerCmd)
 

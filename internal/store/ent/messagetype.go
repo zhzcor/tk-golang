@@ -4,9 +4,9 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/messagetype"
 	"strings"
 	"time"
+	"tkserver/internal/store/ent/messagetype"
 
 	"entgo.io/ent/dialect/sql"
 )

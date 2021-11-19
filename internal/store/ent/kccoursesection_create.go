@@ -6,9 +6,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gserver/internal/store/ent/kccoursechapter"
-	"gserver/internal/store/ent/kccoursesection"
-	"gserver/internal/store/ent/kccoursesmallcategory"
+	"tkserver/internal/store/ent/kccoursechapter"
+	"tkserver/internal/store/ent/kccoursesection"
+	"tkserver/internal/store/ent/kccoursesmallcategory"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"

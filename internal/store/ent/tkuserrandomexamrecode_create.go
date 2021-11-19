@@ -6,10 +6,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gserver/internal/store/ent/tkexampaper"
-	"gserver/internal/store/ent/tkquestion"
-	"gserver/internal/store/ent/tkuserrandomexamrecode"
 	"time"
+	"tkserver/internal/store/ent/tkexampaper"
+	"tkserver/internal/store/ent/tkquestion"
+	"tkserver/internal/store/ent/tkuserrandomexamrecode"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"

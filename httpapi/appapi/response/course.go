@@ -1,8 +1,8 @@
 package response
 
 import (
-	"gserver/internal/store/ent"
 	"time"
+	"tkserver/internal/store/ent"
 )
 
 type CourseCalendar struct {
@@ -106,15 +106,15 @@ type ClassCourseList struct {
 }
 
 type CourseList struct {
-	CourseName    string  `json:"course_name"`
-	TeacherName   string  `json:"teacher_name"`
-	TeacherAvatar string  `json:"teacher_avatar"`
-	ImgCover      string  `json:"img_cover"`
-	CourseId      int     `json:"course_id"`
-	ChapterCount  int     `json:"chapter_count"`
-	SmallCourseCount   int     `json:"small_course_count"`
-	SecCount      int     `json:"sec_count"`
-	Learned       float64 `json:"learned"`
+	CourseName       string  `json:"course_name"`
+	TeacherName      string  `json:"teacher_name"`
+	TeacherAvatar    string  `json:"teacher_avatar"`
+	ImgCover         string  `json:"img_cover"`
+	CourseId         int     `json:"course_id"`
+	ChapterCount     int     `json:"chapter_count"`
+	SmallCourseCount int     `json:"small_course_count"`
+	SecCount         int     `json:"sec_count"`
+	Learned          float64 `json:"learned"`
 }
 
 //课程详情目录+课时

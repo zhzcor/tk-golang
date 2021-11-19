@@ -4,11 +4,11 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/admin"
-	"gserver/internal/store/ent/tkquestion"
-	"gserver/internal/store/ent/tkquestionerrorfeedback"
 	"strings"
 	"time"
+	"tkserver/internal/store/ent/admin"
+	"tkserver/internal/store/ent/tkquestion"
+	"tkserver/internal/store/ent/tkquestionerrorfeedback"
 
 	"entgo.io/ent/dialect/sql"
 )

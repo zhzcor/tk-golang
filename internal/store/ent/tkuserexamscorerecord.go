@@ -4,13 +4,13 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/teacher"
-	"gserver/internal/store/ent/tkexampaper"
-	"gserver/internal/store/ent/tksection"
-	"gserver/internal/store/ent/tkuserexamscorerecord"
-	"gserver/internal/store/ent/user"
 	"strings"
 	"time"
+	"tkserver/internal/store/ent/teacher"
+	"tkserver/internal/store/ent/tkexampaper"
+	"tkserver/internal/store/ent/tksection"
+	"tkserver/internal/store/ent/tkuserexamscorerecord"
+	"tkserver/internal/store/ent/user"
 
 	"entgo.io/ent/dialect/sql"
 )

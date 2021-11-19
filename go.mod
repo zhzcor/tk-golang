@@ -1,4 +1,4 @@
-module gserver
+module tkserver
 
 go 1.16
 

@@ -5,12 +5,12 @@ import (
 	"fmt"
 	openapi "github.com/alibabacloud-go/darabonba-openapi/client"
 	dysmsapi "github.com/alibabacloud-go/dysmsapi-20170525/v2/client"
-	"gserver/internal/cache"
-	"gserver/internal/config"
-	"gserver/internal/errorno"
 	"math/rand"
 	"regexp"
 	"time"
+	"tkserver/internal/cache"
+	"tkserver/internal/config"
+	"tkserver/internal/errorno"
 )
 
 type Sms struct {
@@ -19,19 +19,19 @@ type Sms struct {
 
 func NewSmsService() *Sms {
 	aliyunConfig := config.ServerConfig.Aliyun
-	acid :=aliyunConfig.AccessKeyId
-	scrKey :=aliyunConfig.AccessKeySecret
+	acid := aliyunConfig.AccessKeyId
+	scrKey := aliyunConfig.AccessKeySecret
 	Endpoint := "dysmsapi.aliyuncs.com"
-	time :=2000
+	time := 2000
 	config := &openapi.Config{
 		// 您的AccessKey ID
 		AccessKeyId: &acid,
 		// 您的AccessKey Secret
 		AccessKeySecret: &scrKey,
 
-		Endpoint:&Endpoint,
+		Endpoint: &Endpoint,
 
-		ReadTimeout:&time,
+		ReadTimeout: &time,
 	}
 	// 访问的域名
 	client, _ := dysmsapi.NewClient(config)
@@ -43,11 +43,11 @@ func NewSmsService() *Sms {
 }
 
 //发送短信userType 0：用户登录 1 :新用户注册
-func (*Sms) SendSmsCode(client *dysmsapi.Client,phone string,param interface{}, userType int) (bool,error) {
+func (*Sms) SendSmsCode(client *dysmsapi.Client, phone string, param interface{}, userType int) (bool, error) {
 	request := &dysmsapi.SendSmsRequest{}
 	// 该参数值为假设值，请您根据实际情况进行填写
 	request.SetPhoneNumbers(phone)
-	paramJson,_ := json.Marshal(param)
+	paramJson, _ := json.Marshal(param)
 
 	request.SetTemplateParam(string(paramJson))
 	if userType > 0 { //成功提示短信
@@ -64,14 +64,14 @@ func (*Sms) SendSmsCode(client *dysmsapi.Client,phone string,param interface{}, 
 		return false, err
 	}
 
-	if *response.Body.Code != "OK"{
+	if *response.Body.Code != "OK" {
 		return false, errorno.NewErr(errorno.Errno{
 			Code:    20008,
 			Message: *response.Body.Message,
 		})
 	}
 
-	return true,nil
+	return true, nil
 }
 
 // 识别手机号码

@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/spf13/cobra"
-	"gserver/cmd"
+	"tkserver/cmd"
 )
 
 func init() {
@@ -12,7 +12,7 @@ func init() {
 func main() {
 	var err error
 	rootCmd := &cobra.Command{
-		Use: "gserver",
+		Use: "tkserver",
 	}
 	rootCmd.AddCommand(cmd.ServerRun())
 	rootCmd.AddCommand(cmd.MgRun())

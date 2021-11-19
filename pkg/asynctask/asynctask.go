@@ -3,9 +3,9 @@ package asynctask
 import (
 	"context"
 	"github.com/hibiken/asynq"
-	"gserver/internal/store"
-	"gserver/pkg/log"
 	"sync"
+	"tkserver/internal/store"
+	"tkserver/pkg/log"
 )
 
 var tasks sync.Map

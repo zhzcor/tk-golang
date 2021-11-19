@@ -6,10 +6,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gserver/internal/store/ent/admin"
-	"gserver/internal/store/ent/role"
-	"gserver/internal/store/ent/rolepermission"
 	"time"
+	"tkserver/internal/store/ent/admin"
+	"tkserver/internal/store/ent/role"
+	"tkserver/internal/store/ent/rolepermission"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"

@@ -5,9 +5,9 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gserver/internal/store/ent/informationclassify"
-	"gserver/internal/store/ent/predicate"
 	"time"
+	"tkserver/internal/store/ent/informationclassify"
+	"tkserver/internal/store/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

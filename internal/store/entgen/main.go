@@ -14,7 +14,7 @@ func main() {
 			TagFields("json"),
 		},
 		Target:  "./ent",
-		Package: "gserver/internal/store/ent",
+		Package: "tkserver/internal/store/ent",
 	}, entc.TemplateDir("./enttemplate"), entc.Annotations(entsql.Annotation{OnDelete: entsql.NoAction}))
 	if err != nil {
 		log.Fatalf("running ent codegen: %v", err)

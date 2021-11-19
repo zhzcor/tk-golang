@@ -5,10 +5,10 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gserver/internal/store/ent/activity"
-	"gserver/internal/store/ent/activityapplyinfo"
-	"gserver/internal/store/ent/predicate"
 	"time"
+	"tkserver/internal/store/ent/activity"
+	"tkserver/internal/store/ent/activityapplyinfo"
+	"tkserver/internal/store/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

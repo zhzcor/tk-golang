@@ -2,14 +2,14 @@ package appapi
 
 import (
 	"context"
-	"gserver/internal/store/ent/appversion"
+	"tkserver/internal/store/ent/appversion"
 
 	"github.com/gin-gonic/gin"
-	"gserver/httpapi/appapi/request"
-	"gserver/httpapi/appapi/response"
-	"gserver/internal/store"
-	"gserver/internal/store/ent"
-	"gserver/internal/store/ent/appagreement"
+	"tkserver/httpapi/appapi/request"
+	"tkserver/httpapi/appapi/response"
+	"tkserver/internal/store"
+	"tkserver/internal/store/ent"
+	"tkserver/internal/store/ent/appagreement"
 )
 
 //app协议
@@ -49,14 +49,14 @@ func GetAppVersion(ctx *gin.Context) (interface{}, error) {
 
 	if data != nil {
 		var res response.AppVersion
-		res.PhoneType  = int(data.PhoneType)
-		res.Url  =data.URL
+		res.PhoneType = int(data.PhoneType)
+		res.Url = data.URL
 		res.Name = data.Name
 		res.IsForceUpdate = int(data.IsForceUpdate)
 		res.Sn = data.Sn
 
-		return data,nil
+		return data, nil
 	}
 
-	return nil,nil
+	return nil, nil
 }

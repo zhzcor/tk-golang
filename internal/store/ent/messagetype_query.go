@@ -7,10 +7,10 @@ import (
 	"database/sql/driver"
 	"errors"
 	"fmt"
-	"gserver/internal/store/ent/message"
-	"gserver/internal/store/ent/messagetype"
-	"gserver/internal/store/ent/predicate"
 	"math"
+	"tkserver/internal/store/ent/message"
+	"tkserver/internal/store/ent/messagetype"
+	"tkserver/internal/store/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

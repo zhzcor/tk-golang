@@ -1,6 +1,6 @@
 package response
 
-import "gserver/internal/store/ent"
+import "tkserver/internal/store/ent"
 
 type RegisterSuccess struct {
 	Token  string `json:"token"`
@@ -30,9 +30,9 @@ type PersonalDataItems struct {
 type QuestionClass struct {
 	ClassId int `json:"class_id"`
 	/*	CourseId    int           `json:"course_id"`
-	 *//*RecodeNum   int           `json:"recode_num"`*/ //班级刷题记录
-	Name        string `json:"name"`
-	CourseCount int    `json:"course_count"` //课程数量
+	 */         /*RecodeNum   int           `json:"recode_num"`*/ //班级刷题记录
+	Name        string                                            `json:"name"`
+	CourseCount int                                               `json:"course_count"` //课程数量
 	/*	Img         string        `json:"img"`
 	 */ClassCourse []ClassCourse `json:"course_list"`
 }

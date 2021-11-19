@@ -7,35 +7,35 @@ import (
 	sql2 "entgo.io/ent/dialect/sql"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"gserver/httpapi/appapi/request"
-	"gserver/httpapi/appapi/response"
-	"gserver/internal/app"
-	"gserver/internal/cache"
-	"gserver/internal/errorno"
-	"gserver/internal/store"
-	"gserver/internal/store/ent"
-	"gserver/internal/store/ent/collection"
-	"gserver/internal/store/ent/kcuserclass"
-	"gserver/internal/store/ent/kcusercourse"
-	"gserver/internal/store/ent/makeuserquestionrecord"
-	"gserver/internal/store/ent/tkchapter"
-	"gserver/internal/store/ent/tkexampaper"
-	"gserver/internal/store/ent/tkexampartitionquestionlink"
-	"gserver/internal/store/ent/tkquestion"
-	"gserver/internal/store/ent/tkquestionbank"
-	"gserver/internal/store/ent/tkquestionsection"
-	"gserver/internal/store/ent/tkuserexamscorerecord"
-	"gserver/internal/store/ent/tkuserquestionbankrecord"
-	"gserver/internal/store/ent/tkuserquestionrecord"
-	"gserver/internal/store/ent/tkuserrandomexamrecode"
-	"gserver/internal/store/ent/tkuserwrongquestionrecode"
-	"gserver/pkg/asynctask"
-	"gserver/pkg/htmltojson"
-	"gserver/pkg/log"
-	app2 "gserver/pkg/requestparam"
 	"math"
 	"strconv"
 	"time"
+	"tkserver/httpapi/appapi/request"
+	"tkserver/httpapi/appapi/response"
+	"tkserver/internal/app"
+	"tkserver/internal/cache"
+	"tkserver/internal/errorno"
+	"tkserver/internal/store"
+	"tkserver/internal/store/ent"
+	"tkserver/internal/store/ent/collection"
+	"tkserver/internal/store/ent/kcuserclass"
+	"tkserver/internal/store/ent/kcusercourse"
+	"tkserver/internal/store/ent/makeuserquestionrecord"
+	"tkserver/internal/store/ent/tkchapter"
+	"tkserver/internal/store/ent/tkexampaper"
+	"tkserver/internal/store/ent/tkexampartitionquestionlink"
+	"tkserver/internal/store/ent/tkquestion"
+	"tkserver/internal/store/ent/tkquestionbank"
+	"tkserver/internal/store/ent/tkquestionsection"
+	"tkserver/internal/store/ent/tkuserexamscorerecord"
+	"tkserver/internal/store/ent/tkuserquestionbankrecord"
+	"tkserver/internal/store/ent/tkuserquestionrecord"
+	"tkserver/internal/store/ent/tkuserrandomexamrecode"
+	"tkserver/internal/store/ent/tkuserwrongquestionrecode"
+	"tkserver/pkg/asynctask"
+	"tkserver/pkg/htmltojson"
+	"tkserver/pkg/log"
+	app2 "tkserver/pkg/requestparam"
 )
 
 const (
@@ -179,8 +179,8 @@ func GetCourseQuestionBankInfo(ctx *gin.Context) (interface{}, error) {
 		if userBankRecode != nil {
 			TypeList.UserStudyCount = userBankRecode.RecordCount
 			TypeList.Accuracy = math.Ceil(userBankRecode.CorrectRate * 100)
-			TypeList.FinishRate, _ =strconv.ParseFloat(fmt.Sprintf("%.1f",TypeList.UserStudyCount/TypeList.QuestionNum*100),64)
-			 	/*strconv.ParseFloat(strconv.FormatFloat(float64(TypeList.UserStudyCount)/float64(TypeList.QuestionNum)*100, 'f', 1, 64), 64)*/
+			TypeList.FinishRate, _ = strconv.ParseFloat(fmt.Sprintf("%.1f", TypeList.UserStudyCount/TypeList.QuestionNum*100), 64)
+			/*strconv.ParseFloat(strconv.FormatFloat(float64(TypeList.UserStudyCount)/float64(TypeList.QuestionNum)*100, 'f', 1, 64), 64)*/
 			/*			TypeList.FinishRate= (userBankRecode.FinishRate) * 100
 			 */
 			totalRecode := TypeList.FinishRate + TypeList.Accuracy
@@ -376,8 +376,8 @@ func GetQuestionBankExamList(ctx *gin.Context) (interface{}, error) {
 			if len(v.Edges.UserExamPapers) > 0 {
 				op := v.Edges.UserExamPapers[0].WrongCount + v.Edges.UserExamPapers[0].RightCount
 				if op > 0 {
-					m.Accuracy, _ =strconv.ParseFloat(fmt.Sprintf("%.1f",v.Edges.UserExamPapers[0].RightCount*100/op),64)
-					 	/*strconv.ParseFloat(strconv.FormatFloat(float64(v.Edges.UserExamPapers[0].RightCount*100)/float64(op), 'f', 1, 64), 64)*/
+					m.Accuracy, _ = strconv.ParseFloat(fmt.Sprintf("%.1f", v.Edges.UserExamPapers[0].RightCount*100/op), 64)
+					/*strconv.ParseFloat(strconv.FormatFloat(float64(v.Edges.UserExamPapers[0].RightCount*100)/float64(op), 'f', 1, 64), 64)*/
 				}
 				m.UserQuestionCount = v.Edges.UserExamPapers[0].TotalCount
 				m.OrderStatus = int(v.Edges.UserExamPapers[0].OrderStatus)
@@ -437,7 +437,7 @@ func GetSimulationExamStatus(ctx *gin.Context) (interface{}, error) {
 
 	res := response.GetSimulationExamStatus{}
 
-	if data !=nil && !data.StartAt.IsZero() {
+	if data != nil && !data.StartAt.IsZero() {
 		//	ExamStart      = 1 //考试开始
 		//	ExamEnd        = 2 //考试结束
 		//	ExamViewResult = 3 //查看成绩
@@ -517,21 +517,21 @@ func GetQuestionList(ctx *gin.Context) (interface{}, error) {
 
 		if int(query.ExamType) == SuiJiJuan {
 			query1 := s.TkQuestion.Query().SoftDelete()
-			if req.LookReport == "look_report"{
+			if req.LookReport == "look_report" {
 				randList := s.TkUserRandomExamRecode.Query().Where(tkuserrandomexamrecode.ExamID(req.Id), tkuserrandomexamrecode.UserID(uid.(int))).WithRandomExamQuestion(func(query1 *ent.TkQuestionQuery) {
 					query1.Where(tkquestion.PidIsNil()).SoftDelete()
 				}).FirstX(ctx)
 
-				for _,v:=range randList.Edges.RandomExamQuestion{
-					userRandIds = append(userRandIds,v.ID)
+				for _, v := range randList.Edges.RandomExamQuestion {
+					userRandIds = append(userRandIds, v.ID)
 				}
 
-				if len(userRandIds)>0{
+				if len(userRandIds) > 0 {
 					query1 = query1.Where(tkquestion.IDIn(userRandIds...))
 				}
 
-			}else{
-				query1 = query1.Where(tkquestion.QuestionBankID(query.QuestionBankID),tkquestion.PidIsNil())
+			} else {
+				query1 = query1.Where(tkquestion.QuestionBankID(query.QuestionBankID), tkquestion.PidIsNil())
 			}
 
 			list := query1.Select("id", "type").WithChildren(func(query *ent.TkQuestionQuery) {
@@ -541,7 +541,6 @@ func GetQuestionList(ctx *gin.Context) (interface{}, error) {
 			}).WithCollectionQuestion(func(query *ent.CollectionQuery) {
 				query.SoftDelete().Select("id", "value_id").Where(collection.UserID(uid.(int)), collection.Type(1))
 			}).AllX(ctx)
-
 
 			for _, v := range list {
 				re := response.QuestionIdsCollection{
@@ -596,11 +595,11 @@ func GetQuestionList(ctx *gin.Context) (interface{}, error) {
 							count = int(v.QuestionCount)
 						}
 						//pc端查看答题卡
-/*						if req.LookReport == "look_report"{
-							examPaperPartition.QuestionIDs = suiJiQuestionIds
-						}*/
+						/*						if req.LookReport == "look_report"{
+												examPaperPartition.QuestionIDs = suiJiQuestionIds
+											}*/
 
-							quids := tk.MicsSlice(suiJiQuestionIds[v.Type], count)
+						quids := tk.MicsSlice(suiJiQuestionIds[v.Type], count)
 						if len(quids) > 0 {
 							examPaperPartition.QuestionIDs = quids
 						} else {
@@ -933,23 +932,23 @@ func AddUserQuestionRecode(ctx *gin.Context) (interface{}, error) {
 				scoreList := map[int]int{}
 				exam := s.TkExamPaper.Query().SoftDelete().Where(tkexampaper.ID(req.ExamId)).WithExamPartitions().FirstX(ctx)
 
-				if exam !=nil && len(exam.Edges.ExamPartitions)>0{
-					for _,v :=range exam.Edges.ExamPartitions{
-						if v !=nil{
-							examParIds = append(examParIds,v.ID)
+				if exam != nil && len(exam.Edges.ExamPartitions) > 0 {
+					for _, v := range exam.Edges.ExamPartitions {
+						if v != nil {
+							examParIds = append(examParIds, v.ID)
 						}
 					}
-					scoreInfo := s.TkExamPartitionQuestionLink.Query().SoftDelete().Where(tkexampartitionquestionlink.ExamPaperPartitionIDIn(examParIds...),tkexampartitionquestionlink.QuestionIDIn(newQuestionIds...)).AllX(ctx)
+					scoreInfo := s.TkExamPartitionQuestionLink.Query().SoftDelete().Where(tkexampartitionquestionlink.ExamPaperPartitionIDIn(examParIds...), tkexampartitionquestionlink.QuestionIDIn(newQuestionIds...)).AllX(ctx)
 
-					for _,v:=range scoreInfo{
-						if v !=nil{
+					for _, v := range scoreInfo {
+						if v != nil {
 							scoreList[v.QuestionID] = int(v.QuestionScore)
 						}
 					}
 
-					for _,v :=range req.QuestionList {
-						if v.IsRight == 2 {//正确
-							if _,ok := scoreList[v.QuestionId];ok{
+					for _, v := range req.QuestionList {
+						if v.IsRight == 2 { //正确
+							if _, ok := scoreList[v.QuestionId]; ok {
 								scoreTotal += scoreList[v.QuestionId]
 							}
 						}
@@ -994,12 +993,12 @@ func AddUserQuestionRecode(ctx *gin.Context) (interface{}, error) {
 				} else {
 					query.SetExamPaperID(req.ExamId).SetObjectiveQuestionScore(uint8(scoreTotal))
 				}
-				 query.SaveX(ctx)
+				query.SaveX(ctx)
 			}
 
 			if len(wrongList) > 0 {
 				//跟新错题记录表
-				s.TkUserWrongQuestionRecode.Delete().Where(tkuserwrongquestionrecode.UserID(uid.(int)), tkuserwrongquestionrecode.QuestionIDIn(wrongListIds...),tkuserwrongquestionrecode.QuestionBankID(req.QuestionBankId)).ExecX(ctx)
+				s.TkUserWrongQuestionRecode.Delete().Where(tkuserwrongquestionrecode.UserID(uid.(int)), tkuserwrongquestionrecode.QuestionIDIn(wrongListIds...), tkuserwrongquestionrecode.QuestionBankID(req.QuestionBankId)).ExecX(ctx)
 
 				WrongNumb := make([]*ent.TkUserWrongQuestionRecodeCreate, len(wrongList))
 
@@ -1105,16 +1104,16 @@ func GetUserAnswerSheet(ctx *gin.Context) (interface{}, error) {
 		//试卷查询分数
 		exam := s.TkExamPaper.Query().SoftDelete().Where(tkexampaper.ID(req.ExamId)).WithExamPartitions().FirstX(ctx)
 
-		if exam !=nil && len(exam.Edges.ExamPartitions)>0{
-			for _,v :=range exam.Edges.ExamPartitions{
-				if v !=nil{
-					examParIds = append(examParIds,v.ID)
+		if exam != nil && len(exam.Edges.ExamPartitions) > 0 {
+			for _, v := range exam.Edges.ExamPartitions {
+				if v != nil {
+					examParIds = append(examParIds, v.ID)
 				}
 			}
 			scoreInfo := s.TkExamPartitionQuestionLink.Query().SoftDelete().Where(tkexampartitionquestionlink.ExamPaperPartitionIDIn(examParIds...)).AllX(ctx)
 
-			for _,v:=range scoreInfo{
-				if v !=nil{
+			for _, v := range scoreInfo {
+				if v != nil {
 					scoreList[v.QuestionID] = int(v.QuestionScore)
 				}
 			}
@@ -1137,8 +1136,8 @@ func GetUserAnswerSheet(ctx *gin.Context) (interface{}, error) {
 	if userExamInfo.TotalCount > 0 {
 		op := userExamInfo.RightCount + userExamInfo.WrongCount
 		if op > 0 {
-			res.Accuracy, _ = strconv.ParseFloat(fmt.Sprintf("%.1f",userExamInfo.RightCount*100/op),64)
-			}
+			res.Accuracy, _ = strconv.ParseFloat(fmt.Sprintf("%.1f", userExamInfo.RightCount*100/op), 64)
+		}
 	}
 
 	var qulistSep = make(map[int]*ent.TkUserQuestionRecord)
@@ -1153,8 +1152,8 @@ func GetUserAnswerSheet(ctx *gin.Context) (interface{}, error) {
 		for _, v := range qlist {
 			r := response.UserQuestionTypeList{}
 			r.Id = v.ID
-			if _,ok := scoreList[v.ID];ok{
-				r.QuestionScore =  scoreList[v.ID]
+			if _, ok := scoreList[v.ID]; ok {
+				r.QuestionScore = scoreList[v.ID]
 			}
 			if ok := qulistSep[v.ID]; ok != nil && v.Type != 5 {
 				r.IsRight = int(qulistSep[v.ID].IsRight)
@@ -1170,8 +1169,8 @@ func GetUserAnswerSheet(ctx *gin.Context) (interface{}, error) {
 						re := response.UserQuestionTypeList{}
 						re.Id = v1.ID
 						re.Pid = v1.Pid
-						if _,ok := scoreList[v1.ID];ok{
-							r.QuestionScore =  scoreList[v1.ID]
+						if _, ok := scoreList[v1.ID]; ok {
+							r.QuestionScore = scoreList[v1.ID]
 						}
 
 						if ok := qulistSep[v1.ID]; ok != nil {
@@ -1582,9 +1581,9 @@ func AddCollection(ctx *gin.Context) (interface{}, error) {
 
 			query := s.Collection.Create().SetUserID(uid.(int)).SetType(req.TypeId).SetValueID(req.Id).SetExamQuestionType(req.ExamQuestionType).SetQuestionBankID(req.QuestionBankId)
 
-			if req.ExamId >0{
+			if req.ExamId > 0 {
 				query.SetExamID(req.ExamId)
-			}else if req.SecId >0{
+			} else if req.SecId > 0 {
 				query.SetSecID(req.SecId)
 			}
 
@@ -1648,8 +1647,8 @@ func GetMakeUserQuestionRecode(ctx *gin.Context) (interface{}, error) {
 
 					op := v.Edges.ExamPaper.Edges.UserExamPapers[0].WrongCount + v.Edges.ExamPaper.Edges.UserExamPapers[0].RightCount
 					if op > 0 {
-						re.Accuracy, _ =strconv.ParseFloat(fmt.Sprintf("%.1f",v.Edges.ExamPaper.Edges.UserExamPapers[0].RightCount*100/op),64)
-						 	/*strconv.ParseFloat(strconv.FormatFloat(float64(v.Edges.ExamPaper.Edges.UserExamPapers[0].RightCount*100)/float64(op), 'f', 1, 64), 64)*/
+						re.Accuracy, _ = strconv.ParseFloat(fmt.Sprintf("%.1f", v.Edges.ExamPaper.Edges.UserExamPapers[0].RightCount*100/op), 64)
+						/*strconv.ParseFloat(strconv.FormatFloat(float64(v.Edges.ExamPaper.Edges.UserExamPapers[0].RightCount*100)/float64(op), 'f', 1, 64), 64)*/
 					}
 				}
 
@@ -1665,8 +1664,8 @@ func GetMakeUserQuestionRecode(ctx *gin.Context) (interface{}, error) {
 					op := v.Edges.Section.Edges.UserSectionExam[0].WrongCount + v.Edges.Section.Edges.UserSectionExam[0].RightCount
 
 					if op > 0 {
-						re.Accuracy, _ = strconv.ParseFloat(fmt.Sprintf("%.1f",v.Edges.Section.Edges.UserSectionExam[0].RightCount*100/op),64)
-							/*strconv.ParseFloat(strconv.FormatFloat(float64(v.Edges.Section.Edges.UserSectionExam[0].RightCount*100)/float64(op), 'f', 1, 64), 64)*/
+						re.Accuracy, _ = strconv.ParseFloat(fmt.Sprintf("%.1f", v.Edges.Section.Edges.UserSectionExam[0].RightCount*100/op), 64)
+						/*strconv.ParseFloat(strconv.FormatFloat(float64(v.Edges.Section.Edges.UserSectionExam[0].RightCount*100)/float64(op), 'f', 1, 64), 64)*/
 					}
 
 				}
@@ -1693,7 +1692,7 @@ func GetCollectionList(ctx *gin.Context) (interface{}, error) {
 
 	s := store.WithContext(ctx)
 
-	list, err := s.Collection.Query().Where(collection.UserID(uid.(int)), collection.ExamQuestionTypeNotNil(),collection.QuestionBankID(req.QuestionBankId)).WithQuestion(func(query *ent.TkQuestionQuery) {
+	list, err := s.Collection.Query().Where(collection.UserID(uid.(int)), collection.ExamQuestionTypeNotNil(), collection.QuestionBankID(req.QuestionBankId)).WithQuestion(func(query *ent.TkQuestionQuery) {
 		query.SoftDelete().Select("id", "type")
 	}).All(ctx)
 
@@ -1739,7 +1738,7 @@ func RemoveWrongQuestion(ctx *gin.Context) (interface{}, error) {
 
 	s := store.WithContext(ctx)
 
-	s.TkUserWrongQuestionRecode.Delete().Where(tkuserwrongquestionrecode.UserID(uid.(int)), tkuserwrongquestionrecode.QuestionID(req.QuestionId),tkuserwrongquestionrecode.QuestionBankID(req.QuestionBankId)).ExecX(ctx)
+	s.TkUserWrongQuestionRecode.Delete().Where(tkuserwrongquestionrecode.UserID(uid.(int)), tkuserwrongquestionrecode.QuestionID(req.QuestionId), tkuserwrongquestionrecode.QuestionBankID(req.QuestionBankId)).ExecX(ctx)
 
 	return nil, nil
 

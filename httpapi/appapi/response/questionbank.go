@@ -1,9 +1,9 @@
 package response
 
 import (
-	"gserver/internal/store/ent"
-	"gserver/pkg/htmltojson"
 	"time"
+	"tkserver/internal/store/ent"
+	"tkserver/pkg/htmltojson"
 )
 
 //题库试卷类型接口

@@ -2,17 +2,17 @@ package app
 
 import (
 	"context"
-	"gserver/httpapi/admin/request"
-	"gserver/internal/errorno"
-	"gserver/internal/store"
-	"gserver/internal/store/ent"
-	"gserver/internal/store/ent/appagreement"
-	"gserver/internal/store/ent/appversion"
-	"gserver/internal/store/ent/attachment"
-	"gserver/internal/store/ent/city"
-	"gserver/internal/store/ent/itemcategory"
-	"gserver/internal/store/ent/major"
 	"net/url"
+	"tkserver/httpapi/admin/request"
+	"tkserver/internal/errorno"
+	"tkserver/internal/store"
+	"tkserver/internal/store/ent"
+	"tkserver/internal/store/ent/appagreement"
+	"tkserver/internal/store/ent/appversion"
+	"tkserver/internal/store/ent/attachment"
+	"tkserver/internal/store/ent/city"
+	"tkserver/internal/store/ent/itemcategory"
+	"tkserver/internal/store/ent/major"
 )
 
 type BasicConfig struct {

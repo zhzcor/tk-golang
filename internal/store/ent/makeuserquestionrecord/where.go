@@ -3,8 +3,8 @@
 package makeuserquestionrecord
 
 import (
-	"gserver/internal/store/ent/predicate"
 	"time"
+	"tkserver/internal/store/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

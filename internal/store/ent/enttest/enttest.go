@@ -4,9 +4,9 @@ package enttest
 
 import (
 	"context"
-	"gserver/internal/store/ent"
+	"tkserver/internal/store/ent"
 	// required by schema hooks.
-	_ "gserver/internal/store/ent/runtime"
+	_ "tkserver/internal/store/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
 )

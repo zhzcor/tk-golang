@@ -1,6 +1,6 @@
 package response
 
-import "gserver/internal/store/ent"
+import "tkserver/internal/store/ent"
 
 //班级详情
 type ClassDetail struct {

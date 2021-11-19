@@ -4,10 +4,10 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/tkexampaper"
-	"gserver/internal/store/ent/tkuserrandomexamrecode"
 	"strings"
 	"time"
+	"tkserver/internal/store/ent/tkexampaper"
+	"tkserver/internal/store/ent/tkuserrandomexamrecode"
 
 	"entgo.io/ent/dialect/sql"
 )

@@ -2,9 +2,9 @@ package app
 
 import (
 	"context"
-	"gserver/internal/errorno"
-	"gserver/internal/store"
-	"gserver/internal/store/ent/importtask"
+	"tkserver/internal/errorno"
+	"tkserver/internal/store"
+	"tkserver/internal/store/ent/importtask"
 )
 
 type ImportTask struct {

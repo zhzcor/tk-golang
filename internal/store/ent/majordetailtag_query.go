@@ -6,10 +6,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gserver/internal/store/ent/majordetail"
-	"gserver/internal/store/ent/majordetailtag"
-	"gserver/internal/store/ent/predicate"
 	"math"
+	"tkserver/internal/store/ent/majordetail"
+	"tkserver/internal/store/ent/majordetailtag"
+	"tkserver/internal/store/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

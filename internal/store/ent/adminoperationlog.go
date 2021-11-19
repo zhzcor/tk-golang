@@ -4,10 +4,10 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/admin"
-	"gserver/internal/store/ent/adminoperationlog"
 	"strings"
 	"time"
+	"tkserver/internal/store/ent/admin"
+	"tkserver/internal/store/ent/adminoperationlog"
 
 	"entgo.io/ent/dialect/sql"
 )

@@ -1,8 +1,8 @@
 package schema
 
 import (
-	"gserver/pkg/password"
-	strings "gserver/pkg/strings"
+	"tkserver/pkg/password"
+	strings "tkserver/pkg/strings"
 
 	"context"
 	"entgo.io/ent"

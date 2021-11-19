@@ -6,8 +6,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gserver/internal/store/ent/appagreement"
 	"time"
+	"tkserver/internal/store/ent/appagreement"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"

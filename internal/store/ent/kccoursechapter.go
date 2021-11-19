@@ -4,9 +4,9 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/kccourse"
-	"gserver/internal/store/ent/kccoursechapter"
 	"strings"
+	"tkserver/internal/store/ent/kccourse"
+	"tkserver/internal/store/ent/kccoursechapter"
 
 	"entgo.io/ent/dialect/sql"
 )

@@ -2,12 +2,12 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
-	"gserver/internal/errorno"
-	"gserver/internal/store"
-	app "gserver/pkg/requestparam"
 	"regexp"
 	"strconv"
 	"time"
+	"tkserver/internal/errorno"
+	"tkserver/internal/store"
+	app "tkserver/pkg/requestparam"
 )
 
 type Common struct {
@@ -201,22 +201,22 @@ func (c Common) GetLastDateOfMonth(d time.Time) time.Time {
 }
 
 //获取某一天的0点时间
-func  (c Common) GetZeroTime(d time.Time) time.Time {
+func (c Common) GetZeroTime(d time.Time) time.Time {
 	return time.Date(d.Year(), d.Month(), d.Day(), 0, 0, 0, 0, d.Location())
 }
 
 // 计算日期相差多少天
 // 返回值day>0, t1晚于t2; day<0, t1早于t2
-func (c Common)SubDays(t1,t2 time.Time)(day int)  {
+func (c Common) SubDays(t1, t2 time.Time) (day int) {
 	swap := false
-	if t1.Unix() < t2.Unix(){
-		t_:= t1
+	if t1.Unix() < t2.Unix() {
+		t_ := t1
 		t1 = t2
 		t2 = t_
 		swap = true
 	}
 
-	day = int(t1.Sub(t2).Hours()/24)
+	day = int(t1.Sub(t2).Hours() / 24)
 
 	// 计算在被24整除外的时间是否存在跨自然日
 	if int(t1.Sub(t2).Milliseconds())%86400000 > int(86400000-t2.Unix()%86400000) {
@@ -231,7 +231,7 @@ func (c Common)SubDays(t1,t2 time.Time)(day int)  {
 }
 
 // 计算日期相差多少月
-func (c Common)GetDiffDescDate(t1, t2 time.Time) (data string) {
+func (c Common) GetDiffDescDate(t1, t2 time.Time) (data string) {
 	y1 := t1.Year()
 	y2 := t2.Year()
 	m1 := int(t1.Month())
@@ -249,21 +249,21 @@ func (c Common)GetDiffDescDate(t1, t2 time.Time) (data string) {
 	hourInterval := h1 - h2
 	minInterval := Minute1 - Minute2
 
-	if yearInterval>0{
-		return strconv.Itoa(yearInterval)+"年前"
+	if yearInterval > 0 {
+		return strconv.Itoa(yearInterval) + "年前"
 	}
 
-	if monthInterval >0{
-		return strconv.Itoa(monthInterval)+"月前"
+	if monthInterval > 0 {
+		return strconv.Itoa(monthInterval) + "月前"
 	}
-	if dayInterval >0{
-		return strconv.Itoa(dayInterval)+"天前"
+	if dayInterval > 0 {
+		return strconv.Itoa(dayInterval) + "天前"
 	}
-	if hourInterval >0{
-		return strconv.Itoa(hourInterval)+"小时前"
+	if hourInterval > 0 {
+		return strconv.Itoa(hourInterval) + "小时前"
 	}
-	if minInterval >0{
-		return strconv.Itoa(minInterval)+"分钟前"
+	if minInterval > 0 {
+		return strconv.Itoa(minInterval) + "分钟前"
 	}
 	// 如果 d1的 月-日 小于 d2的 月-日 那么 yearInterval-- 这样就得到了相差的年数
 	/*if m1 < m2 || m1 == m2 && d1 < d2 {

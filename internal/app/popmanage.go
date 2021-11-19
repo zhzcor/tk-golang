@@ -2,13 +2,13 @@ package app
 
 import (
 	"context"
-	"gserver/httpapi/admin/request"
-	"gserver/internal/errorno"
-	"gserver/internal/store"
-	"gserver/internal/store/ent/advertise"
-	"gserver/internal/store/ent/message"
-	"gserver/internal/store/ent/shareposter"
-	app "gserver/pkg/requestparam"
+	"tkserver/httpapi/admin/request"
+	"tkserver/internal/errorno"
+	"tkserver/internal/store"
+	"tkserver/internal/store/ent/advertise"
+	"tkserver/internal/store/ent/message"
+	"tkserver/internal/store/ent/shareposter"
+	app "tkserver/pkg/requestparam"
 )
 
 type PopManage struct {

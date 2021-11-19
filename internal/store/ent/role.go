@@ -4,10 +4,10 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/role"
-	"gserver/internal/store/ent/rolepermission"
 	"strings"
 	"time"
+	"tkserver/internal/store/ent/role"
+	"tkserver/internal/store/ent/rolepermission"
 
 	"entgo.io/ent/dialect/sql"
 )

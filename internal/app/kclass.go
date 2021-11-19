@@ -2,13 +2,13 @@ package app
 
 import (
 	"context"
-	"gserver/httpapi/admin/request"
-	"gserver/internal/errorno"
-	"gserver/internal/store"
-	"gserver/internal/store/ent/kcclass"
-	"gserver/internal/store/ent/kcclassteacher"
-	"gserver/internal/store/ent/kcuserclass"
-	app "gserver/pkg/requestparam"
+	"tkserver/httpapi/admin/request"
+	"tkserver/internal/errorno"
+	"tkserver/internal/store"
+	"tkserver/internal/store/ent/kcclass"
+	"tkserver/internal/store/ent/kcclassteacher"
+	"tkserver/internal/store/ent/kcuserclass"
+	app "tkserver/pkg/requestparam"
 )
 
 type KcClass struct {

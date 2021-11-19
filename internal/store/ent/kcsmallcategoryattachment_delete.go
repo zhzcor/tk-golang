@@ -5,8 +5,8 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gserver/internal/store/ent/kcsmallcategoryattachment"
-	"gserver/internal/store/ent/predicate"
+	"tkserver/internal/store/ent/kcsmallcategoryattachment"
+	"tkserver/internal/store/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

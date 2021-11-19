@@ -4,10 +4,10 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/attachment"
-	"gserver/internal/store/ent/useraskanswer"
-	"gserver/internal/store/ent/useraskanswerattachment"
 	"strings"
+	"tkserver/internal/store/ent/attachment"
+	"tkserver/internal/store/ent/useraskanswer"
+	"tkserver/internal/store/ent/useraskanswerattachment"
 
 	"entgo.io/ent/dialect/sql"
 )

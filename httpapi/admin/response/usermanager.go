@@ -1,6 +1,6 @@
 package response
 
-import "gserver/internal/store/ent"
+import "tkserver/internal/store/ent"
 
 //学员老师问答列表
 type AskAnswerPageListResponse struct {

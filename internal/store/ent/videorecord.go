@@ -4,11 +4,11 @@ package ent
 
 import (
 	"fmt"
-	"gserver/internal/store/ent/kccoursesmallcategory"
-	"gserver/internal/store/ent/user"
-	"gserver/internal/store/ent/videorecord"
 	"strings"
 	"time"
+	"tkserver/internal/store/ent/kccoursesmallcategory"
+	"tkserver/internal/store/ent/user"
+	"tkserver/internal/store/ent/videorecord"
 
 	"entgo.io/ent/dialect/sql"
 )

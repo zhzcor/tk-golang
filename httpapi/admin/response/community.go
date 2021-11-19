@@ -1,6 +1,6 @@
 package response
 
-import "gserver/internal/store/ent"
+import "tkserver/internal/store/ent"
 
 type ActivityTypePageListResponse struct {
 	List ent.ActivityTypes `json:"list"`

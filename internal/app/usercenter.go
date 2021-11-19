@@ -3,14 +3,14 @@ package app
 import (
 	"context"
 	"github.com/dgrijalva/jwt-go"
-	"gserver/httpapi/appapi/request"
-	"gserver/internal/errorno"
-	"gserver/internal/store/ent/user"
-	"gserver/pkg/password"
 	"time"
+	"tkserver/httpapi/appapi/request"
+	"tkserver/internal/errorno"
+	"tkserver/internal/store/ent/user"
+	"tkserver/pkg/password"
 
-	"gserver/internal/store"
-	"gserver/internal/store/ent"
+	"tkserver/internal/store"
+	"tkserver/internal/store/ent"
 )
 
 var jwtKey = []byte("jwtkey1234")
@@ -126,7 +126,7 @@ func (c UserCenter) CheckToken(tk string) (int, error) {
 }
 
 //修改用户资料
-func (c UserCenter) UpdateUser(ctx context.Context, id int, data *request.UpdateUserInfo) (*ent.User,error) {
+func (c UserCenter) UpdateUser(ctx context.Context, id int, data *request.UpdateUserInfo) (*ent.User, error) {
 	query := store.WithContext(ctx).User.
 		UpdateOneID(id)
 	if data.Birthday != "" {
@@ -153,6 +153,6 @@ func (c UserCenter) UpdateUser(ctx context.Context, id int, data *request.Update
 
 	info := query.SaveX(ctx)
 
-	return info,nil
+	return info, nil
 
 }

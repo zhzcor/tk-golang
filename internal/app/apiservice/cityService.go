@@ -3,15 +3,14 @@ package apiservice
 import (
 	"database/sql"
 	"github.com/gin-gonic/gin"
-	"gserver/internal/store"
-	"gserver/internal/store/ent/city"
-
+	"tkserver/internal/store"
+	"tkserver/internal/store/ent/city"
 )
 
 type City struct{}
 
 type cityList struct {
-	Id  int    `json:"id"`
+	Id   int    `json:"id"`
 	Name string `json:"name"`
 }
 
@@ -20,15 +19,14 @@ func CityService() *City {
 }
 
 // 查询城市id
-func (s *City) GetCityList(ctx *gin.Context) ([]*cityList,error) {
+func (s *City) GetCityList(ctx *gin.Context) ([]*cityList, error) {
 	var list []*cityList
 	cityQuery := store.WithContext(ctx).City.Query().SoftDelete()
-	err := cityQuery.Select(city.FieldID,city.FieldName).Scan(ctx,&list)
+	err := cityQuery.Select(city.FieldID, city.FieldName).Scan(ctx, &list)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, err
 		}
 	}
-	return list,err
+	return list, err
 }
-

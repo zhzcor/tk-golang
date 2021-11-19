@@ -6,8 +6,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gserver/internal/store/ent/hotsearch"
 	"time"
+	"tkserver/internal/store/ent/hotsearch"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"

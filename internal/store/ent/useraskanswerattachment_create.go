@@ -6,9 +6,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gserver/internal/store/ent/attachment"
-	"gserver/internal/store/ent/useraskanswer"
-	"gserver/internal/store/ent/useraskanswerattachment"
+	"tkserver/internal/store/ent/attachment"
+	"tkserver/internal/store/ent/useraskanswer"
+	"tkserver/internal/store/ent/useraskanswerattachment"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"

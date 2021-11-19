@@ -5,22 +5,22 @@ import (
 	"fmt"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/sts"
 	"github.com/gin-gonic/gin"
-	"gserver/httpapi/appapi/request"
-	"gserver/httpapi/appapi/response"
-	"gserver/internal/app"
-	"gserver/internal/app/apiservice"
-	"gserver/internal/app/sms"
-	"gserver/internal/config"
-	"gserver/internal/errorno"
-	"gserver/internal/store"
-	user2 "gserver/internal/store/ent/user"
-	"gserver/pkg/oss"
-	"gserver/pkg/password"
-	app2 "gserver/pkg/requestparam"
 	"time"
+	"tkserver/httpapi/appapi/request"
+	"tkserver/httpapi/appapi/response"
+	"tkserver/internal/app"
+	"tkserver/internal/app/apiservice"
+	"tkserver/internal/app/sms"
+	"tkserver/internal/config"
+	"tkserver/internal/errorno"
+	"tkserver/internal/store"
+	user2 "tkserver/internal/store/ent/user"
+	"tkserver/pkg/oss"
+	"tkserver/pkg/password"
+	app2 "tkserver/pkg/requestparam"
 
-	"gserver/internal/cache"
-	"gserver/pkg/log"
+	"tkserver/internal/cache"
+	"tkserver/pkg/log"
 )
 
 const (
@@ -62,7 +62,7 @@ func UserPwdLogin(ctx *gin.Context) (interface{}, error) {
 	res.Nickname = user.Nickname
 	res.UUID = user.UUID
 	res.Phone = user.Phone
-	if user.Birthday !=nil{
+	if user.Birthday != nil {
 		res.Birthday = user.Birthday
 		res.BirthdayStr = user.Birthday.Format("2006-01-02")
 	}
@@ -183,7 +183,7 @@ func UserSmsLogin(ctx *gin.Context) (interface{}, error) {
 	res.UUID = user.UUID
 	res.RegFrom = user.RegFrom
 	res.Phone = user.Phone
-	if user.Birthday !=nil && !user.Birthday.IsZero(){
+	if user.Birthday != nil && !user.Birthday.IsZero() {
 		res.Birthday = user.Birthday
 		res.BirthdayStr = user.Birthday.Format("2006-01-02")
 	}
@@ -201,13 +201,13 @@ func UserSmsLogin(ctx *gin.Context) (interface{}, error) {
 	res.SignRemark = user.SignRemark
 
 	//是否发送新人短信
-	if isNewUser ==1 {
+	if isNewUser == 1 {
 		smsInfo := sms.NewSmsService()
-		var param =map[string]interface{}{
-			"phone":user.Phone,
+		var param = map[string]interface{}{
+			"phone": user.Phone,
 		}
-		_,err:= smsInfo.SendSmsCode(&smsInfo.Client,user.Phone,param,1)
-		if err !=nil{
+		_, err := smsInfo.SendSmsCode(&smsInfo.Client, user.Phone, param, 1)
+		if err != nil {
 			log.Info("新人注册欢迎短信:", err)
 		}
 	}
@@ -229,13 +229,13 @@ func SendSms(ctx *gin.Context) (interface{}, error) {
 	code := smsInfo.RandCode()
 	smsKey := cache.SmsCacheKey + p.Phone
 	cache.MemoryCache.Set(smsKey, code)
-	var param =map[string]interface{}{
-		"code":code,
+	var param = map[string]interface{}{
+		"code": code,
 	}
-	isSend,err:= smsInfo.SendSmsCode(&smsInfo.Client,p.Phone,param,0)
+	isSend, err := smsInfo.SendSmsCode(&smsInfo.Client, p.Phone, param, 0)
 
-	if !isSend{
-		return nil,err
+	if !isSend {
+		return nil, err
 	}
 	s.Phone = p.Phone
 	s.SmsCode = code
@@ -296,9 +296,9 @@ func ScreenItems(ctx *gin.Context) (interface{}, error) {
 
 	for _, v := range list {
 		if user.FromItemCategoryID == v.Id {
-			if v.Parent.Name != ""{
-				itemName = v.Parent.Name+"/"+v.Name
-			}else{
+			if v.Parent.Name != "" {
+				itemName = v.Parent.Name + "/" + v.Name
+			} else {
 				itemName = v.Name
 			}
 		}

@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/sts"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
-	"gserver/internal/config"
 	"io"
 	"time"
+	"tkserver/internal/config"
 )
 
 //const (

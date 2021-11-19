@@ -3,9 +3,9 @@ package asynctask
 import (
 	"context"
 	"github.com/hibiken/asynq"
-	"gserver/pkg/log"
 	"testing"
 	"time"
+	"tkserver/pkg/log"
 )
 
 func TestBackground(t *testing.T) {

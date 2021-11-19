@@ -126,7 +126,7 @@ func ValidColumn(column string) bool {
 // package on the initialization of the application. Therefore,
 // it should be imported in the main as follows:
 //
-//	import _ "gserver/internal/store/ent/runtime"
+//	import _ "tkserver/internal/store/ent/runtime"
 //
 var (
 	Hooks [1]ent.Hook
