@@ -222,6 +222,6 @@ var (
 	DefaultIsActive uint8
 	// DefaultStatus holds the default value on creation for the "status" field.
 	DefaultStatus uint8
-	// DefaultRemark holds the default value on creation for the "Remark" field.
+	// DefaultRemark holds the default value on creation for the "remark" field.
 	DefaultRemark string
 )

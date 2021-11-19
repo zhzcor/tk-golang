@@ -10,6 +10,7 @@ import (
 	"tkserver/internal/store/ent/admin"
 	"tkserver/internal/store/ent/advertise"
 	"tkserver/internal/store/ent/attachment"
+	"tkserver/internal/store/ent/groupcard"
 	"tkserver/internal/store/ent/kcclass"
 	"tkserver/internal/store/ent/kccourse"
 	"tkserver/internal/store/ent/kccoursesmallcategory"
@@ -400,6 +401,21 @@ func (ac *AttachmentCreate) AddAskAttachments(u ...*UserAskAnswerAttachment) *At
 		ids[i] = u[i].ID
 	}
 	return ac.AddAskAttachmentIDs(ids...)
+}
+
+// AddGroupCardIDs adds the "group_card" edge to the GroupCard entity by IDs.
+func (ac *AttachmentCreate) AddGroupCardIDs(ids ...int) *AttachmentCreate {
+	ac.mutation.AddGroupCardIDs(ids...)
+	return ac
+}
+
+// AddGroupCard adds the "group_card" edges to the GroupCard entity.
+func (ac *AttachmentCreate) AddGroupCard(g ...*GroupCard) *AttachmentCreate {
+	ids := make([]int, len(g))
+	for i := range g {
+		ids[i] = g[i].ID
+	}
+	return ac.AddGroupCardIDs(ids...)
 }
 
 // Mutation returns the AttachmentMutation object of the builder.
@@ -885,6 +901,25 @@ func (ac *AttachmentCreate) createSpec() (*Attachment, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: useraskanswerattachment.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ac.mutation.GroupCardIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   attachment.GroupCardTable,
+			Columns: []string{attachment.GroupCardColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: groupcard.FieldID,
 				},
 			},
 		}

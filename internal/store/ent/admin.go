@@ -39,7 +39,7 @@ type Admin struct {
 	// 绑定的邮箱地址
 	Email string `json:"email"`
 	// Phone holds the value of the "phone" field.
-	// 活动须知
+	// 手机号
 	Phone string `json:"phone"`
 	// ThirdOpenid holds the value of the "third_openid" field.
 	// 第三方id
@@ -56,9 +56,9 @@ type Admin struct {
 	// AdminAvatarID holds the value of the "admin_avatar_id" field.
 	// 头像id
 	AdminAvatarID int `json:"admin_avatar_id"`
-	// Remark holds the value of the "Remark" field.
+	// Remark holds the value of the "remark" field.
 	// 备注
-	Remark string `json:"Remark"`
+	Remark string `json:"remark"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AdminQuery when eager-loading is set.
 	Edges AdminEdges `json:"edges"`
@@ -335,7 +335,7 @@ func (a *Admin) assignValues(columns []string, values []interface{}) error {
 			}
 		case admin.FieldRemark:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field Remark", values[i])
+				return fmt.Errorf("unexpected type %T for field remark", values[i])
 			} else if value.Valid {
 				a.Remark = value.String
 			}
@@ -463,7 +463,7 @@ func (a *Admin) String() string {
 	builder.WriteString(fmt.Sprintf("%v", a.Status))
 	builder.WriteString(", admin_avatar_id=")
 	builder.WriteString(fmt.Sprintf("%v", a.AdminAvatarID))
-	builder.WriteString(", Remark=")
+	builder.WriteString(", remark=")
 	builder.WriteString(a.Remark)
 	builder.WriteByte(')')
 	return builder.String()

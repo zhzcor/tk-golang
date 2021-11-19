@@ -11,6 +11,7 @@ import (
 	"tkserver/internal/store/ent/admin"
 	"tkserver/internal/store/ent/itemcategory"
 	"tkserver/internal/store/ent/kccourse"
+	"tkserver/internal/store/ent/level"
 	"tkserver/internal/store/ent/predicate"
 	"tkserver/internal/store/ent/tkchapter"
 	"tkserver/internal/store/ent/tkexampaper"
@@ -18,6 +19,8 @@ import (
 	"tkserver/internal/store/ent/tkknowledgepoint"
 	"tkserver/internal/store/ent/tkquestion"
 	"tkserver/internal/store/ent/tkquestionbank"
+	"tkserver/internal/store/ent/tkquestionbankcity"
+	"tkserver/internal/store/ent/tkquestionbankmajor"
 	"tkserver/internal/store/ent/tkuserquestionbankrecord"
 	"tkserver/internal/store/ent/tkuserquestionrecord"
 
@@ -37,6 +40,7 @@ type TkQuestionBankQuery struct {
 	predicates []predicate.TkQuestionBank
 	// eager-loading edges.
 	withItemCategory        *ItemCategoryQuery
+	withLevel               *LevelQuery
 	withAdmin               *AdminQuery
 	withQuestionChapters    *TkChapterQuery
 	withQuestionBankCourses *KcCourseQuery
@@ -46,6 +50,8 @@ type TkQuestionBankQuery struct {
 	withUserQuestionBank    *TkUserQuestionBankRecordQuery
 	withUserBankRecords     *TkUserQuestionRecordQuery
 	withKnowledgePoints     *TkKnowledgePointQuery
+	withCityQuestionBanks   *TkQuestionBankCityQuery
+	withMajorQuestionBanks  *TkQuestionBankMajorQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -97,6 +103,28 @@ func (tqbq *TkQuestionBankQuery) QueryItemCategory() *ItemCategoryQuery {
 			sqlgraph.From(tkquestionbank.Table, tkquestionbank.FieldID, selector),
 			sqlgraph.To(itemcategory.Table, itemcategory.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, tkquestionbank.ItemCategoryTable, tkquestionbank.ItemCategoryColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(tqbq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryLevel chains the current query on the "level" edge.
+func (tqbq *TkQuestionBankQuery) QueryLevel() *LevelQuery {
+	query := &LevelQuery{config: tqbq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tqbq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tqbq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tkquestionbank.Table, tkquestionbank.FieldID, selector),
+			sqlgraph.To(level.Table, level.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, tkquestionbank.LevelTable, tkquestionbank.LevelColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(tqbq.driver.Dialect(), step)
 		return fromU, nil
@@ -302,6 +330,50 @@ func (tqbq *TkQuestionBankQuery) QueryKnowledgePoints() *TkKnowledgePointQuery {
 	return query
 }
 
+// QueryCityQuestionBanks chains the current query on the "city_question_banks" edge.
+func (tqbq *TkQuestionBankQuery) QueryCityQuestionBanks() *TkQuestionBankCityQuery {
+	query := &TkQuestionBankCityQuery{config: tqbq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tqbq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tqbq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tkquestionbank.Table, tkquestionbank.FieldID, selector),
+			sqlgraph.To(tkquestionbankcity.Table, tkquestionbankcity.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, tkquestionbank.CityQuestionBanksTable, tkquestionbank.CityQuestionBanksColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(tqbq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryMajorQuestionBanks chains the current query on the "major_question_banks" edge.
+func (tqbq *TkQuestionBankQuery) QueryMajorQuestionBanks() *TkQuestionBankMajorQuery {
+	query := &TkQuestionBankMajorQuery{config: tqbq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tqbq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tqbq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tkquestionbank.Table, tkquestionbank.FieldID, selector),
+			sqlgraph.To(tkquestionbankmajor.Table, tkquestionbankmajor.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, tkquestionbank.MajorQuestionBanksTable, tkquestionbank.MajorQuestionBanksColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(tqbq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first TkQuestionBank entity from the query.
 // Returns a *NotFoundError when no TkQuestionBank was found.
 func (tqbq *TkQuestionBankQuery) First(ctx context.Context) (*TkQuestionBank, error) {
@@ -484,6 +556,7 @@ func (tqbq *TkQuestionBankQuery) Clone() *TkQuestionBankQuery {
 		order:                   append([]OrderFunc{}, tqbq.order...),
 		predicates:              append([]predicate.TkQuestionBank{}, tqbq.predicates...),
 		withItemCategory:        tqbq.withItemCategory.Clone(),
+		withLevel:               tqbq.withLevel.Clone(),
 		withAdmin:               tqbq.withAdmin.Clone(),
 		withQuestionChapters:    tqbq.withQuestionChapters.Clone(),
 		withQuestionBankCourses: tqbq.withQuestionBankCourses.Clone(),
@@ -493,6 +566,8 @@ func (tqbq *TkQuestionBankQuery) Clone() *TkQuestionBankQuery {
 		withUserQuestionBank:    tqbq.withUserQuestionBank.Clone(),
 		withUserBankRecords:     tqbq.withUserBankRecords.Clone(),
 		withKnowledgePoints:     tqbq.withKnowledgePoints.Clone(),
+		withCityQuestionBanks:   tqbq.withCityQuestionBanks.Clone(),
+		withMajorQuestionBanks:  tqbq.withMajorQuestionBanks.Clone(),
 		// clone intermediate query.
 		sql:  tqbq.sql.Clone(),
 		path: tqbq.path,
@@ -507,6 +582,17 @@ func (tqbq *TkQuestionBankQuery) WithItemCategory(opts ...func(*ItemCategoryQuer
 		opt(query)
 	}
 	tqbq.withItemCategory = query
+	return tqbq
+}
+
+// WithLevel tells the query-builder to eager-load the nodes that are connected to
+// the "level" edge. The optional arguments are used to configure the query builder of the edge.
+func (tqbq *TkQuestionBankQuery) WithLevel(opts ...func(*LevelQuery)) *TkQuestionBankQuery {
+	query := &LevelQuery{config: tqbq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	tqbq.withLevel = query
 	return tqbq
 }
 
@@ -609,6 +695,28 @@ func (tqbq *TkQuestionBankQuery) WithKnowledgePoints(opts ...func(*TkKnowledgePo
 	return tqbq
 }
 
+// WithCityQuestionBanks tells the query-builder to eager-load the nodes that are connected to
+// the "city_question_banks" edge. The optional arguments are used to configure the query builder of the edge.
+func (tqbq *TkQuestionBankQuery) WithCityQuestionBanks(opts ...func(*TkQuestionBankCityQuery)) *TkQuestionBankQuery {
+	query := &TkQuestionBankCityQuery{config: tqbq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	tqbq.withCityQuestionBanks = query
+	return tqbq
+}
+
+// WithMajorQuestionBanks tells the query-builder to eager-load the nodes that are connected to
+// the "major_question_banks" edge. The optional arguments are used to configure the query builder of the edge.
+func (tqbq *TkQuestionBankQuery) WithMajorQuestionBanks(opts ...func(*TkQuestionBankMajorQuery)) *TkQuestionBankQuery {
+	query := &TkQuestionBankMajorQuery{config: tqbq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	tqbq.withMajorQuestionBanks = query
+	return tqbq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -674,8 +782,9 @@ func (tqbq *TkQuestionBankQuery) sqlAll(ctx context.Context) ([]*TkQuestionBank,
 	var (
 		nodes       = []*TkQuestionBank{}
 		_spec       = tqbq.querySpec()
-		loadedTypes = [10]bool{
+		loadedTypes = [13]bool{
 			tqbq.withItemCategory != nil,
+			tqbq.withLevel != nil,
 			tqbq.withAdmin != nil,
 			tqbq.withQuestionChapters != nil,
 			tqbq.withQuestionBankCourses != nil,
@@ -685,6 +794,8 @@ func (tqbq *TkQuestionBankQuery) sqlAll(ctx context.Context) ([]*TkQuestionBank,
 			tqbq.withUserQuestionBank != nil,
 			tqbq.withUserBankRecords != nil,
 			tqbq.withKnowledgePoints != nil,
+			tqbq.withCityQuestionBanks != nil,
+			tqbq.withMajorQuestionBanks != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -729,6 +840,32 @@ func (tqbq *TkQuestionBankQuery) sqlAll(ctx context.Context) ([]*TkQuestionBank,
 			}
 			for i := range nodes {
 				nodes[i].Edges.ItemCategory = n
+			}
+		}
+	}
+
+	if query := tqbq.withLevel; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*TkQuestionBank)
+		for i := range nodes {
+			fk := nodes[i].LevelID
+			if _, ok := nodeids[fk]; !ok {
+				ids = append(ids, fk)
+			}
+			nodeids[fk] = append(nodeids[fk], nodes[i])
+		}
+		query.Where(level.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "level_id" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Level = n
 			}
 		}
 	}
@@ -956,6 +1093,56 @@ func (tqbq *TkQuestionBankQuery) sqlAll(ctx context.Context) ([]*TkQuestionBank,
 				return nil, fmt.Errorf(`unexpected foreign-key "question_bank_id" returned %v for node %v`, fk, n.ID)
 			}
 			node.Edges.KnowledgePoints = append(node.Edges.KnowledgePoints, n)
+		}
+	}
+
+	if query := tqbq.withCityQuestionBanks; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*TkQuestionBank)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.CityQuestionBanks = []*TkQuestionBankCity{}
+		}
+		query.Where(predicate.TkQuestionBankCity(func(s *sql.Selector) {
+			s.Where(sql.InValues(tkquestionbank.CityQuestionBanksColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.QuestionBankID
+			node, ok := nodeids[fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "question_bank_id" returned %v for node %v`, fk, n.ID)
+			}
+			node.Edges.CityQuestionBanks = append(node.Edges.CityQuestionBanks, n)
+		}
+	}
+
+	if query := tqbq.withMajorQuestionBanks; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*TkQuestionBank)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.MajorQuestionBanks = []*TkQuestionBankMajor{}
+		}
+		query.Where(predicate.TkQuestionBankMajor(func(s *sql.Selector) {
+			s.Where(sql.InValues(tkquestionbank.MajorQuestionBanksColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.QuestionBankID
+			node, ok := nodeids[fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "question_bank_id" returned %v for node %v`, fk, n.ID)
+			}
+			node.Edges.MajorQuestionBanks = append(node.Edges.MajorQuestionBanks, n)
 		}
 	}
 

@@ -80,9 +80,11 @@ type AttachmentEdges struct {
 	VideoTaskAttachment []*KcVideoUploadTask `json:"video_task_attachment,omitempty"`
 	// AskAttachments holds the value of the ask_attachments edge.
 	AskAttachments []*UserAskAnswerAttachment `json:"ask_attachments,omitempty"`
+	// GroupCard holds the value of the group_card edge.
+	GroupCard []*GroupCard `json:"group_card,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [16]bool
+	loadedTypes [17]bool
 }
 
 // MajorDetailCoverImgOrErr returns the MajorDetailCoverImg value or an error if the edge
@@ -242,6 +244,15 @@ func (e AttachmentEdges) AskAttachmentsOrErr() ([]*UserAskAnswerAttachment, erro
 		return e.AskAttachments, nil
 	}
 	return nil, &NotLoadedError{edge: "ask_attachments"}
+}
+
+// GroupCardOrErr returns the GroupCard value or an error if the edge
+// was not loaded in eager-loading.
+func (e AttachmentEdges) GroupCardOrErr() ([]*GroupCard, error) {
+	if e.loadedTypes[16] {
+		return e.GroupCard, nil
+	}
+	return nil, &NotLoadedError{edge: "group_card"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -416,6 +427,11 @@ func (a *Attachment) QueryVideoTaskAttachment() *KcVideoUploadTaskQuery {
 // QueryAskAttachments queries the "ask_attachments" edge of the Attachment entity.
 func (a *Attachment) QueryAskAttachments() *UserAskAnswerAttachmentQuery {
 	return (&AttachmentClient{config: a.config}).QueryAskAttachments(a)
+}
+
+// QueryGroupCard queries the "group_card" edge of the Attachment entity.
+func (a *Attachment) QueryGroupCard() *GroupCardQuery {
+	return (&AttachmentClient{config: a.config}).QueryGroupCard(a)
 }
 
 // Update returns a builder for updating this Attachment.

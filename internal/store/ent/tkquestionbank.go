@@ -8,6 +8,7 @@ import (
 	"time"
 	"tkserver/internal/store/ent/admin"
 	"tkserver/internal/store/ent/itemcategory"
+	"tkserver/internal/store/ent/level"
 	"tkserver/internal/store/ent/tkquestionbank"
 
 	"entgo.io/ent/dialect/sql"
@@ -41,6 +42,9 @@ type TkQuestionBank struct {
 	// ItemCategoryID holds the value of the "item_category_id" field.
 	// 项目id
 	ItemCategoryID int `json:"item_category_id"`
+	// LevelID holds the value of the "level_id" field.
+	// 层次id
+	LevelID int `json:"level_id"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TkQuestionBankQuery when eager-loading is set.
 	Edges TkQuestionBankEdges `json:"edges"`
@@ -50,6 +54,8 @@ type TkQuestionBank struct {
 type TkQuestionBankEdges struct {
 	// ItemCategory holds the value of the item_category edge.
 	ItemCategory *ItemCategory `json:"item_category,omitempty"`
+	// Level holds the value of the level edge.
+	Level *Level `json:"level,omitempty"`
 	// Admin holds the value of the admin edge.
 	Admin *Admin `json:"admin,omitempty"`
 	// QuestionChapters holds the value of the question_chapters edge.
@@ -68,9 +74,13 @@ type TkQuestionBankEdges struct {
 	UserBankRecords []*TkUserQuestionRecord `json:"user_bank_records,omitempty"`
 	// KnowledgePoints holds the value of the knowledge_points edge.
 	KnowledgePoints []*TkKnowledgePoint `json:"knowledge_points,omitempty"`
+	// CityQuestionBanks holds the value of the city_question_banks edge.
+	CityQuestionBanks []*TkQuestionBankCity `json:"city_question_banks,omitempty"`
+	// MajorQuestionBanks holds the value of the major_question_banks edge.
+	MajorQuestionBanks []*TkQuestionBankMajor `json:"major_question_banks,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [10]bool
+	loadedTypes [13]bool
 }
 
 // ItemCategoryOrErr returns the ItemCategory value or an error if the edge
@@ -87,10 +97,24 @@ func (e TkQuestionBankEdges) ItemCategoryOrErr() (*ItemCategory, error) {
 	return nil, &NotLoadedError{edge: "item_category"}
 }
 
+// LevelOrErr returns the Level value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TkQuestionBankEdges) LevelOrErr() (*Level, error) {
+	if e.loadedTypes[1] {
+		if e.Level == nil {
+			// The edge level was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: level.Label}
+		}
+		return e.Level, nil
+	}
+	return nil, &NotLoadedError{edge: "level"}
+}
+
 // AdminOrErr returns the Admin value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e TkQuestionBankEdges) AdminOrErr() (*Admin, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[2] {
 		if e.Admin == nil {
 			// The edge admin was loaded in eager-loading,
 			// but was not found.
@@ -104,7 +128,7 @@ func (e TkQuestionBankEdges) AdminOrErr() (*Admin, error) {
 // QuestionChaptersOrErr returns the QuestionChapters value or an error if the edge
 // was not loaded in eager-loading.
 func (e TkQuestionBankEdges) QuestionChaptersOrErr() ([]*TkChapter, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.QuestionChapters, nil
 	}
 	return nil, &NotLoadedError{edge: "question_chapters"}
@@ -113,7 +137,7 @@ func (e TkQuestionBankEdges) QuestionChaptersOrErr() ([]*TkChapter, error) {
 // QuestionBankCoursesOrErr returns the QuestionBankCourses value or an error if the edge
 // was not loaded in eager-loading.
 func (e TkQuestionBankEdges) QuestionBankCoursesOrErr() ([]*KcCourse, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		return e.QuestionBankCourses, nil
 	}
 	return nil, &NotLoadedError{edge: "question_bank_courses"}
@@ -122,7 +146,7 @@ func (e TkQuestionBankEdges) QuestionBankCoursesOrErr() ([]*KcCourse, error) {
 // QuestionsOrErr returns the Questions value or an error if the edge
 // was not loaded in eager-loading.
 func (e TkQuestionBankEdges) QuestionsOrErr() ([]*TkQuestion, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[5] {
 		return e.Questions, nil
 	}
 	return nil, &NotLoadedError{edge: "questions"}
@@ -131,7 +155,7 @@ func (e TkQuestionBankEdges) QuestionsOrErr() ([]*TkQuestion, error) {
 // ExamPapersOrErr returns the ExamPapers value or an error if the edge
 // was not loaded in eager-loading.
 func (e TkQuestionBankEdges) ExamPapersOrErr() ([]*TkExamPaper, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[6] {
 		return e.ExamPapers, nil
 	}
 	return nil, &NotLoadedError{edge: "exam_papers"}
@@ -140,7 +164,7 @@ func (e TkQuestionBankEdges) ExamPapersOrErr() ([]*TkExamPaper, error) {
 // ExamQuestionTypesOrErr returns the ExamQuestionTypes value or an error if the edge
 // was not loaded in eager-loading.
 func (e TkQuestionBankEdges) ExamQuestionTypesOrErr() ([]*TkExamQuestionType, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[7] {
 		return e.ExamQuestionTypes, nil
 	}
 	return nil, &NotLoadedError{edge: "exam_question_types"}
@@ -149,7 +173,7 @@ func (e TkQuestionBankEdges) ExamQuestionTypesOrErr() ([]*TkExamQuestionType, er
 // UserQuestionBankOrErr returns the UserQuestionBank value or an error if the edge
 // was not loaded in eager-loading.
 func (e TkQuestionBankEdges) UserQuestionBankOrErr() ([]*TkUserQuestionBankRecord, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[8] {
 		return e.UserQuestionBank, nil
 	}
 	return nil, &NotLoadedError{edge: "user_question_bank"}
@@ -158,7 +182,7 @@ func (e TkQuestionBankEdges) UserQuestionBankOrErr() ([]*TkUserQuestionBankRecor
 // UserBankRecordsOrErr returns the UserBankRecords value or an error if the edge
 // was not loaded in eager-loading.
 func (e TkQuestionBankEdges) UserBankRecordsOrErr() ([]*TkUserQuestionRecord, error) {
-	if e.loadedTypes[8] {
+	if e.loadedTypes[9] {
 		return e.UserBankRecords, nil
 	}
 	return nil, &NotLoadedError{edge: "user_bank_records"}
@@ -167,10 +191,28 @@ func (e TkQuestionBankEdges) UserBankRecordsOrErr() ([]*TkUserQuestionRecord, er
 // KnowledgePointsOrErr returns the KnowledgePoints value or an error if the edge
 // was not loaded in eager-loading.
 func (e TkQuestionBankEdges) KnowledgePointsOrErr() ([]*TkKnowledgePoint, error) {
-	if e.loadedTypes[9] {
+	if e.loadedTypes[10] {
 		return e.KnowledgePoints, nil
 	}
 	return nil, &NotLoadedError{edge: "knowledge_points"}
+}
+
+// CityQuestionBanksOrErr returns the CityQuestionBanks value or an error if the edge
+// was not loaded in eager-loading.
+func (e TkQuestionBankEdges) CityQuestionBanksOrErr() ([]*TkQuestionBankCity, error) {
+	if e.loadedTypes[11] {
+		return e.CityQuestionBanks, nil
+	}
+	return nil, &NotLoadedError{edge: "city_question_banks"}
+}
+
+// MajorQuestionBanksOrErr returns the MajorQuestionBanks value or an error if the edge
+// was not loaded in eager-loading.
+func (e TkQuestionBankEdges) MajorQuestionBanksOrErr() ([]*TkQuestionBankMajor, error) {
+	if e.loadedTypes[12] {
+		return e.MajorQuestionBanks, nil
+	}
+	return nil, &NotLoadedError{edge: "major_question_banks"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -178,7 +220,7 @@ func (*TkQuestionBank) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case tkquestionbank.FieldID, tkquestionbank.FieldStatus, tkquestionbank.FieldQuestionCount, tkquestionbank.FieldCreatedAdminID, tkquestionbank.FieldItemCategoryID:
+		case tkquestionbank.FieldID, tkquestionbank.FieldStatus, tkquestionbank.FieldQuestionCount, tkquestionbank.FieldCreatedAdminID, tkquestionbank.FieldItemCategoryID, tkquestionbank.FieldLevelID:
 			values[i] = new(sql.NullInt64)
 		case tkquestionbank.FieldUUID, tkquestionbank.FieldName:
 			values[i] = new(sql.NullString)
@@ -262,6 +304,12 @@ func (tqb *TkQuestionBank) assignValues(columns []string, values []interface{}) 
 			} else if value.Valid {
 				tqb.ItemCategoryID = int(value.Int64)
 			}
+		case tkquestionbank.FieldLevelID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field level_id", values[i])
+			} else if value.Valid {
+				tqb.LevelID = int(value.Int64)
+			}
 		}
 	}
 	return nil
@@ -270,6 +318,11 @@ func (tqb *TkQuestionBank) assignValues(columns []string, values []interface{}) 
 // QueryItemCategory queries the "item_category" edge of the TkQuestionBank entity.
 func (tqb *TkQuestionBank) QueryItemCategory() *ItemCategoryQuery {
 	return (&TkQuestionBankClient{config: tqb.config}).QueryItemCategory(tqb)
+}
+
+// QueryLevel queries the "level" edge of the TkQuestionBank entity.
+func (tqb *TkQuestionBank) QueryLevel() *LevelQuery {
+	return (&TkQuestionBankClient{config: tqb.config}).QueryLevel(tqb)
 }
 
 // QueryAdmin queries the "admin" edge of the TkQuestionBank entity.
@@ -315,6 +368,16 @@ func (tqb *TkQuestionBank) QueryUserBankRecords() *TkUserQuestionRecordQuery {
 // QueryKnowledgePoints queries the "knowledge_points" edge of the TkQuestionBank entity.
 func (tqb *TkQuestionBank) QueryKnowledgePoints() *TkKnowledgePointQuery {
 	return (&TkQuestionBankClient{config: tqb.config}).QueryKnowledgePoints(tqb)
+}
+
+// QueryCityQuestionBanks queries the "city_question_banks" edge of the TkQuestionBank entity.
+func (tqb *TkQuestionBank) QueryCityQuestionBanks() *TkQuestionBankCityQuery {
+	return (&TkQuestionBankClient{config: tqb.config}).QueryCityQuestionBanks(tqb)
+}
+
+// QueryMajorQuestionBanks queries the "major_question_banks" edge of the TkQuestionBank entity.
+func (tqb *TkQuestionBank) QueryMajorQuestionBanks() *TkQuestionBankMajorQuery {
+	return (&TkQuestionBankClient{config: tqb.config}).QueryMajorQuestionBanks(tqb)
 }
 
 // Update returns a builder for updating this TkQuestionBank.
@@ -364,6 +427,8 @@ func (tqb *TkQuestionBank) String() string {
 	builder.WriteString(fmt.Sprintf("%v", tqb.CreatedAdminID))
 	builder.WriteString(", item_category_id=")
 	builder.WriteString(fmt.Sprintf("%v", tqb.ItemCategoryID))
+	builder.WriteString(", level_id=")
+	builder.WriteString(fmt.Sprintf("%v", tqb.LevelID))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -52,9 +52,11 @@ type CityEdges struct {
 	Course []*KcCourse `json:"course,omitempty"`
 	// UserCity holds the value of the user_city edge.
 	UserCity []*User `json:"user_city,omitempty"`
+	// QuestionBankCities holds the value of the question_bank_cities edge.
+	QuestionBankCities []*TkQuestionBankCity `json:"question_bank_cities,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // KcClassOrErr returns the KcClass value or an error if the edge
@@ -82,6 +84,15 @@ func (e CityEdges) UserCityOrErr() ([]*User, error) {
 		return e.UserCity, nil
 	}
 	return nil, &NotLoadedError{edge: "user_city"}
+}
+
+// QuestionBankCitiesOrErr returns the QuestionBankCities value or an error if the edge
+// was not loaded in eager-loading.
+func (e CityEdges) QuestionBankCitiesOrErr() ([]*TkQuestionBankCity, error) {
+	if e.loadedTypes[3] {
+		return e.QuestionBankCities, nil
+	}
+	return nil, &NotLoadedError{edge: "question_bank_cities"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -191,6 +202,11 @@ func (c *City) QueryCourse() *KcCourseQuery {
 // QueryUserCity queries the "user_city" edge of the City entity.
 func (c *City) QueryUserCity() *UserQuery {
 	return (&CityClient{config: c.config}).QueryUserCity(c)
+}
+
+// QueryQuestionBankCities queries the "question_bank_cities" edge of the City entity.
+func (c *City) QueryQuestionBankCities() *TkQuestionBankCityQuery {
+	return (&CityClient{config: c.config}).QueryQuestionBankCities(c)
 }
 
 // Update returns a builder for updating this City.

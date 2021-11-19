@@ -9,6 +9,7 @@ import (
 	"tkserver/internal/store/ent/admin"
 	"tkserver/internal/store/ent/itemcategory"
 	"tkserver/internal/store/ent/kccourse"
+	"tkserver/internal/store/ent/level"
 	"tkserver/internal/store/ent/predicate"
 	"tkserver/internal/store/ent/tkchapter"
 	"tkserver/internal/store/ent/tkexampaper"
@@ -16,6 +17,8 @@ import (
 	"tkserver/internal/store/ent/tkknowledgepoint"
 	"tkserver/internal/store/ent/tkquestion"
 	"tkserver/internal/store/ent/tkquestionbank"
+	"tkserver/internal/store/ent/tkquestionbankcity"
+	"tkserver/internal/store/ent/tkquestionbankmajor"
 	"tkserver/internal/store/ent/tkuserquestionbankrecord"
 	"tkserver/internal/store/ent/tkuserquestionrecord"
 
@@ -173,9 +176,35 @@ func (tqbu *TkQuestionBankUpdate) ClearItemCategoryID() *TkQuestionBankUpdate {
 	return tqbu
 }
 
+// SetLevelID sets the "level_id" field.
+func (tqbu *TkQuestionBankUpdate) SetLevelID(i int) *TkQuestionBankUpdate {
+	tqbu.mutation.ResetLevelID()
+	tqbu.mutation.SetLevelID(i)
+	return tqbu
+}
+
+// SetNillableLevelID sets the "level_id" field if the given value is not nil.
+func (tqbu *TkQuestionBankUpdate) SetNillableLevelID(i *int) *TkQuestionBankUpdate {
+	if i != nil {
+		tqbu.SetLevelID(*i)
+	}
+	return tqbu
+}
+
+// ClearLevelID clears the value of the "level_id" field.
+func (tqbu *TkQuestionBankUpdate) ClearLevelID() *TkQuestionBankUpdate {
+	tqbu.mutation.ClearLevelID()
+	return tqbu
+}
+
 // SetItemCategory sets the "item_category" edge to the ItemCategory entity.
 func (tqbu *TkQuestionBankUpdate) SetItemCategory(i *ItemCategory) *TkQuestionBankUpdate {
 	return tqbu.SetItemCategoryID(i.ID)
+}
+
+// SetLevel sets the "level" edge to the Level entity.
+func (tqbu *TkQuestionBankUpdate) SetLevel(l *Level) *TkQuestionBankUpdate {
+	return tqbu.SetLevelID(l.ID)
 }
 
 // SetAdminID sets the "admin" edge to the Admin entity by ID.
@@ -317,6 +346,36 @@ func (tqbu *TkQuestionBankUpdate) AddKnowledgePoints(t ...*TkKnowledgePoint) *Tk
 	return tqbu.AddKnowledgePointIDs(ids...)
 }
 
+// AddCityQuestionBankIDs adds the "city_question_banks" edge to the TkQuestionBankCity entity by IDs.
+func (tqbu *TkQuestionBankUpdate) AddCityQuestionBankIDs(ids ...int) *TkQuestionBankUpdate {
+	tqbu.mutation.AddCityQuestionBankIDs(ids...)
+	return tqbu
+}
+
+// AddCityQuestionBanks adds the "city_question_banks" edges to the TkQuestionBankCity entity.
+func (tqbu *TkQuestionBankUpdate) AddCityQuestionBanks(t ...*TkQuestionBankCity) *TkQuestionBankUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tqbu.AddCityQuestionBankIDs(ids...)
+}
+
+// AddMajorQuestionBankIDs adds the "major_question_banks" edge to the TkQuestionBankMajor entity by IDs.
+func (tqbu *TkQuestionBankUpdate) AddMajorQuestionBankIDs(ids ...int) *TkQuestionBankUpdate {
+	tqbu.mutation.AddMajorQuestionBankIDs(ids...)
+	return tqbu
+}
+
+// AddMajorQuestionBanks adds the "major_question_banks" edges to the TkQuestionBankMajor entity.
+func (tqbu *TkQuestionBankUpdate) AddMajorQuestionBanks(t ...*TkQuestionBankMajor) *TkQuestionBankUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tqbu.AddMajorQuestionBankIDs(ids...)
+}
+
 // Mutation returns the TkQuestionBankMutation object of the builder.
 func (tqbu *TkQuestionBankUpdate) Mutation() *TkQuestionBankMutation {
 	return tqbu.mutation
@@ -325,6 +384,12 @@ func (tqbu *TkQuestionBankUpdate) Mutation() *TkQuestionBankMutation {
 // ClearItemCategory clears the "item_category" edge to the ItemCategory entity.
 func (tqbu *TkQuestionBankUpdate) ClearItemCategory() *TkQuestionBankUpdate {
 	tqbu.mutation.ClearItemCategory()
+	return tqbu
+}
+
+// ClearLevel clears the "level" edge to the Level entity.
+func (tqbu *TkQuestionBankUpdate) ClearLevel() *TkQuestionBankUpdate {
+	tqbu.mutation.ClearLevel()
 	return tqbu
 }
 
@@ -500,6 +565,48 @@ func (tqbu *TkQuestionBankUpdate) RemoveKnowledgePoints(t ...*TkKnowledgePoint) 
 		ids[i] = t[i].ID
 	}
 	return tqbu.RemoveKnowledgePointIDs(ids...)
+}
+
+// ClearCityQuestionBanks clears all "city_question_banks" edges to the TkQuestionBankCity entity.
+func (tqbu *TkQuestionBankUpdate) ClearCityQuestionBanks() *TkQuestionBankUpdate {
+	tqbu.mutation.ClearCityQuestionBanks()
+	return tqbu
+}
+
+// RemoveCityQuestionBankIDs removes the "city_question_banks" edge to TkQuestionBankCity entities by IDs.
+func (tqbu *TkQuestionBankUpdate) RemoveCityQuestionBankIDs(ids ...int) *TkQuestionBankUpdate {
+	tqbu.mutation.RemoveCityQuestionBankIDs(ids...)
+	return tqbu
+}
+
+// RemoveCityQuestionBanks removes "city_question_banks" edges to TkQuestionBankCity entities.
+func (tqbu *TkQuestionBankUpdate) RemoveCityQuestionBanks(t ...*TkQuestionBankCity) *TkQuestionBankUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tqbu.RemoveCityQuestionBankIDs(ids...)
+}
+
+// ClearMajorQuestionBanks clears all "major_question_banks" edges to the TkQuestionBankMajor entity.
+func (tqbu *TkQuestionBankUpdate) ClearMajorQuestionBanks() *TkQuestionBankUpdate {
+	tqbu.mutation.ClearMajorQuestionBanks()
+	return tqbu
+}
+
+// RemoveMajorQuestionBankIDs removes the "major_question_banks" edge to TkQuestionBankMajor entities by IDs.
+func (tqbu *TkQuestionBankUpdate) RemoveMajorQuestionBankIDs(ids ...int) *TkQuestionBankUpdate {
+	tqbu.mutation.RemoveMajorQuestionBankIDs(ids...)
+	return tqbu
+}
+
+// RemoveMajorQuestionBanks removes "major_question_banks" edges to TkQuestionBankMajor entities.
+func (tqbu *TkQuestionBankUpdate) RemoveMajorQuestionBanks(t ...*TkQuestionBankMajor) *TkQuestionBankUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tqbu.RemoveMajorQuestionBankIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -681,6 +788,41 @@ func (tqbu *TkQuestionBankUpdate) sqlSave(ctx context.Context) (n int, err error
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: itemcategory.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tqbu.mutation.LevelCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tkquestionbank.LevelTable,
+			Columns: []string{tkquestionbank.LevelColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: level.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tqbu.mutation.LevelIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tkquestionbank.LevelTable,
+			Columns: []string{tkquestionbank.LevelColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: level.FieldID,
 				},
 			},
 		}
@@ -1156,6 +1298,114 @@ func (tqbu *TkQuestionBankUpdate) sqlSave(ctx context.Context) (n int, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if tqbu.mutation.CityQuestionBanksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tkquestionbank.CityQuestionBanksTable,
+			Columns: []string{tkquestionbank.CityQuestionBanksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankcity.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tqbu.mutation.RemovedCityQuestionBanksIDs(); len(nodes) > 0 && !tqbu.mutation.CityQuestionBanksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tkquestionbank.CityQuestionBanksTable,
+			Columns: []string{tkquestionbank.CityQuestionBanksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankcity.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tqbu.mutation.CityQuestionBanksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tkquestionbank.CityQuestionBanksTable,
+			Columns: []string{tkquestionbank.CityQuestionBanksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankcity.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tqbu.mutation.MajorQuestionBanksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tkquestionbank.MajorQuestionBanksTable,
+			Columns: []string{tkquestionbank.MajorQuestionBanksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankmajor.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tqbu.mutation.RemovedMajorQuestionBanksIDs(); len(nodes) > 0 && !tqbu.mutation.MajorQuestionBanksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tkquestionbank.MajorQuestionBanksTable,
+			Columns: []string{tkquestionbank.MajorQuestionBanksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankmajor.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tqbu.mutation.MajorQuestionBanksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tkquestionbank.MajorQuestionBanksTable,
+			Columns: []string{tkquestionbank.MajorQuestionBanksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankmajor.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, tqbu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{tkquestionbank.Label}
@@ -1311,9 +1561,35 @@ func (tqbuo *TkQuestionBankUpdateOne) ClearItemCategoryID() *TkQuestionBankUpdat
 	return tqbuo
 }
 
+// SetLevelID sets the "level_id" field.
+func (tqbuo *TkQuestionBankUpdateOne) SetLevelID(i int) *TkQuestionBankUpdateOne {
+	tqbuo.mutation.ResetLevelID()
+	tqbuo.mutation.SetLevelID(i)
+	return tqbuo
+}
+
+// SetNillableLevelID sets the "level_id" field if the given value is not nil.
+func (tqbuo *TkQuestionBankUpdateOne) SetNillableLevelID(i *int) *TkQuestionBankUpdateOne {
+	if i != nil {
+		tqbuo.SetLevelID(*i)
+	}
+	return tqbuo
+}
+
+// ClearLevelID clears the value of the "level_id" field.
+func (tqbuo *TkQuestionBankUpdateOne) ClearLevelID() *TkQuestionBankUpdateOne {
+	tqbuo.mutation.ClearLevelID()
+	return tqbuo
+}
+
 // SetItemCategory sets the "item_category" edge to the ItemCategory entity.
 func (tqbuo *TkQuestionBankUpdateOne) SetItemCategory(i *ItemCategory) *TkQuestionBankUpdateOne {
 	return tqbuo.SetItemCategoryID(i.ID)
+}
+
+// SetLevel sets the "level" edge to the Level entity.
+func (tqbuo *TkQuestionBankUpdateOne) SetLevel(l *Level) *TkQuestionBankUpdateOne {
+	return tqbuo.SetLevelID(l.ID)
 }
 
 // SetAdminID sets the "admin" edge to the Admin entity by ID.
@@ -1455,6 +1731,36 @@ func (tqbuo *TkQuestionBankUpdateOne) AddKnowledgePoints(t ...*TkKnowledgePoint)
 	return tqbuo.AddKnowledgePointIDs(ids...)
 }
 
+// AddCityQuestionBankIDs adds the "city_question_banks" edge to the TkQuestionBankCity entity by IDs.
+func (tqbuo *TkQuestionBankUpdateOne) AddCityQuestionBankIDs(ids ...int) *TkQuestionBankUpdateOne {
+	tqbuo.mutation.AddCityQuestionBankIDs(ids...)
+	return tqbuo
+}
+
+// AddCityQuestionBanks adds the "city_question_banks" edges to the TkQuestionBankCity entity.
+func (tqbuo *TkQuestionBankUpdateOne) AddCityQuestionBanks(t ...*TkQuestionBankCity) *TkQuestionBankUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tqbuo.AddCityQuestionBankIDs(ids...)
+}
+
+// AddMajorQuestionBankIDs adds the "major_question_banks" edge to the TkQuestionBankMajor entity by IDs.
+func (tqbuo *TkQuestionBankUpdateOne) AddMajorQuestionBankIDs(ids ...int) *TkQuestionBankUpdateOne {
+	tqbuo.mutation.AddMajorQuestionBankIDs(ids...)
+	return tqbuo
+}
+
+// AddMajorQuestionBanks adds the "major_question_banks" edges to the TkQuestionBankMajor entity.
+func (tqbuo *TkQuestionBankUpdateOne) AddMajorQuestionBanks(t ...*TkQuestionBankMajor) *TkQuestionBankUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tqbuo.AddMajorQuestionBankIDs(ids...)
+}
+
 // Mutation returns the TkQuestionBankMutation object of the builder.
 func (tqbuo *TkQuestionBankUpdateOne) Mutation() *TkQuestionBankMutation {
 	return tqbuo.mutation
@@ -1463,6 +1769,12 @@ func (tqbuo *TkQuestionBankUpdateOne) Mutation() *TkQuestionBankMutation {
 // ClearItemCategory clears the "item_category" edge to the ItemCategory entity.
 func (tqbuo *TkQuestionBankUpdateOne) ClearItemCategory() *TkQuestionBankUpdateOne {
 	tqbuo.mutation.ClearItemCategory()
+	return tqbuo
+}
+
+// ClearLevel clears the "level" edge to the Level entity.
+func (tqbuo *TkQuestionBankUpdateOne) ClearLevel() *TkQuestionBankUpdateOne {
+	tqbuo.mutation.ClearLevel()
 	return tqbuo
 }
 
@@ -1638,6 +1950,48 @@ func (tqbuo *TkQuestionBankUpdateOne) RemoveKnowledgePoints(t ...*TkKnowledgePoi
 		ids[i] = t[i].ID
 	}
 	return tqbuo.RemoveKnowledgePointIDs(ids...)
+}
+
+// ClearCityQuestionBanks clears all "city_question_banks" edges to the TkQuestionBankCity entity.
+func (tqbuo *TkQuestionBankUpdateOne) ClearCityQuestionBanks() *TkQuestionBankUpdateOne {
+	tqbuo.mutation.ClearCityQuestionBanks()
+	return tqbuo
+}
+
+// RemoveCityQuestionBankIDs removes the "city_question_banks" edge to TkQuestionBankCity entities by IDs.
+func (tqbuo *TkQuestionBankUpdateOne) RemoveCityQuestionBankIDs(ids ...int) *TkQuestionBankUpdateOne {
+	tqbuo.mutation.RemoveCityQuestionBankIDs(ids...)
+	return tqbuo
+}
+
+// RemoveCityQuestionBanks removes "city_question_banks" edges to TkQuestionBankCity entities.
+func (tqbuo *TkQuestionBankUpdateOne) RemoveCityQuestionBanks(t ...*TkQuestionBankCity) *TkQuestionBankUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tqbuo.RemoveCityQuestionBankIDs(ids...)
+}
+
+// ClearMajorQuestionBanks clears all "major_question_banks" edges to the TkQuestionBankMajor entity.
+func (tqbuo *TkQuestionBankUpdateOne) ClearMajorQuestionBanks() *TkQuestionBankUpdateOne {
+	tqbuo.mutation.ClearMajorQuestionBanks()
+	return tqbuo
+}
+
+// RemoveMajorQuestionBankIDs removes the "major_question_banks" edge to TkQuestionBankMajor entities by IDs.
+func (tqbuo *TkQuestionBankUpdateOne) RemoveMajorQuestionBankIDs(ids ...int) *TkQuestionBankUpdateOne {
+	tqbuo.mutation.RemoveMajorQuestionBankIDs(ids...)
+	return tqbuo
+}
+
+// RemoveMajorQuestionBanks removes "major_question_banks" edges to TkQuestionBankMajor entities.
+func (tqbuo *TkQuestionBankUpdateOne) RemoveMajorQuestionBanks(t ...*TkQuestionBankMajor) *TkQuestionBankUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tqbuo.RemoveMajorQuestionBankIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -1843,6 +2197,41 @@ func (tqbuo *TkQuestionBankUpdateOne) sqlSave(ctx context.Context) (_node *TkQue
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: itemcategory.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tqbuo.mutation.LevelCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tkquestionbank.LevelTable,
+			Columns: []string{tkquestionbank.LevelColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: level.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tqbuo.mutation.LevelIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tkquestionbank.LevelTable,
+			Columns: []string{tkquestionbank.LevelColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: level.FieldID,
 				},
 			},
 		}
@@ -2310,6 +2699,114 @@ func (tqbuo *TkQuestionBankUpdateOne) sqlSave(ctx context.Context) (_node *TkQue
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: tkknowledgepoint.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tqbuo.mutation.CityQuestionBanksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tkquestionbank.CityQuestionBanksTable,
+			Columns: []string{tkquestionbank.CityQuestionBanksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankcity.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tqbuo.mutation.RemovedCityQuestionBanksIDs(); len(nodes) > 0 && !tqbuo.mutation.CityQuestionBanksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tkquestionbank.CityQuestionBanksTable,
+			Columns: []string{tkquestionbank.CityQuestionBanksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankcity.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tqbuo.mutation.CityQuestionBanksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tkquestionbank.CityQuestionBanksTable,
+			Columns: []string{tkquestionbank.CityQuestionBanksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankcity.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tqbuo.mutation.MajorQuestionBanksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tkquestionbank.MajorQuestionBanksTable,
+			Columns: []string{tkquestionbank.MajorQuestionBanksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankmajor.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tqbuo.mutation.RemovedMajorQuestionBanksIDs(); len(nodes) > 0 && !tqbuo.mutation.MajorQuestionBanksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tkquestionbank.MajorQuestionBanksTable,
+			Columns: []string{tkquestionbank.MajorQuestionBanksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankmajor.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tqbuo.mutation.MajorQuestionBanksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tkquestionbank.MajorQuestionBanksTable,
+			Columns: []string{tkquestionbank.MajorQuestionBanksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankmajor.FieldID,
 				},
 			},
 		}

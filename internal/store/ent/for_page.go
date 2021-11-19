@@ -233,6 +233,25 @@ func (cq *CollectionQuery) ForPage(page, pageSize *int) *CollectionQuery {
 	return cq.Offset(o).Limit(l)
 }
 
+func (gcq *GroupCardQuery) ForPage(page, pageSize *int) *GroupCardQuery {
+	var p, ps, o, l int
+	if page == nil {
+		p = ForPageDefaultPage
+	} else {
+		p = *page
+	}
+	if pageSize == nil {
+		ps = ForPageDefaultPageSize
+	} else {
+		ps = *pageSize
+	}
+	if p > 0 {
+		o = (p - 1) * ps
+	}
+	l = ps
+	return gcq.Offset(o).Limit(l)
+}
+
 func (hsq *HotSearchQuery) ForPage(page, pageSize *int) *HotSearchQuery {
 	var p, ps, o, l int
 	if page == nil {
@@ -573,6 +592,25 @@ func (kvutq *KcVideoUploadTaskQuery) ForPage(page, pageSize *int) *KcVideoUpload
 	}
 	l = ps
 	return kvutq.Offset(o).Limit(l)
+}
+
+func (lq *LevelQuery) ForPage(page, pageSize *int) *LevelQuery {
+	var p, ps, o, l int
+	if page == nil {
+		p = ForPageDefaultPage
+	} else {
+		p = *page
+	}
+	if pageSize == nil {
+		ps = ForPageDefaultPageSize
+	} else {
+		ps = *pageSize
+	}
+	if p > 0 {
+		o = (p - 1) * ps
+	}
+	l = ps
+	return lq.Offset(o).Limit(l)
 }
 
 func (mq *MajorQuery) ForPage(page, pageSize *int) *MajorQuery {
@@ -1010,6 +1048,44 @@ func (tqbq *TkQuestionBankQuery) ForPage(page, pageSize *int) *TkQuestionBankQue
 	}
 	l = ps
 	return tqbq.Offset(o).Limit(l)
+}
+
+func (tqbcq *TkQuestionBankCityQuery) ForPage(page, pageSize *int) *TkQuestionBankCityQuery {
+	var p, ps, o, l int
+	if page == nil {
+		p = ForPageDefaultPage
+	} else {
+		p = *page
+	}
+	if pageSize == nil {
+		ps = ForPageDefaultPageSize
+	} else {
+		ps = *pageSize
+	}
+	if p > 0 {
+		o = (p - 1) * ps
+	}
+	l = ps
+	return tqbcq.Offset(o).Limit(l)
+}
+
+func (tqbmq *TkQuestionBankMajorQuery) ForPage(page, pageSize *int) *TkQuestionBankMajorQuery {
+	var p, ps, o, l int
+	if page == nil {
+		p = ForPageDefaultPage
+	} else {
+		p = *page
+	}
+	if pageSize == nil {
+		ps = ForPageDefaultPageSize
+	} else {
+		ps = *pageSize
+	}
+	if p > 0 {
+		o = (p - 1) * ps
+	}
+	l = ps
+	return tqbmq.Offset(o).Limit(l)
 }
 
 func (tqefq *TkQuestionErrorFeedbackQuery) ForPage(page, pageSize *int) *TkQuestionErrorFeedbackQuery {

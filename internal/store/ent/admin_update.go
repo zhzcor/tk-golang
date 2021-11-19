@@ -250,13 +250,13 @@ func (au *AdminUpdate) ClearAdminAvatarID() *AdminUpdate {
 	return au
 }
 
-// SetRemark sets the "Remark" field.
+// SetRemark sets the "remark" field.
 func (au *AdminUpdate) SetRemark(s string) *AdminUpdate {
 	au.mutation.SetRemark(s)
 	return au
 }
 
-// SetNillableRemark sets the "Remark" field if the given value is not nil.
+// SetNillableRemark sets the "remark" field if the given value is not nil.
 func (au *AdminUpdate) SetNillableRemark(s *string) *AdminUpdate {
 	if s != nil {
 		au.SetRemark(*s)
@@ -1771,13 +1771,13 @@ func (auo *AdminUpdateOne) ClearAdminAvatarID() *AdminUpdateOne {
 	return auo
 }
 
-// SetRemark sets the "Remark" field.
+// SetRemark sets the "remark" field.
 func (auo *AdminUpdateOne) SetRemark(s string) *AdminUpdateOne {
 	auo.mutation.SetRemark(s)
 	return auo
 }
 
-// SetNillableRemark sets the "Remark" field if the given value is not nil.
+// SetNillableRemark sets the "remark" field if the given value is not nil.
 func (auo *AdminUpdateOne) SetNillableRemark(s *string) *AdminUpdateOne {
 	if s != nil {
 		auo.SetRemark(*s)

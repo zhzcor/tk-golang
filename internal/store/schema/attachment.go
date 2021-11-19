@@ -46,6 +46,7 @@ func (Attachment) Edges() []ent.Edge {
 		edge.To("order_attachment", KcCourseSmallCategory.Type).Unique(), //课时点播视频oss 附件
 		edge.To("video_task_attachment", KcVideoUploadTask.Type),         //video task 视频附件
 		edge.To("ask_attachments", UserAskAnswerAttachment.Type),         //用户问答附件
+		edge.To("group_card", GroupCard.Type),                            //群名片
 
 	}
 }

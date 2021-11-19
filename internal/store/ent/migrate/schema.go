@@ -356,6 +356,34 @@ var (
 			},
 		},
 	}
+	// GroupCardsColumns holds the columns for the "group_cards" table.
+	GroupCardsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "uuid", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "title", Type: field.TypeString, Default: ""},
+		{Name: "sub_title", Type: field.TypeString, Default: ""},
+		{Name: "status", Type: field.TypeUint8, Default: 1},
+		{Name: "desc", Type: field.TypeString, Default: ""},
+		{Name: "sort_order", Type: field.TypeInt, Default: 0},
+		{Name: "attachment_id", Type: field.TypeInt, Nullable: true},
+	}
+	// GroupCardsTable holds the schema information for the "group_cards" table.
+	GroupCardsTable = &schema.Table{
+		Name:       "group_cards",
+		Columns:    GroupCardsColumns,
+		PrimaryKey: []*schema.Column{GroupCardsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "group_cards_attachments_group_card",
+				Columns:    []*schema.Column{GroupCardsColumns[10]},
+				RefColumns: []*schema.Column{AttachmentsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// HotSearchesColumns holds the columns for the "hot_searches" table.
 	HotSearchesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -975,6 +1003,26 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 		},
+	}
+	// LevelsColumns holds the columns for the "levels" table.
+	LevelsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "uuid", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "name", Type: field.TypeString, Default: ""},
+		{Name: "status", Type: field.TypeUint8, Default: 1},
+		{Name: "code", Type: field.TypeString, Default: ""},
+		{Name: "desc", Type: field.TypeString, Default: ""},
+		{Name: "sort_order", Type: field.TypeInt, Default: 0},
+	}
+	// LevelsTable holds the schema information for the "levels" table.
+	LevelsTable = &schema.Table{
+		Name:        "levels",
+		Columns:     LevelsColumns,
+		PrimaryKey:  []*schema.Column{LevelsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
 	}
 	// MajorsColumns holds the columns for the "majors" table.
 	MajorsColumns = []*schema.Column{
@@ -1653,6 +1701,7 @@ var (
 		{Name: "question_count", Type: field.TypeInt, Default: 0},
 		{Name: "created_admin_id", Type: field.TypeInt, Nullable: true},
 		{Name: "item_category_id", Type: field.TypeInt, Nullable: true},
+		{Name: "level_id", Type: field.TypeInt, Nullable: true},
 	}
 	// TkQuestionBanksTable holds the schema information for the "tk_question_banks" table.
 	TkQuestionBanksTable = &schema.Table{
@@ -1670,6 +1719,72 @@ var (
 				Symbol:     "tk_question_banks_item_categories_item_question_banks",
 				Columns:    []*schema.Column{TkQuestionBanksColumns[9]},
 				RefColumns: []*schema.Column{ItemCategoriesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "tk_question_banks_levels_level_question_banks",
+				Columns:    []*schema.Column{TkQuestionBanksColumns[10]},
+				RefColumns: []*schema.Column{LevelsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// TkQuestionBankCitiesColumns holds the columns for the "tk_question_bank_cities" table.
+	TkQuestionBankCitiesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "uuid", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "city_id", Type: field.TypeInt, Nullable: true},
+		{Name: "question_bank_id", Type: field.TypeInt, Nullable: true},
+	}
+	// TkQuestionBankCitiesTable holds the schema information for the "tk_question_bank_cities" table.
+	TkQuestionBankCitiesTable = &schema.Table{
+		Name:       "tk_question_bank_cities",
+		Columns:    TkQuestionBankCitiesColumns,
+		PrimaryKey: []*schema.Column{TkQuestionBankCitiesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "tk_question_bank_cities_cities_question_bank_cities",
+				Columns:    []*schema.Column{TkQuestionBankCitiesColumns[5]},
+				RefColumns: []*schema.Column{CitiesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "tk_question_bank_cities_tk_question_banks_city_question_banks",
+				Columns:    []*schema.Column{TkQuestionBankCitiesColumns[6]},
+				RefColumns: []*schema.Column{TkQuestionBanksColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// TkQuestionBankMajorsColumns holds the columns for the "tk_question_bank_majors" table.
+	TkQuestionBankMajorsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "uuid", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "major_id", Type: field.TypeInt, Nullable: true},
+		{Name: "question_bank_id", Type: field.TypeInt, Nullable: true},
+	}
+	// TkQuestionBankMajorsTable holds the schema information for the "tk_question_bank_majors" table.
+	TkQuestionBankMajorsTable = &schema.Table{
+		Name:       "tk_question_bank_majors",
+		Columns:    TkQuestionBankMajorsColumns,
+		PrimaryKey: []*schema.Column{TkQuestionBankMajorsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "tk_question_bank_majors_majors_question_bank_majors",
+				Columns:    []*schema.Column{TkQuestionBankMajorsColumns[5]},
+				RefColumns: []*schema.Column{MajorsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "tk_question_bank_majors_tk_question_banks_major_question_banks",
+				Columns:    []*schema.Column{TkQuestionBankMajorsColumns[6]},
+				RefColumns: []*schema.Column{TkQuestionBanksColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -2544,6 +2659,7 @@ var (
 		AttachmentsTable,
 		CitiesTable,
 		CollectionsTable,
+		GroupCardsTable,
 		HotSearchesTable,
 		ImportTasksTable,
 		InformationClassifiesTable,
@@ -2562,6 +2678,7 @@ var (
 		KcUserClassesTable,
 		KcUserCoursesTable,
 		KcVideoUploadTasksTable,
+		LevelsTable,
 		MajorsTable,
 		MajorDetailsTable,
 		MajorDetailTagsTable,
@@ -2585,6 +2702,8 @@ var (
 		TkQuestionsTable,
 		TkQuestionAnswerOptionsTable,
 		TkQuestionBanksTable,
+		TkQuestionBankCitiesTable,
+		TkQuestionBankMajorsTable,
 		TkQuestionErrorFeedbacksTable,
 		TkQuestionSectionsTable,
 		TkSectionsTable,
@@ -2622,6 +2741,7 @@ func init() {
 	AdminOperationLogsTable.ForeignKeys[0].RefTable = AdminsTable
 	AdvertisesTable.ForeignKeys[0].RefTable = AttachmentsTable
 	CollectionsTable.ForeignKeys[0].RefTable = TkQuestionsTable
+	GroupCardsTable.ForeignKeys[0].RefTable = AttachmentsTable
 	ItemCategoriesTable.ForeignKeys[0].RefTable = ItemCategoriesTable
 	KcClassesTable.ForeignKeys[0].RefTable = AdminsTable
 	KcClassesTable.ForeignKeys[1].RefTable = AttachmentsTable
@@ -2685,6 +2805,11 @@ func init() {
 	TkQuestionAnswerOptionsTable.ForeignKeys[0].RefTable = TkQuestionsTable
 	TkQuestionBanksTable.ForeignKeys[0].RefTable = AdminsTable
 	TkQuestionBanksTable.ForeignKeys[1].RefTable = ItemCategoriesTable
+	TkQuestionBanksTable.ForeignKeys[2].RefTable = LevelsTable
+	TkQuestionBankCitiesTable.ForeignKeys[0].RefTable = CitiesTable
+	TkQuestionBankCitiesTable.ForeignKeys[1].RefTable = TkQuestionBanksTable
+	TkQuestionBankMajorsTable.ForeignKeys[0].RefTable = MajorsTable
+	TkQuestionBankMajorsTable.ForeignKeys[1].RefTable = TkQuestionBanksTable
 	TkQuestionErrorFeedbacksTable.ForeignKeys[0].RefTable = AdminsTable
 	TkQuestionErrorFeedbacksTable.ForeignKeys[1].RefTable = TkQuestionsTable
 	TkQuestionSectionsTable.ForeignKeys[0].RefTable = TkQuestionsTable

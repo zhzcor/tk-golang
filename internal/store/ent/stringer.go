@@ -88,6 +88,13 @@ func (c *Collection) GoString() string {
 	return c.String()
 }
 
+func (gc *GroupCard) GoString() string {
+	if gc == nil {
+		return fmt.Sprintf("GroupCard(nil)")
+	}
+	return gc.String()
+}
+
 func (hs *HotSearch) GoString() string {
 	if hs == nil {
 		return fmt.Sprintf("HotSearch(nil)")
@@ -212,6 +219,13 @@ func (kvut *KcVideoUploadTask) GoString() string {
 		return fmt.Sprintf("KcVideoUploadTask(nil)")
 	}
 	return kvut.String()
+}
+
+func (l *Level) GoString() string {
+	if l == nil {
+		return fmt.Sprintf("Level(nil)")
+	}
+	return l.String()
 }
 
 func (m *Major) GoString() string {
@@ -373,6 +387,20 @@ func (tqb *TkQuestionBank) GoString() string {
 		return fmt.Sprintf("TkQuestionBank(nil)")
 	}
 	return tqb.String()
+}
+
+func (tqbc *TkQuestionBankCity) GoString() string {
+	if tqbc == nil {
+		return fmt.Sprintf("TkQuestionBankCity(nil)")
+	}
+	return tqbc.String()
+}
+
+func (tqbm *TkQuestionBankMajor) GoString() string {
+	if tqbm == nil {
+		return fmt.Sprintf("TkQuestionBankMajor(nil)")
+	}
+	return tqbm.String()
 }
 
 func (tqef *TkQuestionErrorFeedback) GoString() string {

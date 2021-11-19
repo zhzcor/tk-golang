@@ -16,6 +16,7 @@ import (
 	"tkserver/internal/store/ent/attachment"
 	"tkserver/internal/store/ent/city"
 	"tkserver/internal/store/ent/collection"
+	"tkserver/internal/store/ent/groupcard"
 	"tkserver/internal/store/ent/hotsearch"
 	"tkserver/internal/store/ent/importtask"
 	"tkserver/internal/store/ent/informationclassify"
@@ -34,6 +35,7 @@ import (
 	"tkserver/internal/store/ent/kcuserclass"
 	"tkserver/internal/store/ent/kcusercourse"
 	"tkserver/internal/store/ent/kcvideouploadtask"
+	"tkserver/internal/store/ent/level"
 	"tkserver/internal/store/ent/major"
 	"tkserver/internal/store/ent/majordetail"
 	"tkserver/internal/store/ent/majordetailtag"
@@ -56,6 +58,8 @@ import (
 	"tkserver/internal/store/ent/tkquestion"
 	"tkserver/internal/store/ent/tkquestionansweroption"
 	"tkserver/internal/store/ent/tkquestionbank"
+	"tkserver/internal/store/ent/tkquestionbankcity"
+	"tkserver/internal/store/ent/tkquestionbankmajor"
 	"tkserver/internal/store/ent/tkquestionerrorfeedback"
 	"tkserver/internal/store/ent/tkquestionsection"
 	"tkserver/internal/store/ent/tksection"
@@ -252,9 +256,9 @@ func init() {
 	adminDescStatus := adminFields[7].Descriptor()
 	// admin.DefaultStatus holds the default value on creation for the status field.
 	admin.DefaultStatus = adminDescStatus.Default.(uint8)
-	// adminDescRemark is the schema descriptor for Remark field.
+	// adminDescRemark is the schema descriptor for remark field.
 	adminDescRemark := adminFields[9].Descriptor()
-	// admin.DefaultRemark holds the default value on creation for the Remark field.
+	// admin.DefaultRemark holds the default value on creation for the remark field.
 	admin.DefaultRemark = adminDescRemark.Default.(string)
 	adminloginlogMixin := schema.AdminLoginLog{}.Mixin()
 	adminloginlogMixinHooks0 := adminloginlogMixin[0].Hooks()
@@ -508,6 +512,43 @@ func init() {
 	collection.DefaultUpdatedAt = collectionDescUpdatedAt.Default.(func() time.Time)
 	// collection.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	collection.UpdateDefaultUpdatedAt = collectionDescUpdatedAt.UpdateDefault.(func() time.Time)
+	groupcardMixin := schema.GroupCard{}.Mixin()
+	groupcardMixinHooks0 := groupcardMixin[0].Hooks()
+	groupcard.Hooks[0] = groupcardMixinHooks0[0]
+	groupcardMixinFields0 := groupcardMixin[0].Fields()
+	_ = groupcardMixinFields0
+	groupcardFields := schema.GroupCard{}.Fields()
+	_ = groupcardFields
+	// groupcardDescCreatedAt is the schema descriptor for created_at field.
+	groupcardDescCreatedAt := groupcardMixinFields0[1].Descriptor()
+	// groupcard.DefaultCreatedAt holds the default value on creation for the created_at field.
+	groupcard.DefaultCreatedAt = groupcardDescCreatedAt.Default.(func() time.Time)
+	// groupcardDescUpdatedAt is the schema descriptor for updated_at field.
+	groupcardDescUpdatedAt := groupcardMixinFields0[2].Descriptor()
+	// groupcard.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	groupcard.DefaultUpdatedAt = groupcardDescUpdatedAt.Default.(func() time.Time)
+	// groupcard.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	groupcard.UpdateDefaultUpdatedAt = groupcardDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// groupcardDescTitle is the schema descriptor for title field.
+	groupcardDescTitle := groupcardFields[0].Descriptor()
+	// groupcard.DefaultTitle holds the default value on creation for the title field.
+	groupcard.DefaultTitle = groupcardDescTitle.Default.(string)
+	// groupcardDescSubTitle is the schema descriptor for sub_title field.
+	groupcardDescSubTitle := groupcardFields[1].Descriptor()
+	// groupcard.DefaultSubTitle holds the default value on creation for the sub_title field.
+	groupcard.DefaultSubTitle = groupcardDescSubTitle.Default.(string)
+	// groupcardDescStatus is the schema descriptor for status field.
+	groupcardDescStatus := groupcardFields[2].Descriptor()
+	// groupcard.DefaultStatus holds the default value on creation for the status field.
+	groupcard.DefaultStatus = groupcardDescStatus.Default.(uint8)
+	// groupcardDescDesc is the schema descriptor for desc field.
+	groupcardDescDesc := groupcardFields[3].Descriptor()
+	// groupcard.DefaultDesc holds the default value on creation for the desc field.
+	groupcard.DefaultDesc = groupcardDescDesc.Default.(string)
+	// groupcardDescSortOrder is the schema descriptor for sort_order field.
+	groupcardDescSortOrder := groupcardFields[4].Descriptor()
+	// groupcard.DefaultSortOrder holds the default value on creation for the sort_order field.
+	groupcard.DefaultSortOrder = groupcardDescSortOrder.Default.(int)
 	hotsearchMixin := schema.HotSearch{}.Mixin()
 	hotsearchMixinHooks0 := hotsearchMixin[0].Hooks()
 	hotsearch.Hooks[0] = hotsearchMixinHooks0[0]
@@ -1051,6 +1092,43 @@ func init() {
 	kcvideouploadtaskDescLength := kcvideouploadtaskFields[9].Descriptor()
 	// kcvideouploadtask.DefaultLength holds the default value on creation for the length field.
 	kcvideouploadtask.DefaultLength = kcvideouploadtaskDescLength.Default.(int)
+	levelMixin := schema.Level{}.Mixin()
+	levelMixinHooks0 := levelMixin[0].Hooks()
+	level.Hooks[0] = levelMixinHooks0[0]
+	levelMixinFields0 := levelMixin[0].Fields()
+	_ = levelMixinFields0
+	levelFields := schema.Level{}.Fields()
+	_ = levelFields
+	// levelDescCreatedAt is the schema descriptor for created_at field.
+	levelDescCreatedAt := levelMixinFields0[1].Descriptor()
+	// level.DefaultCreatedAt holds the default value on creation for the created_at field.
+	level.DefaultCreatedAt = levelDescCreatedAt.Default.(func() time.Time)
+	// levelDescUpdatedAt is the schema descriptor for updated_at field.
+	levelDescUpdatedAt := levelMixinFields0[2].Descriptor()
+	// level.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	level.DefaultUpdatedAt = levelDescUpdatedAt.Default.(func() time.Time)
+	// level.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	level.UpdateDefaultUpdatedAt = levelDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// levelDescName is the schema descriptor for name field.
+	levelDescName := levelFields[0].Descriptor()
+	// level.DefaultName holds the default value on creation for the name field.
+	level.DefaultName = levelDescName.Default.(string)
+	// levelDescStatus is the schema descriptor for status field.
+	levelDescStatus := levelFields[1].Descriptor()
+	// level.DefaultStatus holds the default value on creation for the status field.
+	level.DefaultStatus = levelDescStatus.Default.(uint8)
+	// levelDescCode is the schema descriptor for code field.
+	levelDescCode := levelFields[2].Descriptor()
+	// level.DefaultCode holds the default value on creation for the code field.
+	level.DefaultCode = levelDescCode.Default.(string)
+	// levelDescDesc is the schema descriptor for desc field.
+	levelDescDesc := levelFields[3].Descriptor()
+	// level.DefaultDesc holds the default value on creation for the desc field.
+	level.DefaultDesc = levelDescDesc.Default.(string)
+	// levelDescSortOrder is the schema descriptor for sort_order field.
+	levelDescSortOrder := levelFields[4].Descriptor()
+	// level.DefaultSortOrder holds the default value on creation for the sort_order field.
+	level.DefaultSortOrder = levelDescSortOrder.Default.(int)
 	majorMixin := schema.Major{}.Mixin()
 	majorMixinHooks0 := majorMixin[0].Hooks()
 	major.Hooks[0] = majorMixinHooks0[0]
@@ -1781,6 +1859,40 @@ func init() {
 	tkquestionbankDescQuestionCount := tkquestionbankFields[2].Descriptor()
 	// tkquestionbank.DefaultQuestionCount holds the default value on creation for the question_count field.
 	tkquestionbank.DefaultQuestionCount = tkquestionbankDescQuestionCount.Default.(int)
+	tkquestionbankcityMixin := schema.TkQuestionBankCity{}.Mixin()
+	tkquestionbankcityMixinHooks0 := tkquestionbankcityMixin[0].Hooks()
+	tkquestionbankcity.Hooks[0] = tkquestionbankcityMixinHooks0[0]
+	tkquestionbankcityMixinFields0 := tkquestionbankcityMixin[0].Fields()
+	_ = tkquestionbankcityMixinFields0
+	tkquestionbankcityFields := schema.TkQuestionBankCity{}.Fields()
+	_ = tkquestionbankcityFields
+	// tkquestionbankcityDescCreatedAt is the schema descriptor for created_at field.
+	tkquestionbankcityDescCreatedAt := tkquestionbankcityMixinFields0[1].Descriptor()
+	// tkquestionbankcity.DefaultCreatedAt holds the default value on creation for the created_at field.
+	tkquestionbankcity.DefaultCreatedAt = tkquestionbankcityDescCreatedAt.Default.(func() time.Time)
+	// tkquestionbankcityDescUpdatedAt is the schema descriptor for updated_at field.
+	tkquestionbankcityDescUpdatedAt := tkquestionbankcityMixinFields0[2].Descriptor()
+	// tkquestionbankcity.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	tkquestionbankcity.DefaultUpdatedAt = tkquestionbankcityDescUpdatedAt.Default.(func() time.Time)
+	// tkquestionbankcity.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	tkquestionbankcity.UpdateDefaultUpdatedAt = tkquestionbankcityDescUpdatedAt.UpdateDefault.(func() time.Time)
+	tkquestionbankmajorMixin := schema.TkQuestionBankMajor{}.Mixin()
+	tkquestionbankmajorMixinHooks0 := tkquestionbankmajorMixin[0].Hooks()
+	tkquestionbankmajor.Hooks[0] = tkquestionbankmajorMixinHooks0[0]
+	tkquestionbankmajorMixinFields0 := tkquestionbankmajorMixin[0].Fields()
+	_ = tkquestionbankmajorMixinFields0
+	tkquestionbankmajorFields := schema.TkQuestionBankMajor{}.Fields()
+	_ = tkquestionbankmajorFields
+	// tkquestionbankmajorDescCreatedAt is the schema descriptor for created_at field.
+	tkquestionbankmajorDescCreatedAt := tkquestionbankmajorMixinFields0[1].Descriptor()
+	// tkquestionbankmajor.DefaultCreatedAt holds the default value on creation for the created_at field.
+	tkquestionbankmajor.DefaultCreatedAt = tkquestionbankmajorDescCreatedAt.Default.(func() time.Time)
+	// tkquestionbankmajorDescUpdatedAt is the schema descriptor for updated_at field.
+	tkquestionbankmajorDescUpdatedAt := tkquestionbankmajorMixinFields0[2].Descriptor()
+	// tkquestionbankmajor.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	tkquestionbankmajor.DefaultUpdatedAt = tkquestionbankmajorDescUpdatedAt.Default.(func() time.Time)
+	// tkquestionbankmajor.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	tkquestionbankmajor.UpdateDefaultUpdatedAt = tkquestionbankmajorDescUpdatedAt.UpdateDefault.(func() time.Time)
 	tkquestionerrorfeedbackMixin := schema.TkQuestionErrorFeedback{}.Mixin()
 	tkquestionerrorfeedbackMixinHooks0 := tkquestionerrorfeedbackMixin[0].Hooks()
 	tkquestionerrorfeedback.Hooks[0] = tkquestionerrorfeedbackMixinHooks0[0]

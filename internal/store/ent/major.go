@@ -55,9 +55,11 @@ type MajorEdges struct {
 	KcClasses []*KcClass `json:"kc_classes,omitempty"`
 	// Courses holds the value of the courses edge.
 	Courses []*KcCourse `json:"courses,omitempty"`
+	// QuestionBankMajors holds the value of the question_bank_majors edge.
+	QuestionBankMajors []*TkQuestionBankMajor `json:"question_bank_majors,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 }
 
 // TeachersOrErr returns the Teachers value or an error if the edge
@@ -99,6 +101,15 @@ func (e MajorEdges) CoursesOrErr() ([]*KcCourse, error) {
 		return e.Courses, nil
 	}
 	return nil, &NotLoadedError{edge: "courses"}
+}
+
+// QuestionBankMajorsOrErr returns the QuestionBankMajors value or an error if the edge
+// was not loaded in eager-loading.
+func (e MajorEdges) QuestionBankMajorsOrErr() ([]*TkQuestionBankMajor, error) {
+	if e.loadedTypes[4] {
+		return e.QuestionBankMajors, nil
+	}
+	return nil, &NotLoadedError{edge: "question_bank_majors"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -213,6 +224,11 @@ func (m *Major) QueryKcClasses() *KcClassQuery {
 // QueryCourses queries the "courses" edge of the Major entity.
 func (m *Major) QueryCourses() *KcCourseQuery {
 	return (&MajorClient{config: m.config}).QueryCourses(m)
+}
+
+// QueryQuestionBankMajors queries the "question_bank_majors" edge of the Major entity.
+func (m *Major) QueryQuestionBankMajors() *TkQuestionBankMajorQuery {
+	return (&MajorClient{config: m.config}).QueryQuestionBankMajors(m)
 }
 
 // Update returns a builder for updating this Major.

@@ -14,6 +14,7 @@ import (
 	"tkserver/internal/store/ent/majordetail"
 	"tkserver/internal/store/ent/predicate"
 	"tkserver/internal/store/ent/teacher"
+	"tkserver/internal/store/ent/tkquestionbankmajor"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -30,10 +31,11 @@ type MajorQuery struct {
 	fields     []string
 	predicates []predicate.Major
 	// eager-loading edges.
-	withTeachers    *TeacherQuery
-	withMajorDetail *MajorDetailQuery
-	withKcClasses   *KcClassQuery
-	withCourses     *KcCourseQuery
+	withTeachers           *TeacherQuery
+	withMajorDetail        *MajorDetailQuery
+	withKcClasses          *KcClassQuery
+	withCourses            *KcCourseQuery
+	withQuestionBankMajors *TkQuestionBankMajorQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -151,6 +153,28 @@ func (mq *MajorQuery) QueryCourses() *KcCourseQuery {
 			sqlgraph.From(major.Table, major.FieldID, selector),
 			sqlgraph.To(kccourse.Table, kccourse.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, major.CoursesTable, major.CoursesPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryQuestionBankMajors chains the current query on the "question_bank_majors" edge.
+func (mq *MajorQuery) QueryQuestionBankMajors() *TkQuestionBankMajorQuery {
+	query := &TkQuestionBankMajorQuery{config: mq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := mq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := mq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(major.Table, major.FieldID, selector),
+			sqlgraph.To(tkquestionbankmajor.Table, tkquestionbankmajor.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, major.QuestionBankMajorsTable, major.QuestionBankMajorsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
 		return fromU, nil
@@ -334,15 +358,16 @@ func (mq *MajorQuery) Clone() *MajorQuery {
 		return nil
 	}
 	return &MajorQuery{
-		config:          mq.config,
-		limit:           mq.limit,
-		offset:          mq.offset,
-		order:           append([]OrderFunc{}, mq.order...),
-		predicates:      append([]predicate.Major{}, mq.predicates...),
-		withTeachers:    mq.withTeachers.Clone(),
-		withMajorDetail: mq.withMajorDetail.Clone(),
-		withKcClasses:   mq.withKcClasses.Clone(),
-		withCourses:     mq.withCourses.Clone(),
+		config:                 mq.config,
+		limit:                  mq.limit,
+		offset:                 mq.offset,
+		order:                  append([]OrderFunc{}, mq.order...),
+		predicates:             append([]predicate.Major{}, mq.predicates...),
+		withTeachers:           mq.withTeachers.Clone(),
+		withMajorDetail:        mq.withMajorDetail.Clone(),
+		withKcClasses:          mq.withKcClasses.Clone(),
+		withCourses:            mq.withCourses.Clone(),
+		withQuestionBankMajors: mq.withQuestionBankMajors.Clone(),
 		// clone intermediate query.
 		sql:  mq.sql.Clone(),
 		path: mq.path,
@@ -390,6 +415,17 @@ func (mq *MajorQuery) WithCourses(opts ...func(*KcCourseQuery)) *MajorQuery {
 		opt(query)
 	}
 	mq.withCourses = query
+	return mq
+}
+
+// WithQuestionBankMajors tells the query-builder to eager-load the nodes that are connected to
+// the "question_bank_majors" edge. The optional arguments are used to configure the query builder of the edge.
+func (mq *MajorQuery) WithQuestionBankMajors(opts ...func(*TkQuestionBankMajorQuery)) *MajorQuery {
+	query := &TkQuestionBankMajorQuery{config: mq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	mq.withQuestionBankMajors = query
 	return mq
 }
 
@@ -458,11 +494,12 @@ func (mq *MajorQuery) sqlAll(ctx context.Context) ([]*Major, error) {
 	var (
 		nodes       = []*Major{}
 		_spec       = mq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			mq.withTeachers != nil,
 			mq.withMajorDetail != nil,
 			mq.withKcClasses != nil,
 			mq.withCourses != nil,
+			mq.withQuestionBankMajors != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -701,6 +738,31 @@ func (mq *MajorQuery) sqlAll(ctx context.Context) ([]*Major, error) {
 			for i := range nodes {
 				nodes[i].Edges.Courses = append(nodes[i].Edges.Courses, n)
 			}
+		}
+	}
+
+	if query := mq.withQuestionBankMajors; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Major)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.QuestionBankMajors = []*TkQuestionBankMajor{}
+		}
+		query.Where(predicate.TkQuestionBankMajor(func(s *sql.Selector) {
+			s.Where(sql.InValues(major.QuestionBankMajorsColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.MajorID
+			node, ok := nodeids[fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "major_id" returned %v for node %v`, fk, n.ID)
+			}
+			node.Edges.QuestionBankMajors = append(node.Edges.QuestionBankMajors, n)
 		}
 	}
 

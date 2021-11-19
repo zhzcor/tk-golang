@@ -37,6 +37,8 @@ const (
 	EdgeCourse = "course"
 	// EdgeUserCity holds the string denoting the user_city edge name in mutations.
 	EdgeUserCity = "user_city"
+	// EdgeQuestionBankCities holds the string denoting the question_bank_cities edge name in mutations.
+	EdgeQuestionBankCities = "question_bank_cities"
 	// Table holds the table name of the city in the database.
 	Table = "cities"
 	// KcClassTable is the table the holds the kc_class relation/edge.
@@ -60,6 +62,13 @@ const (
 	UserCityInverseTable = "users"
 	// UserCityColumn is the table column denoting the user_city relation/edge.
 	UserCityColumn = "from_city_id"
+	// QuestionBankCitiesTable is the table the holds the question_bank_cities relation/edge.
+	QuestionBankCitiesTable = "tk_question_bank_cities"
+	// QuestionBankCitiesInverseTable is the table name for the TkQuestionBankCity entity.
+	// It exists in this package in order to avoid circular dependency with the "tkquestionbankcity" package.
+	QuestionBankCitiesInverseTable = "tk_question_bank_cities"
+	// QuestionBankCitiesColumn is the table column denoting the question_bank_cities relation/edge.
+	QuestionBankCitiesColumn = "city_id"
 )
 
 // Columns holds all SQL columns for city fields.

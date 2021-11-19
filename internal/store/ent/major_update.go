@@ -12,6 +12,7 @@ import (
 	"tkserver/internal/store/ent/majordetail"
 	"tkserver/internal/store/ent/predicate"
 	"tkserver/internal/store/ent/teacher"
+	"tkserver/internal/store/ent/tkquestionbankmajor"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -217,6 +218,21 @@ func (mu *MajorUpdate) AddCourses(k ...*KcCourse) *MajorUpdate {
 	return mu.AddCourseIDs(ids...)
 }
 
+// AddQuestionBankMajorIDs adds the "question_bank_majors" edge to the TkQuestionBankMajor entity by IDs.
+func (mu *MajorUpdate) AddQuestionBankMajorIDs(ids ...int) *MajorUpdate {
+	mu.mutation.AddQuestionBankMajorIDs(ids...)
+	return mu
+}
+
+// AddQuestionBankMajors adds the "question_bank_majors" edges to the TkQuestionBankMajor entity.
+func (mu *MajorUpdate) AddQuestionBankMajors(t ...*TkQuestionBankMajor) *MajorUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return mu.AddQuestionBankMajorIDs(ids...)
+}
+
 // Mutation returns the MajorMutation object of the builder.
 func (mu *MajorUpdate) Mutation() *MajorMutation {
 	return mu.mutation
@@ -289,6 +305,27 @@ func (mu *MajorUpdate) RemoveCourses(k ...*KcCourse) *MajorUpdate {
 		ids[i] = k[i].ID
 	}
 	return mu.RemoveCourseIDs(ids...)
+}
+
+// ClearQuestionBankMajors clears all "question_bank_majors" edges to the TkQuestionBankMajor entity.
+func (mu *MajorUpdate) ClearQuestionBankMajors() *MajorUpdate {
+	mu.mutation.ClearQuestionBankMajors()
+	return mu
+}
+
+// RemoveQuestionBankMajorIDs removes the "question_bank_majors" edge to TkQuestionBankMajor entities by IDs.
+func (mu *MajorUpdate) RemoveQuestionBankMajorIDs(ids ...int) *MajorUpdate {
+	mu.mutation.RemoveQuestionBankMajorIDs(ids...)
+	return mu
+}
+
+// RemoveQuestionBankMajors removes "question_bank_majors" edges to TkQuestionBankMajor entities.
+func (mu *MajorUpdate) RemoveQuestionBankMajors(t ...*TkQuestionBankMajor) *MajorUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return mu.RemoveQuestionBankMajorIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -654,6 +691,60 @@ func (mu *MajorUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if mu.mutation.QuestionBankMajorsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   major.QuestionBankMajorsTable,
+			Columns: []string{major.QuestionBankMajorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankmajor.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.RemovedQuestionBankMajorsIDs(); len(nodes) > 0 && !mu.mutation.QuestionBankMajorsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   major.QuestionBankMajorsTable,
+			Columns: []string{major.QuestionBankMajorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankmajor.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.QuestionBankMajorsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   major.QuestionBankMajorsTable,
+			Columns: []string{major.QuestionBankMajorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankmajor.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, mu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{major.Label}
@@ -859,6 +950,21 @@ func (muo *MajorUpdateOne) AddCourses(k ...*KcCourse) *MajorUpdateOne {
 	return muo.AddCourseIDs(ids...)
 }
 
+// AddQuestionBankMajorIDs adds the "question_bank_majors" edge to the TkQuestionBankMajor entity by IDs.
+func (muo *MajorUpdateOne) AddQuestionBankMajorIDs(ids ...int) *MajorUpdateOne {
+	muo.mutation.AddQuestionBankMajorIDs(ids...)
+	return muo
+}
+
+// AddQuestionBankMajors adds the "question_bank_majors" edges to the TkQuestionBankMajor entity.
+func (muo *MajorUpdateOne) AddQuestionBankMajors(t ...*TkQuestionBankMajor) *MajorUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return muo.AddQuestionBankMajorIDs(ids...)
+}
+
 // Mutation returns the MajorMutation object of the builder.
 func (muo *MajorUpdateOne) Mutation() *MajorMutation {
 	return muo.mutation
@@ -931,6 +1037,27 @@ func (muo *MajorUpdateOne) RemoveCourses(k ...*KcCourse) *MajorUpdateOne {
 		ids[i] = k[i].ID
 	}
 	return muo.RemoveCourseIDs(ids...)
+}
+
+// ClearQuestionBankMajors clears all "question_bank_majors" edges to the TkQuestionBankMajor entity.
+func (muo *MajorUpdateOne) ClearQuestionBankMajors() *MajorUpdateOne {
+	muo.mutation.ClearQuestionBankMajors()
+	return muo
+}
+
+// RemoveQuestionBankMajorIDs removes the "question_bank_majors" edge to TkQuestionBankMajor entities by IDs.
+func (muo *MajorUpdateOne) RemoveQuestionBankMajorIDs(ids ...int) *MajorUpdateOne {
+	muo.mutation.RemoveQuestionBankMajorIDs(ids...)
+	return muo
+}
+
+// RemoveQuestionBankMajors removes "question_bank_majors" edges to TkQuestionBankMajor entities.
+func (muo *MajorUpdateOne) RemoveQuestionBankMajors(t ...*TkQuestionBankMajor) *MajorUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return muo.RemoveQuestionBankMajorIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -1312,6 +1439,60 @@ func (muo *MajorUpdateOne) sqlSave(ctx context.Context) (_node *Major, err error
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: kccourse.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if muo.mutation.QuestionBankMajorsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   major.QuestionBankMajorsTable,
+			Columns: []string{major.QuestionBankMajorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankmajor.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.RemovedQuestionBankMajorsIDs(); len(nodes) > 0 && !muo.mutation.QuestionBankMajorsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   major.QuestionBankMajorsTable,
+			Columns: []string{major.QuestionBankMajorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankmajor.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.QuestionBankMajorsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   major.QuestionBankMajorsTable,
+			Columns: []string{major.QuestionBankMajorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankmajor.FieldID,
 				},
 			},
 		}

@@ -63,6 +63,8 @@ const (
 	EdgeVideoTaskAttachment = "video_task_attachment"
 	// EdgeAskAttachments holds the string denoting the ask_attachments edge name in mutations.
 	EdgeAskAttachments = "ask_attachments"
+	// EdgeGroupCard holds the string denoting the group_card edge name in mutations.
+	EdgeGroupCard = "group_card"
 	// Table holds the table name of the attachment in the database.
 	Table = "attachments"
 	// MajorDetailCoverImgTable is the table the holds the major_detail_cover_img relation/edge.
@@ -173,6 +175,13 @@ const (
 	AskAttachmentsInverseTable = "user_ask_answer_attachments"
 	// AskAttachmentsColumn is the table column denoting the ask_attachments relation/edge.
 	AskAttachmentsColumn = "attachment_id"
+	// GroupCardTable is the table the holds the group_card relation/edge.
+	GroupCardTable = "group_cards"
+	// GroupCardInverseTable is the table name for the GroupCard entity.
+	// It exists in this package in order to avoid circular dependency with the "groupcard" package.
+	GroupCardInverseTable = "group_cards"
+	// GroupCardColumn is the table column denoting the group_card relation/edge.
+	GroupCardColumn = "attachment_id"
 )
 
 // Columns holds all SQL columns for attachment fields.

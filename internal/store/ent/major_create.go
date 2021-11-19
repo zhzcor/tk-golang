@@ -12,6 +12,7 @@ import (
 	"tkserver/internal/store/ent/major"
 	"tkserver/internal/store/ent/majordetail"
 	"tkserver/internal/store/ent/teacher"
+	"tkserver/internal/store/ent/tkquestionbankmajor"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -204,6 +205,21 @@ func (mc *MajorCreate) AddCourses(k ...*KcCourse) *MajorCreate {
 		ids[i] = k[i].ID
 	}
 	return mc.AddCourseIDs(ids...)
+}
+
+// AddQuestionBankMajorIDs adds the "question_bank_majors" edge to the TkQuestionBankMajor entity by IDs.
+func (mc *MajorCreate) AddQuestionBankMajorIDs(ids ...int) *MajorCreate {
+	mc.mutation.AddQuestionBankMajorIDs(ids...)
+	return mc
+}
+
+// AddQuestionBankMajors adds the "question_bank_majors" edges to the TkQuestionBankMajor entity.
+func (mc *MajorCreate) AddQuestionBankMajors(t ...*TkQuestionBankMajor) *MajorCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return mc.AddQuestionBankMajorIDs(ids...)
 }
 
 // Mutation returns the MajorMutation object of the builder.
@@ -475,6 +491,25 @@ func (mc *MajorCreate) createSpec() (*Major, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: kccourse.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mc.mutation.QuestionBankMajorsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   major.QuestionBankMajorsTable,
+			Columns: []string{major.QuestionBankMajorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankmajor.FieldID,
 				},
 			},
 		}

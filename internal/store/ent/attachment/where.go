@@ -1463,6 +1463,34 @@ func HasAskAttachmentsWith(preds ...predicate.UserAskAnswerAttachment) predicate
 	})
 }
 
+// HasGroupCard applies the HasEdge predicate on the "group_card" edge.
+func HasGroupCard() predicate.Attachment {
+	return predicate.Attachment(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(GroupCardTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, GroupCardTable, GroupCardColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasGroupCardWith applies the HasEdge predicate on the "group_card" edge with a given conditions (other predicates).
+func HasGroupCardWith(preds ...predicate.GroupCard) predicate.Attachment {
+	return predicate.Attachment(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(GroupCardInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, GroupCardTable, GroupCardColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Attachment) predicate.Attachment {
 	return predicate.Attachment(func(s *sql.Selector) {

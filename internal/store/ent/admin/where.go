@@ -198,7 +198,7 @@ func AdminAvatarID(v int) predicate.Admin {
 	})
 }
 
-// Remark applies equality check predicate on the "Remark" field. It's identical to RemarkEQ.
+// Remark applies equality check predicate on the "remark" field. It's identical to RemarkEQ.
 func Remark(v string) predicate.Admin {
 	return predicate.Admin(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldRemark), v))
@@ -1618,21 +1618,21 @@ func AdminAvatarIDNotNil() predicate.Admin {
 	})
 }
 
-// RemarkEQ applies the EQ predicate on the "Remark" field.
+// RemarkEQ applies the EQ predicate on the "remark" field.
 func RemarkEQ(v string) predicate.Admin {
 	return predicate.Admin(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldRemark), v))
 	})
 }
 
-// RemarkNEQ applies the NEQ predicate on the "Remark" field.
+// RemarkNEQ applies the NEQ predicate on the "remark" field.
 func RemarkNEQ(v string) predicate.Admin {
 	return predicate.Admin(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldRemark), v))
 	})
 }
 
-// RemarkIn applies the In predicate on the "Remark" field.
+// RemarkIn applies the In predicate on the "remark" field.
 func RemarkIn(vs ...string) predicate.Admin {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1649,7 +1649,7 @@ func RemarkIn(vs ...string) predicate.Admin {
 	})
 }
 
-// RemarkNotIn applies the NotIn predicate on the "Remark" field.
+// RemarkNotIn applies the NotIn predicate on the "remark" field.
 func RemarkNotIn(vs ...string) predicate.Admin {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -1666,63 +1666,63 @@ func RemarkNotIn(vs ...string) predicate.Admin {
 	})
 }
 
-// RemarkGT applies the GT predicate on the "Remark" field.
+// RemarkGT applies the GT predicate on the "remark" field.
 func RemarkGT(v string) predicate.Admin {
 	return predicate.Admin(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldRemark), v))
 	})
 }
 
-// RemarkGTE applies the GTE predicate on the "Remark" field.
+// RemarkGTE applies the GTE predicate on the "remark" field.
 func RemarkGTE(v string) predicate.Admin {
 	return predicate.Admin(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldRemark), v))
 	})
 }
 
-// RemarkLT applies the LT predicate on the "Remark" field.
+// RemarkLT applies the LT predicate on the "remark" field.
 func RemarkLT(v string) predicate.Admin {
 	return predicate.Admin(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldRemark), v))
 	})
 }
 
-// RemarkLTE applies the LTE predicate on the "Remark" field.
+// RemarkLTE applies the LTE predicate on the "remark" field.
 func RemarkLTE(v string) predicate.Admin {
 	return predicate.Admin(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldRemark), v))
 	})
 }
 
-// RemarkContains applies the Contains predicate on the "Remark" field.
+// RemarkContains applies the Contains predicate on the "remark" field.
 func RemarkContains(v string) predicate.Admin {
 	return predicate.Admin(func(s *sql.Selector) {
 		s.Where(sql.Contains(s.C(FieldRemark), v))
 	})
 }
 
-// RemarkHasPrefix applies the HasPrefix predicate on the "Remark" field.
+// RemarkHasPrefix applies the HasPrefix predicate on the "remark" field.
 func RemarkHasPrefix(v string) predicate.Admin {
 	return predicate.Admin(func(s *sql.Selector) {
 		s.Where(sql.HasPrefix(s.C(FieldRemark), v))
 	})
 }
 
-// RemarkHasSuffix applies the HasSuffix predicate on the "Remark" field.
+// RemarkHasSuffix applies the HasSuffix predicate on the "remark" field.
 func RemarkHasSuffix(v string) predicate.Admin {
 	return predicate.Admin(func(s *sql.Selector) {
 		s.Where(sql.HasSuffix(s.C(FieldRemark), v))
 	})
 }
 
-// RemarkEqualFold applies the EqualFold predicate on the "Remark" field.
+// RemarkEqualFold applies the EqualFold predicate on the "remark" field.
 func RemarkEqualFold(v string) predicate.Admin {
 	return predicate.Admin(func(s *sql.Selector) {
 		s.Where(sql.EqualFold(s.C(FieldRemark), v))
 	})
 }
 
-// RemarkContainsFold applies the ContainsFold predicate on the "Remark" field.
+// RemarkContainsFold applies the ContainsFold predicate on the "remark" field.
 func RemarkContainsFold(v string) predicate.Admin {
 	return predicate.Admin(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldRemark), v))

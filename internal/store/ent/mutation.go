@@ -19,6 +19,7 @@ import (
 	"tkserver/internal/store/ent/attachment"
 	"tkserver/internal/store/ent/city"
 	"tkserver/internal/store/ent/collection"
+	"tkserver/internal/store/ent/groupcard"
 	"tkserver/internal/store/ent/hotsearch"
 	"tkserver/internal/store/ent/importtask"
 	"tkserver/internal/store/ent/informationclassify"
@@ -37,6 +38,7 @@ import (
 	"tkserver/internal/store/ent/kcuserclass"
 	"tkserver/internal/store/ent/kcusercourse"
 	"tkserver/internal/store/ent/kcvideouploadtask"
+	"tkserver/internal/store/ent/level"
 	"tkserver/internal/store/ent/major"
 	"tkserver/internal/store/ent/majordetail"
 	"tkserver/internal/store/ent/majordetailtag"
@@ -61,6 +63,8 @@ import (
 	"tkserver/internal/store/ent/tkquestion"
 	"tkserver/internal/store/ent/tkquestionansweroption"
 	"tkserver/internal/store/ent/tkquestionbank"
+	"tkserver/internal/store/ent/tkquestionbankcity"
+	"tkserver/internal/store/ent/tkquestionbankmajor"
 	"tkserver/internal/store/ent/tkquestionerrorfeedback"
 	"tkserver/internal/store/ent/tkquestionsection"
 	"tkserver/internal/store/ent/tksection"
@@ -101,6 +105,7 @@ const (
 	TypeAttachment                  = "Attachment"
 	TypeCity                        = "City"
 	TypeCollection                  = "Collection"
+	TypeGroupCard                   = "GroupCard"
 	TypeHotSearch                   = "HotSearch"
 	TypeImportTask                  = "ImportTask"
 	TypeInformationClassify         = "InformationClassify"
@@ -119,6 +124,7 @@ const (
 	TypeKcUserClass                 = "KcUserClass"
 	TypeKcUserCourse                = "KcUserCourse"
 	TypeKcVideoUploadTask           = "KcVideoUploadTask"
+	TypeLevel                       = "Level"
 	TypeMajor                       = "Major"
 	TypeMajorDetail                 = "MajorDetail"
 	TypeMajorDetailTag              = "MajorDetailTag"
@@ -142,6 +148,8 @@ const (
 	TypeTkQuestion                  = "TkQuestion"
 	TypeTkQuestionAnswerOption      = "TkQuestionAnswerOption"
 	TypeTkQuestionBank              = "TkQuestionBank"
+	TypeTkQuestionBankCity          = "TkQuestionBankCity"
+	TypeTkQuestionBankMajor         = "TkQuestionBankMajor"
 	TypeTkQuestionErrorFeedback     = "TkQuestionErrorFeedback"
 	TypeTkQuestionSection           = "TkQuestionSection"
 	TypeTkSection                   = "TkSection"
@@ -4199,7 +4207,7 @@ type AdminMutation struct {
 	addis_active                    *uint8
 	status                          *uint8
 	addstatus                       *uint8
-	_Remark                         *string
+	remark                          *string
 	clearedFields                   map[string]struct{}
 	admin_login_logs                map[int]struct{}
 	removedadmin_login_logs         map[int]struct{}
@@ -4992,21 +5000,21 @@ func (m *AdminMutation) ResetAdminAvatarID() {
 	delete(m.clearedFields, admin.FieldAdminAvatarID)
 }
 
-// SetRemark sets the "Remark" field.
+// SetRemark sets the "remark" field.
 func (m *AdminMutation) SetRemark(s string) {
-	m._Remark = &s
+	m.remark = &s
 }
 
-// Remark returns the value of the "Remark" field in the mutation.
+// Remark returns the value of the "remark" field in the mutation.
 func (m *AdminMutation) Remark() (r string, exists bool) {
-	v := m._Remark
+	v := m.remark
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldRemark returns the old "Remark" field's value of the Admin entity.
+// OldRemark returns the old "remark" field's value of the Admin entity.
 // If the Admin object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *AdminMutation) OldRemark(ctx context.Context) (v string, err error) {
@@ -5023,9 +5031,9 @@ func (m *AdminMutation) OldRemark(ctx context.Context) (v string, err error) {
 	return oldValue.Remark, nil
 }
 
-// ResetRemark resets all changes to the "Remark" field.
+// ResetRemark resets all changes to the "remark" field.
 func (m *AdminMutation) ResetRemark() {
-	m._Remark = nil
+	m.remark = nil
 }
 
 // AddAdminLoginLogIDs adds the "admin_login_logs" edge to the AdminLoginLog entity by ids.
@@ -5710,7 +5718,7 @@ func (m *AdminMutation) Fields() []string {
 	if m.admin_attachments != nil {
 		fields = append(fields, admin.FieldAdminAvatarID)
 	}
-	if m._Remark != nil {
+	if m.remark != nil {
 		fields = append(fields, admin.FieldRemark)
 	}
 	return fields
@@ -11154,6 +11162,9 @@ type AttachmentMutation struct {
 	ask_attachments                   map[int]struct{}
 	removedask_attachments            map[int]struct{}
 	clearedask_attachments            bool
+	group_card                        map[int]struct{}
+	removedgroup_card                 map[int]struct{}
+	clearedgroup_card                 bool
 	done                              bool
 	oldValue                          func(context.Context) (*Attachment, error)
 	predicates                        []predicate.Attachment
@@ -12495,6 +12506,59 @@ func (m *AttachmentMutation) ResetAskAttachments() {
 	m.removedask_attachments = nil
 }
 
+// AddGroupCardIDs adds the "group_card" edge to the GroupCard entity by ids.
+func (m *AttachmentMutation) AddGroupCardIDs(ids ...int) {
+	if m.group_card == nil {
+		m.group_card = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.group_card[ids[i]] = struct{}{}
+	}
+}
+
+// ClearGroupCard clears the "group_card" edge to the GroupCard entity.
+func (m *AttachmentMutation) ClearGroupCard() {
+	m.clearedgroup_card = true
+}
+
+// GroupCardCleared reports if the "group_card" edge to the GroupCard entity was cleared.
+func (m *AttachmentMutation) GroupCardCleared() bool {
+	return m.clearedgroup_card
+}
+
+// RemoveGroupCardIDs removes the "group_card" edge to the GroupCard entity by IDs.
+func (m *AttachmentMutation) RemoveGroupCardIDs(ids ...int) {
+	if m.removedgroup_card == nil {
+		m.removedgroup_card = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedgroup_card[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedGroupCard returns the removed IDs of the "group_card" edge to the GroupCard entity.
+func (m *AttachmentMutation) RemovedGroupCardIDs() (ids []int) {
+	for id := range m.removedgroup_card {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// GroupCardIDs returns the "group_card" edge IDs in the mutation.
+func (m *AttachmentMutation) GroupCardIDs() (ids []int) {
+	for id := range m.group_card {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetGroupCard resets all changes to the "group_card" edge.
+func (m *AttachmentMutation) ResetGroupCard() {
+	m.group_card = nil
+	m.clearedgroup_card = false
+	m.removedgroup_card = nil
+}
+
 // Op returns the operation name.
 func (m *AttachmentMutation) Op() Op {
 	return m.op
@@ -12816,7 +12880,7 @@ func (m *AttachmentMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *AttachmentMutation) AddedEdges() []string {
-	edges := make([]string, 0, 16)
+	edges := make([]string, 0, 17)
 	if m.major_detail_cover_img != nil {
 		edges = append(edges, attachment.EdgeMajorDetailCoverImg)
 	}
@@ -12864,6 +12928,9 @@ func (m *AttachmentMutation) AddedEdges() []string {
 	}
 	if m.ask_attachments != nil {
 		edges = append(edges, attachment.EdgeAskAttachments)
+	}
+	if m.group_card != nil {
+		edges = append(edges, attachment.EdgeGroupCard)
 	}
 	return edges
 }
@@ -12962,13 +13029,19 @@ func (m *AttachmentMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case attachment.EdgeGroupCard:
+		ids := make([]ent.Value, 0, len(m.group_card))
+		for id := range m.group_card {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *AttachmentMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 16)
+	edges := make([]string, 0, 17)
 	if m.removedmajor_detail_cover_img != nil {
 		edges = append(edges, attachment.EdgeMajorDetailCoverImg)
 	}
@@ -13007,6 +13080,9 @@ func (m *AttachmentMutation) RemovedEdges() []string {
 	}
 	if m.removedask_attachments != nil {
 		edges = append(edges, attachment.EdgeAskAttachments)
+	}
+	if m.removedgroup_card != nil {
+		edges = append(edges, attachment.EdgeGroupCard)
 	}
 	return edges
 }
@@ -13093,13 +13169,19 @@ func (m *AttachmentMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case attachment.EdgeGroupCard:
+		ids := make([]ent.Value, 0, len(m.removedgroup_card))
+		for id := range m.removedgroup_card {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *AttachmentMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 16)
+	edges := make([]string, 0, 17)
 	if m.clearedmajor_detail_cover_img {
 		edges = append(edges, attachment.EdgeMajorDetailCoverImg)
 	}
@@ -13148,6 +13230,9 @@ func (m *AttachmentMutation) ClearedEdges() []string {
 	if m.clearedask_attachments {
 		edges = append(edges, attachment.EdgeAskAttachments)
 	}
+	if m.clearedgroup_card {
+		edges = append(edges, attachment.EdgeGroupCard)
+	}
 	return edges
 }
 
@@ -13187,6 +13272,8 @@ func (m *AttachmentMutation) EdgeCleared(name string) bool {
 		return m.clearedvideo_task_attachment
 	case attachment.EdgeAskAttachments:
 		return m.clearedask_attachments
+	case attachment.EdgeGroupCard:
+		return m.clearedgroup_card
 	}
 	return false
 }
@@ -13260,6 +13347,9 @@ func (m *AttachmentMutation) ResetEdge(name string) error {
 	case attachment.EdgeAskAttachments:
 		m.ResetAskAttachments()
 		return nil
+	case attachment.EdgeGroupCard:
+		m.ResetGroupCard()
+		return nil
 	}
 	return fmt.Errorf("unknown Attachment edge %s", name)
 }
@@ -13267,33 +13357,36 @@ func (m *AttachmentMutation) ResetEdge(name string) error {
 // CityMutation represents an operation that mutates the City nodes in the graph.
 type CityMutation struct {
 	config
-	op               Op
-	typ              string
-	id               *int
-	uuid             *string
-	created_at       *time.Time
-	updated_at       *time.Time
-	deleted_at       *time.Time
-	name             *string
-	status           *uint8
-	addstatus        *uint8
-	code             *string
-	desc             *string
-	sort_order       *int
-	addsort_order    *int
-	clearedFields    map[string]struct{}
-	kc_class         map[int]struct{}
-	removedkc_class  map[int]struct{}
-	clearedkc_class  bool
-	course           map[int]struct{}
-	removedcourse    map[int]struct{}
-	clearedcourse    bool
-	user_city        map[int]struct{}
-	removeduser_city map[int]struct{}
-	cleareduser_city bool
-	done             bool
-	oldValue         func(context.Context) (*City, error)
-	predicates       []predicate.City
+	op                          Op
+	typ                         string
+	id                          *int
+	uuid                        *string
+	created_at                  *time.Time
+	updated_at                  *time.Time
+	deleted_at                  *time.Time
+	name                        *string
+	status                      *uint8
+	addstatus                   *uint8
+	code                        *string
+	desc                        *string
+	sort_order                  *int
+	addsort_order               *int
+	clearedFields               map[string]struct{}
+	kc_class                    map[int]struct{}
+	removedkc_class             map[int]struct{}
+	clearedkc_class             bool
+	course                      map[int]struct{}
+	removedcourse               map[int]struct{}
+	clearedcourse               bool
+	user_city                   map[int]struct{}
+	removeduser_city            map[int]struct{}
+	cleareduser_city            bool
+	question_bank_cities        map[int]struct{}
+	removedquestion_bank_cities map[int]struct{}
+	clearedquestion_bank_cities bool
+	done                        bool
+	oldValue                    func(context.Context) (*City, error)
+	predicates                  []predicate.City
 }
 
 var _ ent.Mutation = (*CityMutation)(nil)
@@ -13937,6 +14030,59 @@ func (m *CityMutation) ResetUserCity() {
 	m.removeduser_city = nil
 }
 
+// AddQuestionBankCityIDs adds the "question_bank_cities" edge to the TkQuestionBankCity entity by ids.
+func (m *CityMutation) AddQuestionBankCityIDs(ids ...int) {
+	if m.question_bank_cities == nil {
+		m.question_bank_cities = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.question_bank_cities[ids[i]] = struct{}{}
+	}
+}
+
+// ClearQuestionBankCities clears the "question_bank_cities" edge to the TkQuestionBankCity entity.
+func (m *CityMutation) ClearQuestionBankCities() {
+	m.clearedquestion_bank_cities = true
+}
+
+// QuestionBankCitiesCleared reports if the "question_bank_cities" edge to the TkQuestionBankCity entity was cleared.
+func (m *CityMutation) QuestionBankCitiesCleared() bool {
+	return m.clearedquestion_bank_cities
+}
+
+// RemoveQuestionBankCityIDs removes the "question_bank_cities" edge to the TkQuestionBankCity entity by IDs.
+func (m *CityMutation) RemoveQuestionBankCityIDs(ids ...int) {
+	if m.removedquestion_bank_cities == nil {
+		m.removedquestion_bank_cities = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedquestion_bank_cities[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedQuestionBankCities returns the removed IDs of the "question_bank_cities" edge to the TkQuestionBankCity entity.
+func (m *CityMutation) RemovedQuestionBankCitiesIDs() (ids []int) {
+	for id := range m.removedquestion_bank_cities {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// QuestionBankCitiesIDs returns the "question_bank_cities" edge IDs in the mutation.
+func (m *CityMutation) QuestionBankCitiesIDs() (ids []int) {
+	for id := range m.question_bank_cities {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetQuestionBankCities resets all changes to the "question_bank_cities" edge.
+func (m *CityMutation) ResetQuestionBankCities() {
+	m.question_bank_cities = nil
+	m.clearedquestion_bank_cities = false
+	m.removedquestion_bank_cities = nil
+}
+
 // Op returns the operation name.
 func (m *CityMutation) Op() Op {
 	return m.op
@@ -14234,7 +14380,7 @@ func (m *CityMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *CityMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.kc_class != nil {
 		edges = append(edges, city.EdgeKcClass)
 	}
@@ -14243,6 +14389,9 @@ func (m *CityMutation) AddedEdges() []string {
 	}
 	if m.user_city != nil {
 		edges = append(edges, city.EdgeUserCity)
+	}
+	if m.question_bank_cities != nil {
+		edges = append(edges, city.EdgeQuestionBankCities)
 	}
 	return edges
 }
@@ -14269,13 +14418,19 @@ func (m *CityMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case city.EdgeQuestionBankCities:
+		ids := make([]ent.Value, 0, len(m.question_bank_cities))
+		for id := range m.question_bank_cities {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *CityMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.removedkc_class != nil {
 		edges = append(edges, city.EdgeKcClass)
 	}
@@ -14284,6 +14439,9 @@ func (m *CityMutation) RemovedEdges() []string {
 	}
 	if m.removeduser_city != nil {
 		edges = append(edges, city.EdgeUserCity)
+	}
+	if m.removedquestion_bank_cities != nil {
+		edges = append(edges, city.EdgeQuestionBankCities)
 	}
 	return edges
 }
@@ -14310,13 +14468,19 @@ func (m *CityMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case city.EdgeQuestionBankCities:
+		ids := make([]ent.Value, 0, len(m.removedquestion_bank_cities))
+		for id := range m.removedquestion_bank_cities {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *CityMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedkc_class {
 		edges = append(edges, city.EdgeKcClass)
 	}
@@ -14325,6 +14489,9 @@ func (m *CityMutation) ClearedEdges() []string {
 	}
 	if m.cleareduser_city {
 		edges = append(edges, city.EdgeUserCity)
+	}
+	if m.clearedquestion_bank_cities {
+		edges = append(edges, city.EdgeQuestionBankCities)
 	}
 	return edges
 }
@@ -14339,6 +14506,8 @@ func (m *CityMutation) EdgeCleared(name string) bool {
 		return m.clearedcourse
 	case city.EdgeUserCity:
 		return m.cleareduser_city
+	case city.EdgeQuestionBankCities:
+		return m.clearedquestion_bank_cities
 	}
 	return false
 }
@@ -14363,6 +14532,9 @@ func (m *CityMutation) ResetEdge(name string) error {
 		return nil
 	case city.EdgeUserCity:
 		m.ResetUserCity()
+		return nil
+	case city.EdgeQuestionBankCities:
+		m.ResetQuestionBankCities()
 		return nil
 	}
 	return fmt.Errorf("unknown City edge %s", name)
@@ -15661,6 +15833,982 @@ func (m *CollectionMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Collection edge %s", name)
+}
+
+// GroupCardMutation represents an operation that mutates the GroupCard nodes in the graph.
+type GroupCardMutation struct {
+	config
+	op                Op
+	typ               string
+	id                *int
+	uuid              *string
+	created_at        *time.Time
+	updated_at        *time.Time
+	deleted_at        *time.Time
+	title             *string
+	sub_title         *string
+	status            *uint8
+	addstatus         *uint8
+	desc              *string
+	sort_order        *int
+	addsort_order     *int
+	clearedFields     map[string]struct{}
+	attachment        *int
+	clearedattachment bool
+	done              bool
+	oldValue          func(context.Context) (*GroupCard, error)
+	predicates        []predicate.GroupCard
+}
+
+var _ ent.Mutation = (*GroupCardMutation)(nil)
+
+// groupcardOption allows management of the mutation configuration using functional options.
+type groupcardOption func(*GroupCardMutation)
+
+// newGroupCardMutation creates new mutation for the GroupCard entity.
+func newGroupCardMutation(c config, op Op, opts ...groupcardOption) *GroupCardMutation {
+	m := &GroupCardMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeGroupCard,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withGroupCardID sets the ID field of the mutation.
+func withGroupCardID(id int) groupcardOption {
+	return func(m *GroupCardMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *GroupCard
+		)
+		m.oldValue = func(ctx context.Context) (*GroupCard, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().GroupCard.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withGroupCard sets the old GroupCard of the mutation.
+func withGroupCard(node *GroupCard) groupcardOption {
+	return func(m *GroupCardMutation) {
+		m.oldValue = func(context.Context) (*GroupCard, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m GroupCardMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m GroupCardMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID
+// is only available if it was provided to the builder.
+func (m *GroupCardMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetUUID sets the "uuid" field.
+func (m *GroupCardMutation) SetUUID(s string) {
+	m.uuid = &s
+}
+
+// UUID returns the value of the "uuid" field in the mutation.
+func (m *GroupCardMutation) UUID() (r string, exists bool) {
+	v := m.uuid
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUUID returns the old "uuid" field's value of the GroupCard entity.
+// If the GroupCard object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupCardMutation) OldUUID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUUID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUUID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUUID: %w", err)
+	}
+	return oldValue.UUID, nil
+}
+
+// ResetUUID resets all changes to the "uuid" field.
+func (m *GroupCardMutation) ResetUUID() {
+	m.uuid = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *GroupCardMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *GroupCardMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the GroupCard entity.
+// If the GroupCard object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupCardMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *GroupCardMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[groupcard.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *GroupCardMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[groupcard.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *GroupCardMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, groupcard.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *GroupCardMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *GroupCardMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the GroupCard entity.
+// If the GroupCard object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupCardMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *GroupCardMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[groupcard.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *GroupCardMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[groupcard.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *GroupCardMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, groupcard.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *GroupCardMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *GroupCardMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the GroupCard entity.
+// If the GroupCard object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupCardMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *GroupCardMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[groupcard.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *GroupCardMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[groupcard.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *GroupCardMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, groupcard.FieldDeletedAt)
+}
+
+// SetTitle sets the "title" field.
+func (m *GroupCardMutation) SetTitle(s string) {
+	m.title = &s
+}
+
+// Title returns the value of the "title" field in the mutation.
+func (m *GroupCardMutation) Title() (r string, exists bool) {
+	v := m.title
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTitle returns the old "title" field's value of the GroupCard entity.
+// If the GroupCard object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupCardMutation) OldTitle(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTitle is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTitle requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTitle: %w", err)
+	}
+	return oldValue.Title, nil
+}
+
+// ResetTitle resets all changes to the "title" field.
+func (m *GroupCardMutation) ResetTitle() {
+	m.title = nil
+}
+
+// SetSubTitle sets the "sub_title" field.
+func (m *GroupCardMutation) SetSubTitle(s string) {
+	m.sub_title = &s
+}
+
+// SubTitle returns the value of the "sub_title" field in the mutation.
+func (m *GroupCardMutation) SubTitle() (r string, exists bool) {
+	v := m.sub_title
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSubTitle returns the old "sub_title" field's value of the GroupCard entity.
+// If the GroupCard object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupCardMutation) OldSubTitle(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldSubTitle is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldSubTitle requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSubTitle: %w", err)
+	}
+	return oldValue.SubTitle, nil
+}
+
+// ResetSubTitle resets all changes to the "sub_title" field.
+func (m *GroupCardMutation) ResetSubTitle() {
+	m.sub_title = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *GroupCardMutation) SetStatus(u uint8) {
+	m.status = &u
+	m.addstatus = nil
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *GroupCardMutation) Status() (r uint8, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the GroupCard entity.
+// If the GroupCard object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupCardMutation) OldStatus(ctx context.Context) (v uint8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// AddStatus adds u to the "status" field.
+func (m *GroupCardMutation) AddStatus(u uint8) {
+	if m.addstatus != nil {
+		*m.addstatus += u
+	} else {
+		m.addstatus = &u
+	}
+}
+
+// AddedStatus returns the value that was added to the "status" field in this mutation.
+func (m *GroupCardMutation) AddedStatus() (r uint8, exists bool) {
+	v := m.addstatus
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *GroupCardMutation) ResetStatus() {
+	m.status = nil
+	m.addstatus = nil
+}
+
+// SetDesc sets the "desc" field.
+func (m *GroupCardMutation) SetDesc(s string) {
+	m.desc = &s
+}
+
+// Desc returns the value of the "desc" field in the mutation.
+func (m *GroupCardMutation) Desc() (r string, exists bool) {
+	v := m.desc
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDesc returns the old "desc" field's value of the GroupCard entity.
+// If the GroupCard object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupCardMutation) OldDesc(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDesc is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDesc requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDesc: %w", err)
+	}
+	return oldValue.Desc, nil
+}
+
+// ResetDesc resets all changes to the "desc" field.
+func (m *GroupCardMutation) ResetDesc() {
+	m.desc = nil
+}
+
+// SetSortOrder sets the "sort_order" field.
+func (m *GroupCardMutation) SetSortOrder(i int) {
+	m.sort_order = &i
+	m.addsort_order = nil
+}
+
+// SortOrder returns the value of the "sort_order" field in the mutation.
+func (m *GroupCardMutation) SortOrder() (r int, exists bool) {
+	v := m.sort_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSortOrder returns the old "sort_order" field's value of the GroupCard entity.
+// If the GroupCard object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupCardMutation) OldSortOrder(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldSortOrder is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldSortOrder requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSortOrder: %w", err)
+	}
+	return oldValue.SortOrder, nil
+}
+
+// AddSortOrder adds i to the "sort_order" field.
+func (m *GroupCardMutation) AddSortOrder(i int) {
+	if m.addsort_order != nil {
+		*m.addsort_order += i
+	} else {
+		m.addsort_order = &i
+	}
+}
+
+// AddedSortOrder returns the value that was added to the "sort_order" field in this mutation.
+func (m *GroupCardMutation) AddedSortOrder() (r int, exists bool) {
+	v := m.addsort_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSortOrder resets all changes to the "sort_order" field.
+func (m *GroupCardMutation) ResetSortOrder() {
+	m.sort_order = nil
+	m.addsort_order = nil
+}
+
+// SetAttachmentID sets the "attachment_id" field.
+func (m *GroupCardMutation) SetAttachmentID(i int) {
+	m.attachment = &i
+}
+
+// AttachmentID returns the value of the "attachment_id" field in the mutation.
+func (m *GroupCardMutation) AttachmentID() (r int, exists bool) {
+	v := m.attachment
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAttachmentID returns the old "attachment_id" field's value of the GroupCard entity.
+// If the GroupCard object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupCardMutation) OldAttachmentID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAttachmentID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAttachmentID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAttachmentID: %w", err)
+	}
+	return oldValue.AttachmentID, nil
+}
+
+// ClearAttachmentID clears the value of the "attachment_id" field.
+func (m *GroupCardMutation) ClearAttachmentID() {
+	m.attachment = nil
+	m.clearedFields[groupcard.FieldAttachmentID] = struct{}{}
+}
+
+// AttachmentIDCleared returns if the "attachment_id" field was cleared in this mutation.
+func (m *GroupCardMutation) AttachmentIDCleared() bool {
+	_, ok := m.clearedFields[groupcard.FieldAttachmentID]
+	return ok
+}
+
+// ResetAttachmentID resets all changes to the "attachment_id" field.
+func (m *GroupCardMutation) ResetAttachmentID() {
+	m.attachment = nil
+	delete(m.clearedFields, groupcard.FieldAttachmentID)
+}
+
+// ClearAttachment clears the "attachment" edge to the Attachment entity.
+func (m *GroupCardMutation) ClearAttachment() {
+	m.clearedattachment = true
+}
+
+// AttachmentCleared reports if the "attachment" edge to the Attachment entity was cleared.
+func (m *GroupCardMutation) AttachmentCleared() bool {
+	return m.AttachmentIDCleared() || m.clearedattachment
+}
+
+// AttachmentIDs returns the "attachment" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AttachmentID instead. It exists only for internal usage by the builders.
+func (m *GroupCardMutation) AttachmentIDs() (ids []int) {
+	if id := m.attachment; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetAttachment resets all changes to the "attachment" edge.
+func (m *GroupCardMutation) ResetAttachment() {
+	m.attachment = nil
+	m.clearedattachment = false
+}
+
+// Op returns the operation name.
+func (m *GroupCardMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (GroupCard).
+func (m *GroupCardMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *GroupCardMutation) Fields() []string {
+	fields := make([]string, 0, 10)
+	if m.uuid != nil {
+		fields = append(fields, groupcard.FieldUUID)
+	}
+	if m.created_at != nil {
+		fields = append(fields, groupcard.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, groupcard.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, groupcard.FieldDeletedAt)
+	}
+	if m.title != nil {
+		fields = append(fields, groupcard.FieldTitle)
+	}
+	if m.sub_title != nil {
+		fields = append(fields, groupcard.FieldSubTitle)
+	}
+	if m.status != nil {
+		fields = append(fields, groupcard.FieldStatus)
+	}
+	if m.desc != nil {
+		fields = append(fields, groupcard.FieldDesc)
+	}
+	if m.sort_order != nil {
+		fields = append(fields, groupcard.FieldSortOrder)
+	}
+	if m.attachment != nil {
+		fields = append(fields, groupcard.FieldAttachmentID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *GroupCardMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case groupcard.FieldUUID:
+		return m.UUID()
+	case groupcard.FieldCreatedAt:
+		return m.CreatedAt()
+	case groupcard.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case groupcard.FieldDeletedAt:
+		return m.DeletedAt()
+	case groupcard.FieldTitle:
+		return m.Title()
+	case groupcard.FieldSubTitle:
+		return m.SubTitle()
+	case groupcard.FieldStatus:
+		return m.Status()
+	case groupcard.FieldDesc:
+		return m.Desc()
+	case groupcard.FieldSortOrder:
+		return m.SortOrder()
+	case groupcard.FieldAttachmentID:
+		return m.AttachmentID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *GroupCardMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case groupcard.FieldUUID:
+		return m.OldUUID(ctx)
+	case groupcard.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case groupcard.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case groupcard.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case groupcard.FieldTitle:
+		return m.OldTitle(ctx)
+	case groupcard.FieldSubTitle:
+		return m.OldSubTitle(ctx)
+	case groupcard.FieldStatus:
+		return m.OldStatus(ctx)
+	case groupcard.FieldDesc:
+		return m.OldDesc(ctx)
+	case groupcard.FieldSortOrder:
+		return m.OldSortOrder(ctx)
+	case groupcard.FieldAttachmentID:
+		return m.OldAttachmentID(ctx)
+	}
+	return nil, fmt.Errorf("unknown GroupCard field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *GroupCardMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case groupcard.FieldUUID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUUID(v)
+		return nil
+	case groupcard.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case groupcard.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case groupcard.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case groupcard.FieldTitle:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTitle(v)
+		return nil
+	case groupcard.FieldSubTitle:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSubTitle(v)
+		return nil
+	case groupcard.FieldStatus:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case groupcard.FieldDesc:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDesc(v)
+		return nil
+	case groupcard.FieldSortOrder:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSortOrder(v)
+		return nil
+	case groupcard.FieldAttachmentID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAttachmentID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown GroupCard field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *GroupCardMutation) AddedFields() []string {
+	var fields []string
+	if m.addstatus != nil {
+		fields = append(fields, groupcard.FieldStatus)
+	}
+	if m.addsort_order != nil {
+		fields = append(fields, groupcard.FieldSortOrder)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *GroupCardMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case groupcard.FieldStatus:
+		return m.AddedStatus()
+	case groupcard.FieldSortOrder:
+		return m.AddedSortOrder()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *GroupCardMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case groupcard.FieldStatus:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddStatus(v)
+		return nil
+	case groupcard.FieldSortOrder:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSortOrder(v)
+		return nil
+	}
+	return fmt.Errorf("unknown GroupCard numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *GroupCardMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(groupcard.FieldCreatedAt) {
+		fields = append(fields, groupcard.FieldCreatedAt)
+	}
+	if m.FieldCleared(groupcard.FieldUpdatedAt) {
+		fields = append(fields, groupcard.FieldUpdatedAt)
+	}
+	if m.FieldCleared(groupcard.FieldDeletedAt) {
+		fields = append(fields, groupcard.FieldDeletedAt)
+	}
+	if m.FieldCleared(groupcard.FieldAttachmentID) {
+		fields = append(fields, groupcard.FieldAttachmentID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *GroupCardMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *GroupCardMutation) ClearField(name string) error {
+	switch name {
+	case groupcard.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case groupcard.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case groupcard.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case groupcard.FieldAttachmentID:
+		m.ClearAttachmentID()
+		return nil
+	}
+	return fmt.Errorf("unknown GroupCard nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *GroupCardMutation) ResetField(name string) error {
+	switch name {
+	case groupcard.FieldUUID:
+		m.ResetUUID()
+		return nil
+	case groupcard.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case groupcard.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case groupcard.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case groupcard.FieldTitle:
+		m.ResetTitle()
+		return nil
+	case groupcard.FieldSubTitle:
+		m.ResetSubTitle()
+		return nil
+	case groupcard.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case groupcard.FieldDesc:
+		m.ResetDesc()
+		return nil
+	case groupcard.FieldSortOrder:
+		m.ResetSortOrder()
+		return nil
+	case groupcard.FieldAttachmentID:
+		m.ResetAttachmentID()
+		return nil
+	}
+	return fmt.Errorf("unknown GroupCard field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *GroupCardMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.attachment != nil {
+		edges = append(edges, groupcard.EdgeAttachment)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *GroupCardMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case groupcard.EdgeAttachment:
+		if id := m.attachment; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *GroupCardMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *GroupCardMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *GroupCardMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedattachment {
+		edges = append(edges, groupcard.EdgeAttachment)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *GroupCardMutation) EdgeCleared(name string) bool {
+	switch name {
+	case groupcard.EdgeAttachment:
+		return m.clearedattachment
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *GroupCardMutation) ClearEdge(name string) error {
+	switch name {
+	case groupcard.EdgeAttachment:
+		m.ClearAttachment()
+		return nil
+	}
+	return fmt.Errorf("unknown GroupCard unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *GroupCardMutation) ResetEdge(name string) error {
+	switch name {
+	case groupcard.EdgeAttachment:
+		m.ResetAttachment()
+		return nil
+	}
+	return fmt.Errorf("unknown GroupCard edge %s", name)
 }
 
 // HotSearchMutation represents an operation that mutates the HotSearch nodes in the graph.
@@ -36777,38 +37925,981 @@ func (m *KcVideoUploadTaskMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown KcVideoUploadTask edge %s", name)
 }
 
+// LevelMutation represents an operation that mutates the Level nodes in the graph.
+type LevelMutation struct {
+	config
+	op                          Op
+	typ                         string
+	id                          *int
+	uuid                        *string
+	created_at                  *time.Time
+	updated_at                  *time.Time
+	deleted_at                  *time.Time
+	name                        *string
+	status                      *uint8
+	addstatus                   *uint8
+	code                        *string
+	desc                        *string
+	sort_order                  *int
+	addsort_order               *int
+	clearedFields               map[string]struct{}
+	level_question_banks        map[int]struct{}
+	removedlevel_question_banks map[int]struct{}
+	clearedlevel_question_banks bool
+	done                        bool
+	oldValue                    func(context.Context) (*Level, error)
+	predicates                  []predicate.Level
+}
+
+var _ ent.Mutation = (*LevelMutation)(nil)
+
+// levelOption allows management of the mutation configuration using functional options.
+type levelOption func(*LevelMutation)
+
+// newLevelMutation creates new mutation for the Level entity.
+func newLevelMutation(c config, op Op, opts ...levelOption) *LevelMutation {
+	m := &LevelMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeLevel,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withLevelID sets the ID field of the mutation.
+func withLevelID(id int) levelOption {
+	return func(m *LevelMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Level
+		)
+		m.oldValue = func(ctx context.Context) (*Level, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Level.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withLevel sets the old Level of the mutation.
+func withLevel(node *Level) levelOption {
+	return func(m *LevelMutation) {
+		m.oldValue = func(context.Context) (*Level, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m LevelMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m LevelMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID
+// is only available if it was provided to the builder.
+func (m *LevelMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetUUID sets the "uuid" field.
+func (m *LevelMutation) SetUUID(s string) {
+	m.uuid = &s
+}
+
+// UUID returns the value of the "uuid" field in the mutation.
+func (m *LevelMutation) UUID() (r string, exists bool) {
+	v := m.uuid
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUUID returns the old "uuid" field's value of the Level entity.
+// If the Level object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LevelMutation) OldUUID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUUID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUUID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUUID: %w", err)
+	}
+	return oldValue.UUID, nil
+}
+
+// ResetUUID resets all changes to the "uuid" field.
+func (m *LevelMutation) ResetUUID() {
+	m.uuid = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *LevelMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *LevelMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Level entity.
+// If the Level object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LevelMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *LevelMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[level.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *LevelMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[level.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *LevelMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, level.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *LevelMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *LevelMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Level entity.
+// If the Level object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LevelMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *LevelMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[level.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *LevelMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[level.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *LevelMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, level.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *LevelMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *LevelMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Level entity.
+// If the Level object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LevelMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *LevelMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[level.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *LevelMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[level.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *LevelMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, level.FieldDeletedAt)
+}
+
+// SetName sets the "name" field.
+func (m *LevelMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *LevelMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Level entity.
+// If the Level object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LevelMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *LevelMutation) ResetName() {
+	m.name = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *LevelMutation) SetStatus(u uint8) {
+	m.status = &u
+	m.addstatus = nil
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *LevelMutation) Status() (r uint8, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the Level entity.
+// If the Level object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LevelMutation) OldStatus(ctx context.Context) (v uint8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// AddStatus adds u to the "status" field.
+func (m *LevelMutation) AddStatus(u uint8) {
+	if m.addstatus != nil {
+		*m.addstatus += u
+	} else {
+		m.addstatus = &u
+	}
+}
+
+// AddedStatus returns the value that was added to the "status" field in this mutation.
+func (m *LevelMutation) AddedStatus() (r uint8, exists bool) {
+	v := m.addstatus
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *LevelMutation) ResetStatus() {
+	m.status = nil
+	m.addstatus = nil
+}
+
+// SetCode sets the "code" field.
+func (m *LevelMutation) SetCode(s string) {
+	m.code = &s
+}
+
+// Code returns the value of the "code" field in the mutation.
+func (m *LevelMutation) Code() (r string, exists bool) {
+	v := m.code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCode returns the old "code" field's value of the Level entity.
+// If the Level object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LevelMutation) OldCode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCode: %w", err)
+	}
+	return oldValue.Code, nil
+}
+
+// ResetCode resets all changes to the "code" field.
+func (m *LevelMutation) ResetCode() {
+	m.code = nil
+}
+
+// SetDesc sets the "desc" field.
+func (m *LevelMutation) SetDesc(s string) {
+	m.desc = &s
+}
+
+// Desc returns the value of the "desc" field in the mutation.
+func (m *LevelMutation) Desc() (r string, exists bool) {
+	v := m.desc
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDesc returns the old "desc" field's value of the Level entity.
+// If the Level object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LevelMutation) OldDesc(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDesc is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDesc requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDesc: %w", err)
+	}
+	return oldValue.Desc, nil
+}
+
+// ResetDesc resets all changes to the "desc" field.
+func (m *LevelMutation) ResetDesc() {
+	m.desc = nil
+}
+
+// SetSortOrder sets the "sort_order" field.
+func (m *LevelMutation) SetSortOrder(i int) {
+	m.sort_order = &i
+	m.addsort_order = nil
+}
+
+// SortOrder returns the value of the "sort_order" field in the mutation.
+func (m *LevelMutation) SortOrder() (r int, exists bool) {
+	v := m.sort_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSortOrder returns the old "sort_order" field's value of the Level entity.
+// If the Level object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LevelMutation) OldSortOrder(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldSortOrder is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldSortOrder requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSortOrder: %w", err)
+	}
+	return oldValue.SortOrder, nil
+}
+
+// AddSortOrder adds i to the "sort_order" field.
+func (m *LevelMutation) AddSortOrder(i int) {
+	if m.addsort_order != nil {
+		*m.addsort_order += i
+	} else {
+		m.addsort_order = &i
+	}
+}
+
+// AddedSortOrder returns the value that was added to the "sort_order" field in this mutation.
+func (m *LevelMutation) AddedSortOrder() (r int, exists bool) {
+	v := m.addsort_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSortOrder resets all changes to the "sort_order" field.
+func (m *LevelMutation) ResetSortOrder() {
+	m.sort_order = nil
+	m.addsort_order = nil
+}
+
+// AddLevelQuestionBankIDs adds the "level_question_banks" edge to the TkQuestionBank entity by ids.
+func (m *LevelMutation) AddLevelQuestionBankIDs(ids ...int) {
+	if m.level_question_banks == nil {
+		m.level_question_banks = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.level_question_banks[ids[i]] = struct{}{}
+	}
+}
+
+// ClearLevelQuestionBanks clears the "level_question_banks" edge to the TkQuestionBank entity.
+func (m *LevelMutation) ClearLevelQuestionBanks() {
+	m.clearedlevel_question_banks = true
+}
+
+// LevelQuestionBanksCleared reports if the "level_question_banks" edge to the TkQuestionBank entity was cleared.
+func (m *LevelMutation) LevelQuestionBanksCleared() bool {
+	return m.clearedlevel_question_banks
+}
+
+// RemoveLevelQuestionBankIDs removes the "level_question_banks" edge to the TkQuestionBank entity by IDs.
+func (m *LevelMutation) RemoveLevelQuestionBankIDs(ids ...int) {
+	if m.removedlevel_question_banks == nil {
+		m.removedlevel_question_banks = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedlevel_question_banks[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedLevelQuestionBanks returns the removed IDs of the "level_question_banks" edge to the TkQuestionBank entity.
+func (m *LevelMutation) RemovedLevelQuestionBanksIDs() (ids []int) {
+	for id := range m.removedlevel_question_banks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// LevelQuestionBanksIDs returns the "level_question_banks" edge IDs in the mutation.
+func (m *LevelMutation) LevelQuestionBanksIDs() (ids []int) {
+	for id := range m.level_question_banks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetLevelQuestionBanks resets all changes to the "level_question_banks" edge.
+func (m *LevelMutation) ResetLevelQuestionBanks() {
+	m.level_question_banks = nil
+	m.clearedlevel_question_banks = false
+	m.removedlevel_question_banks = nil
+}
+
+// Op returns the operation name.
+func (m *LevelMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (Level).
+func (m *LevelMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *LevelMutation) Fields() []string {
+	fields := make([]string, 0, 9)
+	if m.uuid != nil {
+		fields = append(fields, level.FieldUUID)
+	}
+	if m.created_at != nil {
+		fields = append(fields, level.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, level.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, level.FieldDeletedAt)
+	}
+	if m.name != nil {
+		fields = append(fields, level.FieldName)
+	}
+	if m.status != nil {
+		fields = append(fields, level.FieldStatus)
+	}
+	if m.code != nil {
+		fields = append(fields, level.FieldCode)
+	}
+	if m.desc != nil {
+		fields = append(fields, level.FieldDesc)
+	}
+	if m.sort_order != nil {
+		fields = append(fields, level.FieldSortOrder)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *LevelMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case level.FieldUUID:
+		return m.UUID()
+	case level.FieldCreatedAt:
+		return m.CreatedAt()
+	case level.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case level.FieldDeletedAt:
+		return m.DeletedAt()
+	case level.FieldName:
+		return m.Name()
+	case level.FieldStatus:
+		return m.Status()
+	case level.FieldCode:
+		return m.Code()
+	case level.FieldDesc:
+		return m.Desc()
+	case level.FieldSortOrder:
+		return m.SortOrder()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *LevelMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case level.FieldUUID:
+		return m.OldUUID(ctx)
+	case level.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case level.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case level.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case level.FieldName:
+		return m.OldName(ctx)
+	case level.FieldStatus:
+		return m.OldStatus(ctx)
+	case level.FieldCode:
+		return m.OldCode(ctx)
+	case level.FieldDesc:
+		return m.OldDesc(ctx)
+	case level.FieldSortOrder:
+		return m.OldSortOrder(ctx)
+	}
+	return nil, fmt.Errorf("unknown Level field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *LevelMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case level.FieldUUID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUUID(v)
+		return nil
+	case level.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case level.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case level.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case level.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case level.FieldStatus:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case level.FieldCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCode(v)
+		return nil
+	case level.FieldDesc:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDesc(v)
+		return nil
+	case level.FieldSortOrder:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSortOrder(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Level field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *LevelMutation) AddedFields() []string {
+	var fields []string
+	if m.addstatus != nil {
+		fields = append(fields, level.FieldStatus)
+	}
+	if m.addsort_order != nil {
+		fields = append(fields, level.FieldSortOrder)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *LevelMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case level.FieldStatus:
+		return m.AddedStatus()
+	case level.FieldSortOrder:
+		return m.AddedSortOrder()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *LevelMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case level.FieldStatus:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddStatus(v)
+		return nil
+	case level.FieldSortOrder:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSortOrder(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Level numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *LevelMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(level.FieldCreatedAt) {
+		fields = append(fields, level.FieldCreatedAt)
+	}
+	if m.FieldCleared(level.FieldUpdatedAt) {
+		fields = append(fields, level.FieldUpdatedAt)
+	}
+	if m.FieldCleared(level.FieldDeletedAt) {
+		fields = append(fields, level.FieldDeletedAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *LevelMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *LevelMutation) ClearField(name string) error {
+	switch name {
+	case level.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case level.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case level.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown Level nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *LevelMutation) ResetField(name string) error {
+	switch name {
+	case level.FieldUUID:
+		m.ResetUUID()
+		return nil
+	case level.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case level.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case level.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case level.FieldName:
+		m.ResetName()
+		return nil
+	case level.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case level.FieldCode:
+		m.ResetCode()
+		return nil
+	case level.FieldDesc:
+		m.ResetDesc()
+		return nil
+	case level.FieldSortOrder:
+		m.ResetSortOrder()
+		return nil
+	}
+	return fmt.Errorf("unknown Level field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *LevelMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.level_question_banks != nil {
+		edges = append(edges, level.EdgeLevelQuestionBanks)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *LevelMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case level.EdgeLevelQuestionBanks:
+		ids := make([]ent.Value, 0, len(m.level_question_banks))
+		for id := range m.level_question_banks {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *LevelMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedlevel_question_banks != nil {
+		edges = append(edges, level.EdgeLevelQuestionBanks)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *LevelMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case level.EdgeLevelQuestionBanks:
+		ids := make([]ent.Value, 0, len(m.removedlevel_question_banks))
+		for id := range m.removedlevel_question_banks {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *LevelMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedlevel_question_banks {
+		edges = append(edges, level.EdgeLevelQuestionBanks)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *LevelMutation) EdgeCleared(name string) bool {
+	switch name {
+	case level.EdgeLevelQuestionBanks:
+		return m.clearedlevel_question_banks
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *LevelMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Level unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *LevelMutation) ResetEdge(name string) error {
+	switch name {
+	case level.EdgeLevelQuestionBanks:
+		m.ResetLevelQuestionBanks()
+		return nil
+	}
+	return fmt.Errorf("unknown Level edge %s", name)
+}
+
 // MajorMutation represents an operation that mutates the Major nodes in the graph.
 type MajorMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *int
-	uuid                *string
-	created_at          *time.Time
-	updated_at          *time.Time
-	deleted_at          *time.Time
-	name                *string
-	status              *uint8
-	addstatus           *uint8
-	code                *string
-	desc                *string
-	sort_order          *int
-	addsort_order       *int
-	clearedFields       map[string]struct{}
-	teachers            map[int]struct{}
-	removedteachers     map[int]struct{}
-	clearedteachers     bool
-	major_detail        *int
-	clearedmajor_detail bool
-	kc_classes          map[int]struct{}
-	removedkc_classes   map[int]struct{}
-	clearedkc_classes   bool
-	courses             map[int]struct{}
-	removedcourses      map[int]struct{}
-	clearedcourses      bool
-	done                bool
-	oldValue            func(context.Context) (*Major, error)
-	predicates          []predicate.Major
+	op                          Op
+	typ                         string
+	id                          *int
+	uuid                        *string
+	created_at                  *time.Time
+	updated_at                  *time.Time
+	deleted_at                  *time.Time
+	name                        *string
+	status                      *uint8
+	addstatus                   *uint8
+	code                        *string
+	desc                        *string
+	sort_order                  *int
+	addsort_order               *int
+	clearedFields               map[string]struct{}
+	teachers                    map[int]struct{}
+	removedteachers             map[int]struct{}
+	clearedteachers             bool
+	major_detail                *int
+	clearedmajor_detail         bool
+	kc_classes                  map[int]struct{}
+	removedkc_classes           map[int]struct{}
+	clearedkc_classes           bool
+	courses                     map[int]struct{}
+	removedcourses              map[int]struct{}
+	clearedcourses              bool
+	question_bank_majors        map[int]struct{}
+	removedquestion_bank_majors map[int]struct{}
+	clearedquestion_bank_majors bool
+	done                        bool
+	oldValue                    func(context.Context) (*Major, error)
+	predicates                  []predicate.Major
 }
 
 var _ ent.Mutation = (*MajorMutation)(nil)
@@ -37491,6 +39582,59 @@ func (m *MajorMutation) ResetCourses() {
 	m.removedcourses = nil
 }
 
+// AddQuestionBankMajorIDs adds the "question_bank_majors" edge to the TkQuestionBankMajor entity by ids.
+func (m *MajorMutation) AddQuestionBankMajorIDs(ids ...int) {
+	if m.question_bank_majors == nil {
+		m.question_bank_majors = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.question_bank_majors[ids[i]] = struct{}{}
+	}
+}
+
+// ClearQuestionBankMajors clears the "question_bank_majors" edge to the TkQuestionBankMajor entity.
+func (m *MajorMutation) ClearQuestionBankMajors() {
+	m.clearedquestion_bank_majors = true
+}
+
+// QuestionBankMajorsCleared reports if the "question_bank_majors" edge to the TkQuestionBankMajor entity was cleared.
+func (m *MajorMutation) QuestionBankMajorsCleared() bool {
+	return m.clearedquestion_bank_majors
+}
+
+// RemoveQuestionBankMajorIDs removes the "question_bank_majors" edge to the TkQuestionBankMajor entity by IDs.
+func (m *MajorMutation) RemoveQuestionBankMajorIDs(ids ...int) {
+	if m.removedquestion_bank_majors == nil {
+		m.removedquestion_bank_majors = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedquestion_bank_majors[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedQuestionBankMajors returns the removed IDs of the "question_bank_majors" edge to the TkQuestionBankMajor entity.
+func (m *MajorMutation) RemovedQuestionBankMajorsIDs() (ids []int) {
+	for id := range m.removedquestion_bank_majors {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// QuestionBankMajorsIDs returns the "question_bank_majors" edge IDs in the mutation.
+func (m *MajorMutation) QuestionBankMajorsIDs() (ids []int) {
+	for id := range m.question_bank_majors {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetQuestionBankMajors resets all changes to the "question_bank_majors" edge.
+func (m *MajorMutation) ResetQuestionBankMajors() {
+	m.question_bank_majors = nil
+	m.clearedquestion_bank_majors = false
+	m.removedquestion_bank_majors = nil
+}
+
 // Op returns the operation name.
 func (m *MajorMutation) Op() Op {
 	return m.op
@@ -37788,7 +39932,7 @@ func (m *MajorMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MajorMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.teachers != nil {
 		edges = append(edges, major.EdgeTeachers)
 	}
@@ -37800,6 +39944,9 @@ func (m *MajorMutation) AddedEdges() []string {
 	}
 	if m.courses != nil {
 		edges = append(edges, major.EdgeCourses)
+	}
+	if m.question_bank_majors != nil {
+		edges = append(edges, major.EdgeQuestionBankMajors)
 	}
 	return edges
 }
@@ -37830,13 +39977,19 @@ func (m *MajorMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case major.EdgeQuestionBankMajors:
+		ids := make([]ent.Value, 0, len(m.question_bank_majors))
+		for id := range m.question_bank_majors {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MajorMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.removedteachers != nil {
 		edges = append(edges, major.EdgeTeachers)
 	}
@@ -37845,6 +39998,9 @@ func (m *MajorMutation) RemovedEdges() []string {
 	}
 	if m.removedcourses != nil {
 		edges = append(edges, major.EdgeCourses)
+	}
+	if m.removedquestion_bank_majors != nil {
+		edges = append(edges, major.EdgeQuestionBankMajors)
 	}
 	return edges
 }
@@ -37871,13 +40027,19 @@ func (m *MajorMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case major.EdgeQuestionBankMajors:
+		ids := make([]ent.Value, 0, len(m.removedquestion_bank_majors))
+		for id := range m.removedquestion_bank_majors {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MajorMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.clearedteachers {
 		edges = append(edges, major.EdgeTeachers)
 	}
@@ -37889,6 +40051,9 @@ func (m *MajorMutation) ClearedEdges() []string {
 	}
 	if m.clearedcourses {
 		edges = append(edges, major.EdgeCourses)
+	}
+	if m.clearedquestion_bank_majors {
+		edges = append(edges, major.EdgeQuestionBankMajors)
 	}
 	return edges
 }
@@ -37905,6 +40070,8 @@ func (m *MajorMutation) EdgeCleared(name string) bool {
 		return m.clearedkc_classes
 	case major.EdgeCourses:
 		return m.clearedcourses
+	case major.EdgeQuestionBankMajors:
+		return m.clearedquestion_bank_majors
 	}
 	return false
 }
@@ -37935,6 +40102,9 @@ func (m *MajorMutation) ResetEdge(name string) error {
 		return nil
 	case major.EdgeCourses:
 		m.ResetCourses()
+		return nil
+	case major.EdgeQuestionBankMajors:
+		m.ResetQuestionBankMajors()
 		return nil
 	}
 	return fmt.Errorf("unknown Major edge %s", name)
@@ -62217,6 +64387,8 @@ type TkQuestionBankMutation struct {
 	clearedFields                map[string]struct{}
 	item_category                *int
 	cleareditem_category         bool
+	level                        *int
+	clearedlevel                 bool
 	admin                        *int
 	clearedadmin                 bool
 	question_chapters            map[int]struct{}
@@ -62243,6 +64415,12 @@ type TkQuestionBankMutation struct {
 	knowledge_points             map[int]struct{}
 	removedknowledge_points      map[int]struct{}
 	clearedknowledge_points      bool
+	city_question_banks          map[int]struct{}
+	removedcity_question_banks   map[int]struct{}
+	clearedcity_question_banks   bool
+	major_question_banks         map[int]struct{}
+	removedmajor_question_banks  map[int]struct{}
+	clearedmajor_question_banks  bool
 	done                         bool
 	oldValue                     func(context.Context) (*TkQuestionBank, error)
 	predicates                   []predicate.TkQuestionBank
@@ -62756,6 +64934,55 @@ func (m *TkQuestionBankMutation) ResetItemCategoryID() {
 	delete(m.clearedFields, tkquestionbank.FieldItemCategoryID)
 }
 
+// SetLevelID sets the "level_id" field.
+func (m *TkQuestionBankMutation) SetLevelID(i int) {
+	m.level = &i
+}
+
+// LevelID returns the value of the "level_id" field in the mutation.
+func (m *TkQuestionBankMutation) LevelID() (r int, exists bool) {
+	v := m.level
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLevelID returns the old "level_id" field's value of the TkQuestionBank entity.
+// If the TkQuestionBank object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TkQuestionBankMutation) OldLevelID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldLevelID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldLevelID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLevelID: %w", err)
+	}
+	return oldValue.LevelID, nil
+}
+
+// ClearLevelID clears the value of the "level_id" field.
+func (m *TkQuestionBankMutation) ClearLevelID() {
+	m.level = nil
+	m.clearedFields[tkquestionbank.FieldLevelID] = struct{}{}
+}
+
+// LevelIDCleared returns if the "level_id" field was cleared in this mutation.
+func (m *TkQuestionBankMutation) LevelIDCleared() bool {
+	_, ok := m.clearedFields[tkquestionbank.FieldLevelID]
+	return ok
+}
+
+// ResetLevelID resets all changes to the "level_id" field.
+func (m *TkQuestionBankMutation) ResetLevelID() {
+	m.level = nil
+	delete(m.clearedFields, tkquestionbank.FieldLevelID)
+}
+
 // ClearItemCategory clears the "item_category" edge to the ItemCategory entity.
 func (m *TkQuestionBankMutation) ClearItemCategory() {
 	m.cleareditem_category = true
@@ -62780,6 +65007,32 @@ func (m *TkQuestionBankMutation) ItemCategoryIDs() (ids []int) {
 func (m *TkQuestionBankMutation) ResetItemCategory() {
 	m.item_category = nil
 	m.cleareditem_category = false
+}
+
+// ClearLevel clears the "level" edge to the Level entity.
+func (m *TkQuestionBankMutation) ClearLevel() {
+	m.clearedlevel = true
+}
+
+// LevelCleared reports if the "level" edge to the Level entity was cleared.
+func (m *TkQuestionBankMutation) LevelCleared() bool {
+	return m.LevelIDCleared() || m.clearedlevel
+}
+
+// LevelIDs returns the "level" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// LevelID instead. It exists only for internal usage by the builders.
+func (m *TkQuestionBankMutation) LevelIDs() (ids []int) {
+	if id := m.level; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetLevel resets all changes to the "level" edge.
+func (m *TkQuestionBankMutation) ResetLevel() {
+	m.level = nil
+	m.clearedlevel = false
 }
 
 // SetAdminID sets the "admin" edge to the Admin entity by id.
@@ -63245,6 +65498,112 @@ func (m *TkQuestionBankMutation) ResetKnowledgePoints() {
 	m.removedknowledge_points = nil
 }
 
+// AddCityQuestionBankIDs adds the "city_question_banks" edge to the TkQuestionBankCity entity by ids.
+func (m *TkQuestionBankMutation) AddCityQuestionBankIDs(ids ...int) {
+	if m.city_question_banks == nil {
+		m.city_question_banks = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.city_question_banks[ids[i]] = struct{}{}
+	}
+}
+
+// ClearCityQuestionBanks clears the "city_question_banks" edge to the TkQuestionBankCity entity.
+func (m *TkQuestionBankMutation) ClearCityQuestionBanks() {
+	m.clearedcity_question_banks = true
+}
+
+// CityQuestionBanksCleared reports if the "city_question_banks" edge to the TkQuestionBankCity entity was cleared.
+func (m *TkQuestionBankMutation) CityQuestionBanksCleared() bool {
+	return m.clearedcity_question_banks
+}
+
+// RemoveCityQuestionBankIDs removes the "city_question_banks" edge to the TkQuestionBankCity entity by IDs.
+func (m *TkQuestionBankMutation) RemoveCityQuestionBankIDs(ids ...int) {
+	if m.removedcity_question_banks == nil {
+		m.removedcity_question_banks = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedcity_question_banks[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedCityQuestionBanks returns the removed IDs of the "city_question_banks" edge to the TkQuestionBankCity entity.
+func (m *TkQuestionBankMutation) RemovedCityQuestionBanksIDs() (ids []int) {
+	for id := range m.removedcity_question_banks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// CityQuestionBanksIDs returns the "city_question_banks" edge IDs in the mutation.
+func (m *TkQuestionBankMutation) CityQuestionBanksIDs() (ids []int) {
+	for id := range m.city_question_banks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetCityQuestionBanks resets all changes to the "city_question_banks" edge.
+func (m *TkQuestionBankMutation) ResetCityQuestionBanks() {
+	m.city_question_banks = nil
+	m.clearedcity_question_banks = false
+	m.removedcity_question_banks = nil
+}
+
+// AddMajorQuestionBankIDs adds the "major_question_banks" edge to the TkQuestionBankMajor entity by ids.
+func (m *TkQuestionBankMutation) AddMajorQuestionBankIDs(ids ...int) {
+	if m.major_question_banks == nil {
+		m.major_question_banks = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.major_question_banks[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMajorQuestionBanks clears the "major_question_banks" edge to the TkQuestionBankMajor entity.
+func (m *TkQuestionBankMutation) ClearMajorQuestionBanks() {
+	m.clearedmajor_question_banks = true
+}
+
+// MajorQuestionBanksCleared reports if the "major_question_banks" edge to the TkQuestionBankMajor entity was cleared.
+func (m *TkQuestionBankMutation) MajorQuestionBanksCleared() bool {
+	return m.clearedmajor_question_banks
+}
+
+// RemoveMajorQuestionBankIDs removes the "major_question_banks" edge to the TkQuestionBankMajor entity by IDs.
+func (m *TkQuestionBankMutation) RemoveMajorQuestionBankIDs(ids ...int) {
+	if m.removedmajor_question_banks == nil {
+		m.removedmajor_question_banks = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedmajor_question_banks[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMajorQuestionBanks returns the removed IDs of the "major_question_banks" edge to the TkQuestionBankMajor entity.
+func (m *TkQuestionBankMutation) RemovedMajorQuestionBanksIDs() (ids []int) {
+	for id := range m.removedmajor_question_banks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MajorQuestionBanksIDs returns the "major_question_banks" edge IDs in the mutation.
+func (m *TkQuestionBankMutation) MajorQuestionBanksIDs() (ids []int) {
+	for id := range m.major_question_banks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMajorQuestionBanks resets all changes to the "major_question_banks" edge.
+func (m *TkQuestionBankMutation) ResetMajorQuestionBanks() {
+	m.major_question_banks = nil
+	m.clearedmajor_question_banks = false
+	m.removedmajor_question_banks = nil
+}
+
 // Op returns the operation name.
 func (m *TkQuestionBankMutation) Op() Op {
 	return m.op
@@ -63259,7 +65618,7 @@ func (m *TkQuestionBankMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TkQuestionBankMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.uuid != nil {
 		fields = append(fields, tkquestionbank.FieldUUID)
 	}
@@ -63287,6 +65646,9 @@ func (m *TkQuestionBankMutation) Fields() []string {
 	if m.item_category != nil {
 		fields = append(fields, tkquestionbank.FieldItemCategoryID)
 	}
+	if m.level != nil {
+		fields = append(fields, tkquestionbank.FieldLevelID)
+	}
 	return fields
 }
 
@@ -63313,6 +65675,8 @@ func (m *TkQuestionBankMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAdminID()
 	case tkquestionbank.FieldItemCategoryID:
 		return m.ItemCategoryID()
+	case tkquestionbank.FieldLevelID:
+		return m.LevelID()
 	}
 	return nil, false
 }
@@ -63340,6 +65704,8 @@ func (m *TkQuestionBankMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldCreatedAdminID(ctx)
 	case tkquestionbank.FieldItemCategoryID:
 		return m.OldItemCategoryID(ctx)
+	case tkquestionbank.FieldLevelID:
+		return m.OldLevelID(ctx)
 	}
 	return nil, fmt.Errorf("unknown TkQuestionBank field %s", name)
 }
@@ -63411,6 +65777,13 @@ func (m *TkQuestionBankMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetItemCategoryID(v)
+		return nil
+	case tkquestionbank.FieldLevelID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLevelID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TkQuestionBank field %s", name)
@@ -63484,6 +65857,9 @@ func (m *TkQuestionBankMutation) ClearedFields() []string {
 	if m.FieldCleared(tkquestionbank.FieldItemCategoryID) {
 		fields = append(fields, tkquestionbank.FieldItemCategoryID)
 	}
+	if m.FieldCleared(tkquestionbank.FieldLevelID) {
+		fields = append(fields, tkquestionbank.FieldLevelID)
+	}
 	return fields
 }
 
@@ -63512,6 +65888,9 @@ func (m *TkQuestionBankMutation) ClearField(name string) error {
 		return nil
 	case tkquestionbank.FieldItemCategoryID:
 		m.ClearItemCategoryID()
+		return nil
+	case tkquestionbank.FieldLevelID:
+		m.ClearLevelID()
 		return nil
 	}
 	return fmt.Errorf("unknown TkQuestionBank nullable field %s", name)
@@ -63548,15 +65927,21 @@ func (m *TkQuestionBankMutation) ResetField(name string) error {
 	case tkquestionbank.FieldItemCategoryID:
 		m.ResetItemCategoryID()
 		return nil
+	case tkquestionbank.FieldLevelID:
+		m.ResetLevelID()
+		return nil
 	}
 	return fmt.Errorf("unknown TkQuestionBank field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TkQuestionBankMutation) AddedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 13)
 	if m.item_category != nil {
 		edges = append(edges, tkquestionbank.EdgeItemCategory)
+	}
+	if m.level != nil {
+		edges = append(edges, tkquestionbank.EdgeLevel)
 	}
 	if m.admin != nil {
 		edges = append(edges, tkquestionbank.EdgeAdmin)
@@ -63585,6 +65970,12 @@ func (m *TkQuestionBankMutation) AddedEdges() []string {
 	if m.knowledge_points != nil {
 		edges = append(edges, tkquestionbank.EdgeKnowledgePoints)
 	}
+	if m.city_question_banks != nil {
+		edges = append(edges, tkquestionbank.EdgeCityQuestionBanks)
+	}
+	if m.major_question_banks != nil {
+		edges = append(edges, tkquestionbank.EdgeMajorQuestionBanks)
+	}
 	return edges
 }
 
@@ -63594,6 +65985,10 @@ func (m *TkQuestionBankMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case tkquestionbank.EdgeItemCategory:
 		if id := m.item_category; id != nil {
+			return []ent.Value{*id}
+		}
+	case tkquestionbank.EdgeLevel:
+		if id := m.level; id != nil {
 			return []ent.Value{*id}
 		}
 	case tkquestionbank.EdgeAdmin:
@@ -63648,13 +66043,25 @@ func (m *TkQuestionBankMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case tkquestionbank.EdgeCityQuestionBanks:
+		ids := make([]ent.Value, 0, len(m.city_question_banks))
+		for id := range m.city_question_banks {
+			ids = append(ids, id)
+		}
+		return ids
+	case tkquestionbank.EdgeMajorQuestionBanks:
+		ids := make([]ent.Value, 0, len(m.major_question_banks))
+		for id := range m.major_question_banks {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TkQuestionBankMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 13)
 	if m.removedquestion_chapters != nil {
 		edges = append(edges, tkquestionbank.EdgeQuestionChapters)
 	}
@@ -63678,6 +66085,12 @@ func (m *TkQuestionBankMutation) RemovedEdges() []string {
 	}
 	if m.removedknowledge_points != nil {
 		edges = append(edges, tkquestionbank.EdgeKnowledgePoints)
+	}
+	if m.removedcity_question_banks != nil {
+		edges = append(edges, tkquestionbank.EdgeCityQuestionBanks)
+	}
+	if m.removedmajor_question_banks != nil {
+		edges = append(edges, tkquestionbank.EdgeMajorQuestionBanks)
 	}
 	return edges
 }
@@ -63734,15 +66147,30 @@ func (m *TkQuestionBankMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case tkquestionbank.EdgeCityQuestionBanks:
+		ids := make([]ent.Value, 0, len(m.removedcity_question_banks))
+		for id := range m.removedcity_question_banks {
+			ids = append(ids, id)
+		}
+		return ids
+	case tkquestionbank.EdgeMajorQuestionBanks:
+		ids := make([]ent.Value, 0, len(m.removedmajor_question_banks))
+		for id := range m.removedmajor_question_banks {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TkQuestionBankMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 13)
 	if m.cleareditem_category {
 		edges = append(edges, tkquestionbank.EdgeItemCategory)
+	}
+	if m.clearedlevel {
+		edges = append(edges, tkquestionbank.EdgeLevel)
 	}
 	if m.clearedadmin {
 		edges = append(edges, tkquestionbank.EdgeAdmin)
@@ -63771,6 +66199,12 @@ func (m *TkQuestionBankMutation) ClearedEdges() []string {
 	if m.clearedknowledge_points {
 		edges = append(edges, tkquestionbank.EdgeKnowledgePoints)
 	}
+	if m.clearedcity_question_banks {
+		edges = append(edges, tkquestionbank.EdgeCityQuestionBanks)
+	}
+	if m.clearedmajor_question_banks {
+		edges = append(edges, tkquestionbank.EdgeMajorQuestionBanks)
+	}
 	return edges
 }
 
@@ -63780,6 +66214,8 @@ func (m *TkQuestionBankMutation) EdgeCleared(name string) bool {
 	switch name {
 	case tkquestionbank.EdgeItemCategory:
 		return m.cleareditem_category
+	case tkquestionbank.EdgeLevel:
+		return m.clearedlevel
 	case tkquestionbank.EdgeAdmin:
 		return m.clearedadmin
 	case tkquestionbank.EdgeQuestionChapters:
@@ -63798,6 +66234,10 @@ func (m *TkQuestionBankMutation) EdgeCleared(name string) bool {
 		return m.cleareduser_bank_records
 	case tkquestionbank.EdgeKnowledgePoints:
 		return m.clearedknowledge_points
+	case tkquestionbank.EdgeCityQuestionBanks:
+		return m.clearedcity_question_banks
+	case tkquestionbank.EdgeMajorQuestionBanks:
+		return m.clearedmajor_question_banks
 	}
 	return false
 }
@@ -63808,6 +66248,9 @@ func (m *TkQuestionBankMutation) ClearEdge(name string) error {
 	switch name {
 	case tkquestionbank.EdgeItemCategory:
 		m.ClearItemCategory()
+		return nil
+	case tkquestionbank.EdgeLevel:
+		m.ClearLevel()
 		return nil
 	case tkquestionbank.EdgeAdmin:
 		m.ClearAdmin()
@@ -63822,6 +66265,9 @@ func (m *TkQuestionBankMutation) ResetEdge(name string) error {
 	switch name {
 	case tkquestionbank.EdgeItemCategory:
 		m.ResetItemCategory()
+		return nil
+	case tkquestionbank.EdgeLevel:
+		m.ResetLevel()
 		return nil
 	case tkquestionbank.EdgeAdmin:
 		m.ResetAdmin()
@@ -63850,8 +66296,1556 @@ func (m *TkQuestionBankMutation) ResetEdge(name string) error {
 	case tkquestionbank.EdgeKnowledgePoints:
 		m.ResetKnowledgePoints()
 		return nil
+	case tkquestionbank.EdgeCityQuestionBanks:
+		m.ResetCityQuestionBanks()
+		return nil
+	case tkquestionbank.EdgeMajorQuestionBanks:
+		m.ResetMajorQuestionBanks()
+		return nil
 	}
 	return fmt.Errorf("unknown TkQuestionBank edge %s", name)
+}
+
+// TkQuestionBankCityMutation represents an operation that mutates the TkQuestionBankCity nodes in the graph.
+type TkQuestionBankCityMutation struct {
+	config
+	op                      Op
+	typ                     string
+	id                      *int
+	uuid                    *string
+	created_at              *time.Time
+	updated_at              *time.Time
+	deleted_at              *time.Time
+	clearedFields           map[string]struct{}
+	tk_question_bank        *int
+	clearedtk_question_bank bool
+	city                    *int
+	clearedcity             bool
+	done                    bool
+	oldValue                func(context.Context) (*TkQuestionBankCity, error)
+	predicates              []predicate.TkQuestionBankCity
+}
+
+var _ ent.Mutation = (*TkQuestionBankCityMutation)(nil)
+
+// tkquestionbankcityOption allows management of the mutation configuration using functional options.
+type tkquestionbankcityOption func(*TkQuestionBankCityMutation)
+
+// newTkQuestionBankCityMutation creates new mutation for the TkQuestionBankCity entity.
+func newTkQuestionBankCityMutation(c config, op Op, opts ...tkquestionbankcityOption) *TkQuestionBankCityMutation {
+	m := &TkQuestionBankCityMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeTkQuestionBankCity,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withTkQuestionBankCityID sets the ID field of the mutation.
+func withTkQuestionBankCityID(id int) tkquestionbankcityOption {
+	return func(m *TkQuestionBankCityMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *TkQuestionBankCity
+		)
+		m.oldValue = func(ctx context.Context) (*TkQuestionBankCity, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().TkQuestionBankCity.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withTkQuestionBankCity sets the old TkQuestionBankCity of the mutation.
+func withTkQuestionBankCity(node *TkQuestionBankCity) tkquestionbankcityOption {
+	return func(m *TkQuestionBankCityMutation) {
+		m.oldValue = func(context.Context) (*TkQuestionBankCity, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m TkQuestionBankCityMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m TkQuestionBankCityMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID
+// is only available if it was provided to the builder.
+func (m *TkQuestionBankCityMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetUUID sets the "uuid" field.
+func (m *TkQuestionBankCityMutation) SetUUID(s string) {
+	m.uuid = &s
+}
+
+// UUID returns the value of the "uuid" field in the mutation.
+func (m *TkQuestionBankCityMutation) UUID() (r string, exists bool) {
+	v := m.uuid
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUUID returns the old "uuid" field's value of the TkQuestionBankCity entity.
+// If the TkQuestionBankCity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TkQuestionBankCityMutation) OldUUID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUUID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUUID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUUID: %w", err)
+	}
+	return oldValue.UUID, nil
+}
+
+// ResetUUID resets all changes to the "uuid" field.
+func (m *TkQuestionBankCityMutation) ResetUUID() {
+	m.uuid = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *TkQuestionBankCityMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *TkQuestionBankCityMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the TkQuestionBankCity entity.
+// If the TkQuestionBankCity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TkQuestionBankCityMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *TkQuestionBankCityMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[tkquestionbankcity.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *TkQuestionBankCityMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[tkquestionbankcity.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *TkQuestionBankCityMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, tkquestionbankcity.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *TkQuestionBankCityMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *TkQuestionBankCityMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the TkQuestionBankCity entity.
+// If the TkQuestionBankCity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TkQuestionBankCityMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *TkQuestionBankCityMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[tkquestionbankcity.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *TkQuestionBankCityMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[tkquestionbankcity.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *TkQuestionBankCityMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, tkquestionbankcity.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *TkQuestionBankCityMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *TkQuestionBankCityMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the TkQuestionBankCity entity.
+// If the TkQuestionBankCity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TkQuestionBankCityMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *TkQuestionBankCityMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[tkquestionbankcity.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *TkQuestionBankCityMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[tkquestionbankcity.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *TkQuestionBankCityMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, tkquestionbankcity.FieldDeletedAt)
+}
+
+// SetCityID sets the "city_id" field.
+func (m *TkQuestionBankCityMutation) SetCityID(i int) {
+	m.city = &i
+}
+
+// CityID returns the value of the "city_id" field in the mutation.
+func (m *TkQuestionBankCityMutation) CityID() (r int, exists bool) {
+	v := m.city
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCityID returns the old "city_id" field's value of the TkQuestionBankCity entity.
+// If the TkQuestionBankCity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TkQuestionBankCityMutation) OldCityID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCityID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCityID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCityID: %w", err)
+	}
+	return oldValue.CityID, nil
+}
+
+// ClearCityID clears the value of the "city_id" field.
+func (m *TkQuestionBankCityMutation) ClearCityID() {
+	m.city = nil
+	m.clearedFields[tkquestionbankcity.FieldCityID] = struct{}{}
+}
+
+// CityIDCleared returns if the "city_id" field was cleared in this mutation.
+func (m *TkQuestionBankCityMutation) CityIDCleared() bool {
+	_, ok := m.clearedFields[tkquestionbankcity.FieldCityID]
+	return ok
+}
+
+// ResetCityID resets all changes to the "city_id" field.
+func (m *TkQuestionBankCityMutation) ResetCityID() {
+	m.city = nil
+	delete(m.clearedFields, tkquestionbankcity.FieldCityID)
+}
+
+// SetQuestionBankID sets the "question_bank_id" field.
+func (m *TkQuestionBankCityMutation) SetQuestionBankID(i int) {
+	m.tk_question_bank = &i
+}
+
+// QuestionBankID returns the value of the "question_bank_id" field in the mutation.
+func (m *TkQuestionBankCityMutation) QuestionBankID() (r int, exists bool) {
+	v := m.tk_question_bank
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldQuestionBankID returns the old "question_bank_id" field's value of the TkQuestionBankCity entity.
+// If the TkQuestionBankCity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TkQuestionBankCityMutation) OldQuestionBankID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldQuestionBankID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldQuestionBankID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldQuestionBankID: %w", err)
+	}
+	return oldValue.QuestionBankID, nil
+}
+
+// ClearQuestionBankID clears the value of the "question_bank_id" field.
+func (m *TkQuestionBankCityMutation) ClearQuestionBankID() {
+	m.tk_question_bank = nil
+	m.clearedFields[tkquestionbankcity.FieldQuestionBankID] = struct{}{}
+}
+
+// QuestionBankIDCleared returns if the "question_bank_id" field was cleared in this mutation.
+func (m *TkQuestionBankCityMutation) QuestionBankIDCleared() bool {
+	_, ok := m.clearedFields[tkquestionbankcity.FieldQuestionBankID]
+	return ok
+}
+
+// ResetQuestionBankID resets all changes to the "question_bank_id" field.
+func (m *TkQuestionBankCityMutation) ResetQuestionBankID() {
+	m.tk_question_bank = nil
+	delete(m.clearedFields, tkquestionbankcity.FieldQuestionBankID)
+}
+
+// SetTkQuestionBankID sets the "tk_question_bank" edge to the TkQuestionBank entity by id.
+func (m *TkQuestionBankCityMutation) SetTkQuestionBankID(id int) {
+	m.tk_question_bank = &id
+}
+
+// ClearTkQuestionBank clears the "tk_question_bank" edge to the TkQuestionBank entity.
+func (m *TkQuestionBankCityMutation) ClearTkQuestionBank() {
+	m.clearedtk_question_bank = true
+}
+
+// TkQuestionBankCleared reports if the "tk_question_bank" edge to the TkQuestionBank entity was cleared.
+func (m *TkQuestionBankCityMutation) TkQuestionBankCleared() bool {
+	return m.QuestionBankIDCleared() || m.clearedtk_question_bank
+}
+
+// TkQuestionBankID returns the "tk_question_bank" edge ID in the mutation.
+func (m *TkQuestionBankCityMutation) TkQuestionBankID() (id int, exists bool) {
+	if m.tk_question_bank != nil {
+		return *m.tk_question_bank, true
+	}
+	return
+}
+
+// TkQuestionBankIDs returns the "tk_question_bank" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// TkQuestionBankID instead. It exists only for internal usage by the builders.
+func (m *TkQuestionBankCityMutation) TkQuestionBankIDs() (ids []int) {
+	if id := m.tk_question_bank; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetTkQuestionBank resets all changes to the "tk_question_bank" edge.
+func (m *TkQuestionBankCityMutation) ResetTkQuestionBank() {
+	m.tk_question_bank = nil
+	m.clearedtk_question_bank = false
+}
+
+// ClearCity clears the "city" edge to the City entity.
+func (m *TkQuestionBankCityMutation) ClearCity() {
+	m.clearedcity = true
+}
+
+// CityCleared reports if the "city" edge to the City entity was cleared.
+func (m *TkQuestionBankCityMutation) CityCleared() bool {
+	return m.CityIDCleared() || m.clearedcity
+}
+
+// CityIDs returns the "city" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// CityID instead. It exists only for internal usage by the builders.
+func (m *TkQuestionBankCityMutation) CityIDs() (ids []int) {
+	if id := m.city; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetCity resets all changes to the "city" edge.
+func (m *TkQuestionBankCityMutation) ResetCity() {
+	m.city = nil
+	m.clearedcity = false
+}
+
+// Op returns the operation name.
+func (m *TkQuestionBankCityMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (TkQuestionBankCity).
+func (m *TkQuestionBankCityMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *TkQuestionBankCityMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.uuid != nil {
+		fields = append(fields, tkquestionbankcity.FieldUUID)
+	}
+	if m.created_at != nil {
+		fields = append(fields, tkquestionbankcity.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, tkquestionbankcity.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, tkquestionbankcity.FieldDeletedAt)
+	}
+	if m.city != nil {
+		fields = append(fields, tkquestionbankcity.FieldCityID)
+	}
+	if m.tk_question_bank != nil {
+		fields = append(fields, tkquestionbankcity.FieldQuestionBankID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *TkQuestionBankCityMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case tkquestionbankcity.FieldUUID:
+		return m.UUID()
+	case tkquestionbankcity.FieldCreatedAt:
+		return m.CreatedAt()
+	case tkquestionbankcity.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case tkquestionbankcity.FieldDeletedAt:
+		return m.DeletedAt()
+	case tkquestionbankcity.FieldCityID:
+		return m.CityID()
+	case tkquestionbankcity.FieldQuestionBankID:
+		return m.QuestionBankID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *TkQuestionBankCityMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case tkquestionbankcity.FieldUUID:
+		return m.OldUUID(ctx)
+	case tkquestionbankcity.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case tkquestionbankcity.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case tkquestionbankcity.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case tkquestionbankcity.FieldCityID:
+		return m.OldCityID(ctx)
+	case tkquestionbankcity.FieldQuestionBankID:
+		return m.OldQuestionBankID(ctx)
+	}
+	return nil, fmt.Errorf("unknown TkQuestionBankCity field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TkQuestionBankCityMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case tkquestionbankcity.FieldUUID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUUID(v)
+		return nil
+	case tkquestionbankcity.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case tkquestionbankcity.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case tkquestionbankcity.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case tkquestionbankcity.FieldCityID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCityID(v)
+		return nil
+	case tkquestionbankcity.FieldQuestionBankID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetQuestionBankID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown TkQuestionBankCity field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *TkQuestionBankCityMutation) AddedFields() []string {
+	var fields []string
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *TkQuestionBankCityMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TkQuestionBankCityMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown TkQuestionBankCity numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *TkQuestionBankCityMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(tkquestionbankcity.FieldCreatedAt) {
+		fields = append(fields, tkquestionbankcity.FieldCreatedAt)
+	}
+	if m.FieldCleared(tkquestionbankcity.FieldUpdatedAt) {
+		fields = append(fields, tkquestionbankcity.FieldUpdatedAt)
+	}
+	if m.FieldCleared(tkquestionbankcity.FieldDeletedAt) {
+		fields = append(fields, tkquestionbankcity.FieldDeletedAt)
+	}
+	if m.FieldCleared(tkquestionbankcity.FieldCityID) {
+		fields = append(fields, tkquestionbankcity.FieldCityID)
+	}
+	if m.FieldCleared(tkquestionbankcity.FieldQuestionBankID) {
+		fields = append(fields, tkquestionbankcity.FieldQuestionBankID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *TkQuestionBankCityMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *TkQuestionBankCityMutation) ClearField(name string) error {
+	switch name {
+	case tkquestionbankcity.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case tkquestionbankcity.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case tkquestionbankcity.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case tkquestionbankcity.FieldCityID:
+		m.ClearCityID()
+		return nil
+	case tkquestionbankcity.FieldQuestionBankID:
+		m.ClearQuestionBankID()
+		return nil
+	}
+	return fmt.Errorf("unknown TkQuestionBankCity nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *TkQuestionBankCityMutation) ResetField(name string) error {
+	switch name {
+	case tkquestionbankcity.FieldUUID:
+		m.ResetUUID()
+		return nil
+	case tkquestionbankcity.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case tkquestionbankcity.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case tkquestionbankcity.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case tkquestionbankcity.FieldCityID:
+		m.ResetCityID()
+		return nil
+	case tkquestionbankcity.FieldQuestionBankID:
+		m.ResetQuestionBankID()
+		return nil
+	}
+	return fmt.Errorf("unknown TkQuestionBankCity field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *TkQuestionBankCityMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.tk_question_bank != nil {
+		edges = append(edges, tkquestionbankcity.EdgeTkQuestionBank)
+	}
+	if m.city != nil {
+		edges = append(edges, tkquestionbankcity.EdgeCity)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *TkQuestionBankCityMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case tkquestionbankcity.EdgeTkQuestionBank:
+		if id := m.tk_question_bank; id != nil {
+			return []ent.Value{*id}
+		}
+	case tkquestionbankcity.EdgeCity:
+		if id := m.city; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *TkQuestionBankCityMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *TkQuestionBankCityMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *TkQuestionBankCityMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedtk_question_bank {
+		edges = append(edges, tkquestionbankcity.EdgeTkQuestionBank)
+	}
+	if m.clearedcity {
+		edges = append(edges, tkquestionbankcity.EdgeCity)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *TkQuestionBankCityMutation) EdgeCleared(name string) bool {
+	switch name {
+	case tkquestionbankcity.EdgeTkQuestionBank:
+		return m.clearedtk_question_bank
+	case tkquestionbankcity.EdgeCity:
+		return m.clearedcity
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *TkQuestionBankCityMutation) ClearEdge(name string) error {
+	switch name {
+	case tkquestionbankcity.EdgeTkQuestionBank:
+		m.ClearTkQuestionBank()
+		return nil
+	case tkquestionbankcity.EdgeCity:
+		m.ClearCity()
+		return nil
+	}
+	return fmt.Errorf("unknown TkQuestionBankCity unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *TkQuestionBankCityMutation) ResetEdge(name string) error {
+	switch name {
+	case tkquestionbankcity.EdgeTkQuestionBank:
+		m.ResetTkQuestionBank()
+		return nil
+	case tkquestionbankcity.EdgeCity:
+		m.ResetCity()
+		return nil
+	}
+	return fmt.Errorf("unknown TkQuestionBankCity edge %s", name)
+}
+
+// TkQuestionBankMajorMutation represents an operation that mutates the TkQuestionBankMajor nodes in the graph.
+type TkQuestionBankMajorMutation struct {
+	config
+	op                      Op
+	typ                     string
+	id                      *int
+	uuid                    *string
+	created_at              *time.Time
+	updated_at              *time.Time
+	deleted_at              *time.Time
+	clearedFields           map[string]struct{}
+	tk_question_bank        *int
+	clearedtk_question_bank bool
+	major                   *int
+	clearedmajor            bool
+	done                    bool
+	oldValue                func(context.Context) (*TkQuestionBankMajor, error)
+	predicates              []predicate.TkQuestionBankMajor
+}
+
+var _ ent.Mutation = (*TkQuestionBankMajorMutation)(nil)
+
+// tkquestionbankmajorOption allows management of the mutation configuration using functional options.
+type tkquestionbankmajorOption func(*TkQuestionBankMajorMutation)
+
+// newTkQuestionBankMajorMutation creates new mutation for the TkQuestionBankMajor entity.
+func newTkQuestionBankMajorMutation(c config, op Op, opts ...tkquestionbankmajorOption) *TkQuestionBankMajorMutation {
+	m := &TkQuestionBankMajorMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeTkQuestionBankMajor,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withTkQuestionBankMajorID sets the ID field of the mutation.
+func withTkQuestionBankMajorID(id int) tkquestionbankmajorOption {
+	return func(m *TkQuestionBankMajorMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *TkQuestionBankMajor
+		)
+		m.oldValue = func(ctx context.Context) (*TkQuestionBankMajor, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().TkQuestionBankMajor.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withTkQuestionBankMajor sets the old TkQuestionBankMajor of the mutation.
+func withTkQuestionBankMajor(node *TkQuestionBankMajor) tkquestionbankmajorOption {
+	return func(m *TkQuestionBankMajorMutation) {
+		m.oldValue = func(context.Context) (*TkQuestionBankMajor, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m TkQuestionBankMajorMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m TkQuestionBankMajorMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID
+// is only available if it was provided to the builder.
+func (m *TkQuestionBankMajorMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetUUID sets the "uuid" field.
+func (m *TkQuestionBankMajorMutation) SetUUID(s string) {
+	m.uuid = &s
+}
+
+// UUID returns the value of the "uuid" field in the mutation.
+func (m *TkQuestionBankMajorMutation) UUID() (r string, exists bool) {
+	v := m.uuid
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUUID returns the old "uuid" field's value of the TkQuestionBankMajor entity.
+// If the TkQuestionBankMajor object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TkQuestionBankMajorMutation) OldUUID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUUID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUUID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUUID: %w", err)
+	}
+	return oldValue.UUID, nil
+}
+
+// ResetUUID resets all changes to the "uuid" field.
+func (m *TkQuestionBankMajorMutation) ResetUUID() {
+	m.uuid = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *TkQuestionBankMajorMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *TkQuestionBankMajorMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the TkQuestionBankMajor entity.
+// If the TkQuestionBankMajor object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TkQuestionBankMajorMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *TkQuestionBankMajorMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[tkquestionbankmajor.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *TkQuestionBankMajorMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[tkquestionbankmajor.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *TkQuestionBankMajorMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, tkquestionbankmajor.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *TkQuestionBankMajorMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *TkQuestionBankMajorMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the TkQuestionBankMajor entity.
+// If the TkQuestionBankMajor object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TkQuestionBankMajorMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *TkQuestionBankMajorMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[tkquestionbankmajor.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *TkQuestionBankMajorMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[tkquestionbankmajor.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *TkQuestionBankMajorMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, tkquestionbankmajor.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *TkQuestionBankMajorMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *TkQuestionBankMajorMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the TkQuestionBankMajor entity.
+// If the TkQuestionBankMajor object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TkQuestionBankMajorMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *TkQuestionBankMajorMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[tkquestionbankmajor.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *TkQuestionBankMajorMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[tkquestionbankmajor.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *TkQuestionBankMajorMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, tkquestionbankmajor.FieldDeletedAt)
+}
+
+// SetMajorID sets the "major_id" field.
+func (m *TkQuestionBankMajorMutation) SetMajorID(i int) {
+	m.major = &i
+}
+
+// MajorID returns the value of the "major_id" field in the mutation.
+func (m *TkQuestionBankMajorMutation) MajorID() (r int, exists bool) {
+	v := m.major
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMajorID returns the old "major_id" field's value of the TkQuestionBankMajor entity.
+// If the TkQuestionBankMajor object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TkQuestionBankMajorMutation) OldMajorID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldMajorID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldMajorID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMajorID: %w", err)
+	}
+	return oldValue.MajorID, nil
+}
+
+// ClearMajorID clears the value of the "major_id" field.
+func (m *TkQuestionBankMajorMutation) ClearMajorID() {
+	m.major = nil
+	m.clearedFields[tkquestionbankmajor.FieldMajorID] = struct{}{}
+}
+
+// MajorIDCleared returns if the "major_id" field was cleared in this mutation.
+func (m *TkQuestionBankMajorMutation) MajorIDCleared() bool {
+	_, ok := m.clearedFields[tkquestionbankmajor.FieldMajorID]
+	return ok
+}
+
+// ResetMajorID resets all changes to the "major_id" field.
+func (m *TkQuestionBankMajorMutation) ResetMajorID() {
+	m.major = nil
+	delete(m.clearedFields, tkquestionbankmajor.FieldMajorID)
+}
+
+// SetQuestionBankID sets the "question_bank_id" field.
+func (m *TkQuestionBankMajorMutation) SetQuestionBankID(i int) {
+	m.tk_question_bank = &i
+}
+
+// QuestionBankID returns the value of the "question_bank_id" field in the mutation.
+func (m *TkQuestionBankMajorMutation) QuestionBankID() (r int, exists bool) {
+	v := m.tk_question_bank
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldQuestionBankID returns the old "question_bank_id" field's value of the TkQuestionBankMajor entity.
+// If the TkQuestionBankMajor object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TkQuestionBankMajorMutation) OldQuestionBankID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldQuestionBankID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldQuestionBankID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldQuestionBankID: %w", err)
+	}
+	return oldValue.QuestionBankID, nil
+}
+
+// ClearQuestionBankID clears the value of the "question_bank_id" field.
+func (m *TkQuestionBankMajorMutation) ClearQuestionBankID() {
+	m.tk_question_bank = nil
+	m.clearedFields[tkquestionbankmajor.FieldQuestionBankID] = struct{}{}
+}
+
+// QuestionBankIDCleared returns if the "question_bank_id" field was cleared in this mutation.
+func (m *TkQuestionBankMajorMutation) QuestionBankIDCleared() bool {
+	_, ok := m.clearedFields[tkquestionbankmajor.FieldQuestionBankID]
+	return ok
+}
+
+// ResetQuestionBankID resets all changes to the "question_bank_id" field.
+func (m *TkQuestionBankMajorMutation) ResetQuestionBankID() {
+	m.tk_question_bank = nil
+	delete(m.clearedFields, tkquestionbankmajor.FieldQuestionBankID)
+}
+
+// SetTkQuestionBankID sets the "tk_question_bank" edge to the TkQuestionBank entity by id.
+func (m *TkQuestionBankMajorMutation) SetTkQuestionBankID(id int) {
+	m.tk_question_bank = &id
+}
+
+// ClearTkQuestionBank clears the "tk_question_bank" edge to the TkQuestionBank entity.
+func (m *TkQuestionBankMajorMutation) ClearTkQuestionBank() {
+	m.clearedtk_question_bank = true
+}
+
+// TkQuestionBankCleared reports if the "tk_question_bank" edge to the TkQuestionBank entity was cleared.
+func (m *TkQuestionBankMajorMutation) TkQuestionBankCleared() bool {
+	return m.QuestionBankIDCleared() || m.clearedtk_question_bank
+}
+
+// TkQuestionBankID returns the "tk_question_bank" edge ID in the mutation.
+func (m *TkQuestionBankMajorMutation) TkQuestionBankID() (id int, exists bool) {
+	if m.tk_question_bank != nil {
+		return *m.tk_question_bank, true
+	}
+	return
+}
+
+// TkQuestionBankIDs returns the "tk_question_bank" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// TkQuestionBankID instead. It exists only for internal usage by the builders.
+func (m *TkQuestionBankMajorMutation) TkQuestionBankIDs() (ids []int) {
+	if id := m.tk_question_bank; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetTkQuestionBank resets all changes to the "tk_question_bank" edge.
+func (m *TkQuestionBankMajorMutation) ResetTkQuestionBank() {
+	m.tk_question_bank = nil
+	m.clearedtk_question_bank = false
+}
+
+// ClearMajor clears the "major" edge to the Major entity.
+func (m *TkQuestionBankMajorMutation) ClearMajor() {
+	m.clearedmajor = true
+}
+
+// MajorCleared reports if the "major" edge to the Major entity was cleared.
+func (m *TkQuestionBankMajorMutation) MajorCleared() bool {
+	return m.MajorIDCleared() || m.clearedmajor
+}
+
+// MajorIDs returns the "major" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MajorID instead. It exists only for internal usage by the builders.
+func (m *TkQuestionBankMajorMutation) MajorIDs() (ids []int) {
+	if id := m.major; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMajor resets all changes to the "major" edge.
+func (m *TkQuestionBankMajorMutation) ResetMajor() {
+	m.major = nil
+	m.clearedmajor = false
+}
+
+// Op returns the operation name.
+func (m *TkQuestionBankMajorMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (TkQuestionBankMajor).
+func (m *TkQuestionBankMajorMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *TkQuestionBankMajorMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.uuid != nil {
+		fields = append(fields, tkquestionbankmajor.FieldUUID)
+	}
+	if m.created_at != nil {
+		fields = append(fields, tkquestionbankmajor.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, tkquestionbankmajor.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, tkquestionbankmajor.FieldDeletedAt)
+	}
+	if m.major != nil {
+		fields = append(fields, tkquestionbankmajor.FieldMajorID)
+	}
+	if m.tk_question_bank != nil {
+		fields = append(fields, tkquestionbankmajor.FieldQuestionBankID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *TkQuestionBankMajorMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case tkquestionbankmajor.FieldUUID:
+		return m.UUID()
+	case tkquestionbankmajor.FieldCreatedAt:
+		return m.CreatedAt()
+	case tkquestionbankmajor.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case tkquestionbankmajor.FieldDeletedAt:
+		return m.DeletedAt()
+	case tkquestionbankmajor.FieldMajorID:
+		return m.MajorID()
+	case tkquestionbankmajor.FieldQuestionBankID:
+		return m.QuestionBankID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *TkQuestionBankMajorMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case tkquestionbankmajor.FieldUUID:
+		return m.OldUUID(ctx)
+	case tkquestionbankmajor.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case tkquestionbankmajor.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case tkquestionbankmajor.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case tkquestionbankmajor.FieldMajorID:
+		return m.OldMajorID(ctx)
+	case tkquestionbankmajor.FieldQuestionBankID:
+		return m.OldQuestionBankID(ctx)
+	}
+	return nil, fmt.Errorf("unknown TkQuestionBankMajor field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TkQuestionBankMajorMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case tkquestionbankmajor.FieldUUID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUUID(v)
+		return nil
+	case tkquestionbankmajor.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case tkquestionbankmajor.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case tkquestionbankmajor.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case tkquestionbankmajor.FieldMajorID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMajorID(v)
+		return nil
+	case tkquestionbankmajor.FieldQuestionBankID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetQuestionBankID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown TkQuestionBankMajor field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *TkQuestionBankMajorMutation) AddedFields() []string {
+	var fields []string
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *TkQuestionBankMajorMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TkQuestionBankMajorMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown TkQuestionBankMajor numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *TkQuestionBankMajorMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(tkquestionbankmajor.FieldCreatedAt) {
+		fields = append(fields, tkquestionbankmajor.FieldCreatedAt)
+	}
+	if m.FieldCleared(tkquestionbankmajor.FieldUpdatedAt) {
+		fields = append(fields, tkquestionbankmajor.FieldUpdatedAt)
+	}
+	if m.FieldCleared(tkquestionbankmajor.FieldDeletedAt) {
+		fields = append(fields, tkquestionbankmajor.FieldDeletedAt)
+	}
+	if m.FieldCleared(tkquestionbankmajor.FieldMajorID) {
+		fields = append(fields, tkquestionbankmajor.FieldMajorID)
+	}
+	if m.FieldCleared(tkquestionbankmajor.FieldQuestionBankID) {
+		fields = append(fields, tkquestionbankmajor.FieldQuestionBankID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *TkQuestionBankMajorMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *TkQuestionBankMajorMutation) ClearField(name string) error {
+	switch name {
+	case tkquestionbankmajor.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case tkquestionbankmajor.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case tkquestionbankmajor.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case tkquestionbankmajor.FieldMajorID:
+		m.ClearMajorID()
+		return nil
+	case tkquestionbankmajor.FieldQuestionBankID:
+		m.ClearQuestionBankID()
+		return nil
+	}
+	return fmt.Errorf("unknown TkQuestionBankMajor nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *TkQuestionBankMajorMutation) ResetField(name string) error {
+	switch name {
+	case tkquestionbankmajor.FieldUUID:
+		m.ResetUUID()
+		return nil
+	case tkquestionbankmajor.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case tkquestionbankmajor.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case tkquestionbankmajor.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case tkquestionbankmajor.FieldMajorID:
+		m.ResetMajorID()
+		return nil
+	case tkquestionbankmajor.FieldQuestionBankID:
+		m.ResetQuestionBankID()
+		return nil
+	}
+	return fmt.Errorf("unknown TkQuestionBankMajor field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *TkQuestionBankMajorMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.tk_question_bank != nil {
+		edges = append(edges, tkquestionbankmajor.EdgeTkQuestionBank)
+	}
+	if m.major != nil {
+		edges = append(edges, tkquestionbankmajor.EdgeMajor)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *TkQuestionBankMajorMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case tkquestionbankmajor.EdgeTkQuestionBank:
+		if id := m.tk_question_bank; id != nil {
+			return []ent.Value{*id}
+		}
+	case tkquestionbankmajor.EdgeMajor:
+		if id := m.major; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *TkQuestionBankMajorMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *TkQuestionBankMajorMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *TkQuestionBankMajorMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedtk_question_bank {
+		edges = append(edges, tkquestionbankmajor.EdgeTkQuestionBank)
+	}
+	if m.clearedmajor {
+		edges = append(edges, tkquestionbankmajor.EdgeMajor)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *TkQuestionBankMajorMutation) EdgeCleared(name string) bool {
+	switch name {
+	case tkquestionbankmajor.EdgeTkQuestionBank:
+		return m.clearedtk_question_bank
+	case tkquestionbankmajor.EdgeMajor:
+		return m.clearedmajor
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *TkQuestionBankMajorMutation) ClearEdge(name string) error {
+	switch name {
+	case tkquestionbankmajor.EdgeTkQuestionBank:
+		m.ClearTkQuestionBank()
+		return nil
+	case tkquestionbankmajor.EdgeMajor:
+		m.ClearMajor()
+		return nil
+	}
+	return fmt.Errorf("unknown TkQuestionBankMajor unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *TkQuestionBankMajorMutation) ResetEdge(name string) error {
+	switch name {
+	case tkquestionbankmajor.EdgeTkQuestionBank:
+		m.ResetTkQuestionBank()
+		return nil
+	case tkquestionbankmajor.EdgeMajor:
+		m.ResetMajor()
+		return nil
+	}
+	return fmt.Errorf("unknown TkQuestionBankMajor edge %s", name)
 }
 
 // TkQuestionErrorFeedbackMutation represents an operation that mutates the TkQuestionErrorFeedback nodes in the graph.

@@ -31,8 +31,12 @@ const (
 	FieldCreatedAdminID = "created_admin_id"
 	// FieldItemCategoryID holds the string denoting the item_category_id field in the database.
 	FieldItemCategoryID = "item_category_id"
+	// FieldLevelID holds the string denoting the level_id field in the database.
+	FieldLevelID = "level_id"
 	// EdgeItemCategory holds the string denoting the item_category edge name in mutations.
 	EdgeItemCategory = "item_category"
+	// EdgeLevel holds the string denoting the level edge name in mutations.
+	EdgeLevel = "level"
 	// EdgeAdmin holds the string denoting the admin edge name in mutations.
 	EdgeAdmin = "admin"
 	// EdgeQuestionChapters holds the string denoting the question_chapters edge name in mutations.
@@ -51,6 +55,10 @@ const (
 	EdgeUserBankRecords = "user_bank_records"
 	// EdgeKnowledgePoints holds the string denoting the knowledge_points edge name in mutations.
 	EdgeKnowledgePoints = "knowledge_points"
+	// EdgeCityQuestionBanks holds the string denoting the city_question_banks edge name in mutations.
+	EdgeCityQuestionBanks = "city_question_banks"
+	// EdgeMajorQuestionBanks holds the string denoting the major_question_banks edge name in mutations.
+	EdgeMajorQuestionBanks = "major_question_banks"
 	// Table holds the table name of the tkquestionbank in the database.
 	Table = "tk_question_banks"
 	// ItemCategoryTable is the table the holds the item_category relation/edge.
@@ -60,6 +68,13 @@ const (
 	ItemCategoryInverseTable = "item_categories"
 	// ItemCategoryColumn is the table column denoting the item_category relation/edge.
 	ItemCategoryColumn = "item_category_id"
+	// LevelTable is the table the holds the level relation/edge.
+	LevelTable = "tk_question_banks"
+	// LevelInverseTable is the table name for the Level entity.
+	// It exists in this package in order to avoid circular dependency with the "level" package.
+	LevelInverseTable = "levels"
+	// LevelColumn is the table column denoting the level relation/edge.
+	LevelColumn = "level_id"
 	// AdminTable is the table the holds the admin relation/edge.
 	AdminTable = "tk_question_banks"
 	// AdminInverseTable is the table name for the Admin entity.
@@ -123,6 +138,20 @@ const (
 	KnowledgePointsInverseTable = "tk_knowledge_points"
 	// KnowledgePointsColumn is the table column denoting the knowledge_points relation/edge.
 	KnowledgePointsColumn = "question_bank_id"
+	// CityQuestionBanksTable is the table the holds the city_question_banks relation/edge.
+	CityQuestionBanksTable = "tk_question_bank_cities"
+	// CityQuestionBanksInverseTable is the table name for the TkQuestionBankCity entity.
+	// It exists in this package in order to avoid circular dependency with the "tkquestionbankcity" package.
+	CityQuestionBanksInverseTable = "tk_question_bank_cities"
+	// CityQuestionBanksColumn is the table column denoting the city_question_banks relation/edge.
+	CityQuestionBanksColumn = "question_bank_id"
+	// MajorQuestionBanksTable is the table the holds the major_question_banks relation/edge.
+	MajorQuestionBanksTable = "tk_question_bank_majors"
+	// MajorQuestionBanksInverseTable is the table name for the TkQuestionBankMajor entity.
+	// It exists in this package in order to avoid circular dependency with the "tkquestionbankmajor" package.
+	MajorQuestionBanksInverseTable = "tk_question_bank_majors"
+	// MajorQuestionBanksColumn is the table column denoting the major_question_banks relation/edge.
+	MajorQuestionBanksColumn = "question_bank_id"
 )
 
 // Columns holds all SQL columns for tkquestionbank fields.
@@ -137,6 +166,7 @@ var Columns = []string{
 	FieldQuestionCount,
 	FieldCreatedAdminID,
 	FieldItemCategoryID,
+	FieldLevelID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

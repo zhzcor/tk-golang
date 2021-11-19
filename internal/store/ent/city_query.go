@@ -12,6 +12,7 @@ import (
 	"tkserver/internal/store/ent/kcclass"
 	"tkserver/internal/store/ent/kccourse"
 	"tkserver/internal/store/ent/predicate"
+	"tkserver/internal/store/ent/tkquestionbankcity"
 	"tkserver/internal/store/ent/user"
 
 	"entgo.io/ent/dialect/sql"
@@ -29,9 +30,10 @@ type CityQuery struct {
 	fields     []string
 	predicates []predicate.City
 	// eager-loading edges.
-	withKcClass  *KcClassQuery
-	withCourse   *KcCourseQuery
-	withUserCity *UserQuery
+	withKcClass            *KcClassQuery
+	withCourse             *KcCourseQuery
+	withUserCity           *UserQuery
+	withQuestionBankCities *TkQuestionBankCityQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -127,6 +129,28 @@ func (cq *CityQuery) QueryUserCity() *UserQuery {
 			sqlgraph.From(city.Table, city.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, city.UserCityTable, city.UserCityColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryQuestionBankCities chains the current query on the "question_bank_cities" edge.
+func (cq *CityQuery) QueryQuestionBankCities() *TkQuestionBankCityQuery {
+	query := &TkQuestionBankCityQuery{config: cq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := cq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := cq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(city.Table, city.FieldID, selector),
+			sqlgraph.To(tkquestionbankcity.Table, tkquestionbankcity.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, city.QuestionBankCitiesTable, city.QuestionBankCitiesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
 		return fromU, nil
@@ -310,14 +334,15 @@ func (cq *CityQuery) Clone() *CityQuery {
 		return nil
 	}
 	return &CityQuery{
-		config:       cq.config,
-		limit:        cq.limit,
-		offset:       cq.offset,
-		order:        append([]OrderFunc{}, cq.order...),
-		predicates:   append([]predicate.City{}, cq.predicates...),
-		withKcClass:  cq.withKcClass.Clone(),
-		withCourse:   cq.withCourse.Clone(),
-		withUserCity: cq.withUserCity.Clone(),
+		config:                 cq.config,
+		limit:                  cq.limit,
+		offset:                 cq.offset,
+		order:                  append([]OrderFunc{}, cq.order...),
+		predicates:             append([]predicate.City{}, cq.predicates...),
+		withKcClass:            cq.withKcClass.Clone(),
+		withCourse:             cq.withCourse.Clone(),
+		withUserCity:           cq.withUserCity.Clone(),
+		withQuestionBankCities: cq.withQuestionBankCities.Clone(),
 		// clone intermediate query.
 		sql:  cq.sql.Clone(),
 		path: cq.path,
@@ -354,6 +379,17 @@ func (cq *CityQuery) WithUserCity(opts ...func(*UserQuery)) *CityQuery {
 		opt(query)
 	}
 	cq.withUserCity = query
+	return cq
+}
+
+// WithQuestionBankCities tells the query-builder to eager-load the nodes that are connected to
+// the "question_bank_cities" edge. The optional arguments are used to configure the query builder of the edge.
+func (cq *CityQuery) WithQuestionBankCities(opts ...func(*TkQuestionBankCityQuery)) *CityQuery {
+	query := &TkQuestionBankCityQuery{config: cq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	cq.withQuestionBankCities = query
 	return cq
 }
 
@@ -422,10 +458,11 @@ func (cq *CityQuery) sqlAll(ctx context.Context) ([]*City, error) {
 	var (
 		nodes       = []*City{}
 		_spec       = cq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			cq.withKcClass != nil,
 			cq.withCourse != nil,
 			cq.withUserCity != nil,
+			cq.withQuestionBankCities != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -520,6 +557,31 @@ func (cq *CityQuery) sqlAll(ctx context.Context) ([]*City, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "from_city_id" returned %v for node %v`, fk, n.ID)
 			}
 			node.Edges.UserCity = append(node.Edges.UserCity, n)
+		}
+	}
+
+	if query := cq.withQuestionBankCities; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*City)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.QuestionBankCities = []*TkQuestionBankCity{}
+		}
+		query.Where(predicate.TkQuestionBankCity(func(s *sql.Selector) {
+			s.Where(sql.InValues(city.QuestionBankCitiesColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.CityID
+			node, ok := nodeids[fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "city_id" returned %v for node %v`, fk, n.ID)
+			}
+			node.Edges.QuestionBankCities = append(node.Edges.QuestionBankCities, n)
 		}
 	}
 

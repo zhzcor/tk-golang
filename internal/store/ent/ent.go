@@ -17,6 +17,7 @@ import (
 	"tkserver/internal/store/ent/attachment"
 	"tkserver/internal/store/ent/city"
 	"tkserver/internal/store/ent/collection"
+	"tkserver/internal/store/ent/groupcard"
 	"tkserver/internal/store/ent/hotsearch"
 	"tkserver/internal/store/ent/importtask"
 	"tkserver/internal/store/ent/informationclassify"
@@ -35,6 +36,7 @@ import (
 	"tkserver/internal/store/ent/kcuserclass"
 	"tkserver/internal/store/ent/kcusercourse"
 	"tkserver/internal/store/ent/kcvideouploadtask"
+	"tkserver/internal/store/ent/level"
 	"tkserver/internal/store/ent/major"
 	"tkserver/internal/store/ent/majordetail"
 	"tkserver/internal/store/ent/majordetailtag"
@@ -58,6 +60,8 @@ import (
 	"tkserver/internal/store/ent/tkquestion"
 	"tkserver/internal/store/ent/tkquestionansweroption"
 	"tkserver/internal/store/ent/tkquestionbank"
+	"tkserver/internal/store/ent/tkquestionbankcity"
+	"tkserver/internal/store/ent/tkquestionbankmajor"
 	"tkserver/internal/store/ent/tkquestionerrorfeedback"
 	"tkserver/internal/store/ent/tkquestionsection"
 	"tkserver/internal/store/ent/tksection"
@@ -110,6 +114,7 @@ func columnChecker(table string) func(string) error {
 		attachment.Table:                  attachment.ValidColumn,
 		city.Table:                        city.ValidColumn,
 		collection.Table:                  collection.ValidColumn,
+		groupcard.Table:                   groupcard.ValidColumn,
 		hotsearch.Table:                   hotsearch.ValidColumn,
 		importtask.Table:                  importtask.ValidColumn,
 		informationclassify.Table:         informationclassify.ValidColumn,
@@ -128,6 +133,7 @@ func columnChecker(table string) func(string) error {
 		kcuserclass.Table:                 kcuserclass.ValidColumn,
 		kcusercourse.Table:                kcusercourse.ValidColumn,
 		kcvideouploadtask.Table:           kcvideouploadtask.ValidColumn,
+		level.Table:                       level.ValidColumn,
 		major.Table:                       major.ValidColumn,
 		majordetail.Table:                 majordetail.ValidColumn,
 		majordetailtag.Table:              majordetailtag.ValidColumn,
@@ -151,6 +157,8 @@ func columnChecker(table string) func(string) error {
 		tkquestion.Table:                  tkquestion.ValidColumn,
 		tkquestionansweroption.Table:      tkquestionansweroption.ValidColumn,
 		tkquestionbank.Table:              tkquestionbank.ValidColumn,
+		tkquestionbankcity.Table:          tkquestionbankcity.ValidColumn,
+		tkquestionbankmajor.Table:         tkquestionbankmajor.ValidColumn,
 		tkquestionerrorfeedback.Table:     tkquestionerrorfeedback.ValidColumn,
 		tkquestionsection.Table:           tkquestionsection.ValidColumn,
 		tksection.Table:                   tksection.ValidColumn,

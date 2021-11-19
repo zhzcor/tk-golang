@@ -21,6 +21,7 @@ import (
 	"tkserver/internal/store/ent/attachment"
 	"tkserver/internal/store/ent/city"
 	"tkserver/internal/store/ent/collection"
+	"tkserver/internal/store/ent/groupcard"
 	"tkserver/internal/store/ent/hotsearch"
 	"tkserver/internal/store/ent/importtask"
 	"tkserver/internal/store/ent/informationclassify"
@@ -39,6 +40,7 @@ import (
 	"tkserver/internal/store/ent/kcuserclass"
 	"tkserver/internal/store/ent/kcusercourse"
 	"tkserver/internal/store/ent/kcvideouploadtask"
+	"tkserver/internal/store/ent/level"
 	"tkserver/internal/store/ent/major"
 	"tkserver/internal/store/ent/majordetail"
 	"tkserver/internal/store/ent/majordetailtag"
@@ -62,6 +64,8 @@ import (
 	"tkserver/internal/store/ent/tkquestion"
 	"tkserver/internal/store/ent/tkquestionansweroption"
 	"tkserver/internal/store/ent/tkquestionbank"
+	"tkserver/internal/store/ent/tkquestionbankcity"
+	"tkserver/internal/store/ent/tkquestionbankmajor"
 	"tkserver/internal/store/ent/tkquestionerrorfeedback"
 	"tkserver/internal/store/ent/tkquestionsection"
 	"tkserver/internal/store/ent/tksection"
@@ -112,6 +116,8 @@ type Client struct {
 	City *CityClient
 	// Collection is the client for interacting with the Collection builders.
 	Collection *CollectionClient
+	// GroupCard is the client for interacting with the GroupCard builders.
+	GroupCard *GroupCardClient
 	// HotSearch is the client for interacting with the HotSearch builders.
 	HotSearch *HotSearchClient
 	// ImportTask is the client for interacting with the ImportTask builders.
@@ -148,6 +154,8 @@ type Client struct {
 	KcUserCourse *KcUserCourseClient
 	// KcVideoUploadTask is the client for interacting with the KcVideoUploadTask builders.
 	KcVideoUploadTask *KcVideoUploadTaskClient
+	// Level is the client for interacting with the Level builders.
+	Level *LevelClient
 	// Major is the client for interacting with the Major builders.
 	Major *MajorClient
 	// MajorDetail is the client for interacting with the MajorDetail builders.
@@ -194,6 +202,10 @@ type Client struct {
 	TkQuestionAnswerOption *TkQuestionAnswerOptionClient
 	// TkQuestionBank is the client for interacting with the TkQuestionBank builders.
 	TkQuestionBank *TkQuestionBankClient
+	// TkQuestionBankCity is the client for interacting with the TkQuestionBankCity builders.
+	TkQuestionBankCity *TkQuestionBankCityClient
+	// TkQuestionBankMajor is the client for interacting with the TkQuestionBankMajor builders.
+	TkQuestionBankMajor *TkQuestionBankMajorClient
 	// TkQuestionErrorFeedback is the client for interacting with the TkQuestionErrorFeedback builders.
 	TkQuestionErrorFeedback *TkQuestionErrorFeedbackClient
 	// TkQuestionSection is the client for interacting with the TkQuestionSection builders.
@@ -249,6 +261,7 @@ func (c *Client) init() {
 	c.Attachment = NewAttachmentClient(c.config)
 	c.City = NewCityClient(c.config)
 	c.Collection = NewCollectionClient(c.config)
+	c.GroupCard = NewGroupCardClient(c.config)
 	c.HotSearch = NewHotSearchClient(c.config)
 	c.ImportTask = NewImportTaskClient(c.config)
 	c.InformationClassify = NewInformationClassifyClient(c.config)
@@ -267,6 +280,7 @@ func (c *Client) init() {
 	c.KcUserClass = NewKcUserClassClient(c.config)
 	c.KcUserCourse = NewKcUserCourseClient(c.config)
 	c.KcVideoUploadTask = NewKcVideoUploadTaskClient(c.config)
+	c.Level = NewLevelClient(c.config)
 	c.Major = NewMajorClient(c.config)
 	c.MajorDetail = NewMajorDetailClient(c.config)
 	c.MajorDetailTag = NewMajorDetailTagClient(c.config)
@@ -290,6 +304,8 @@ func (c *Client) init() {
 	c.TkQuestion = NewTkQuestionClient(c.config)
 	c.TkQuestionAnswerOption = NewTkQuestionAnswerOptionClient(c.config)
 	c.TkQuestionBank = NewTkQuestionBankClient(c.config)
+	c.TkQuestionBankCity = NewTkQuestionBankCityClient(c.config)
+	c.TkQuestionBankMajor = NewTkQuestionBankMajorClient(c.config)
 	c.TkQuestionErrorFeedback = NewTkQuestionErrorFeedbackClient(c.config)
 	c.TkQuestionSection = NewTkQuestionSectionClient(c.config)
 	c.TkSection = NewTkSectionClient(c.config)
@@ -350,6 +366,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Attachment:                  NewAttachmentClient(cfg),
 		City:                        NewCityClient(cfg),
 		Collection:                  NewCollectionClient(cfg),
+		GroupCard:                   NewGroupCardClient(cfg),
 		HotSearch:                   NewHotSearchClient(cfg),
 		ImportTask:                  NewImportTaskClient(cfg),
 		InformationClassify:         NewInformationClassifyClient(cfg),
@@ -368,6 +385,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		KcUserClass:                 NewKcUserClassClient(cfg),
 		KcUserCourse:                NewKcUserCourseClient(cfg),
 		KcVideoUploadTask:           NewKcVideoUploadTaskClient(cfg),
+		Level:                       NewLevelClient(cfg),
 		Major:                       NewMajorClient(cfg),
 		MajorDetail:                 NewMajorDetailClient(cfg),
 		MajorDetailTag:              NewMajorDetailTagClient(cfg),
@@ -391,6 +409,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		TkQuestion:                  NewTkQuestionClient(cfg),
 		TkQuestionAnswerOption:      NewTkQuestionAnswerOptionClient(cfg),
 		TkQuestionBank:              NewTkQuestionBankClient(cfg),
+		TkQuestionBankCity:          NewTkQuestionBankCityClient(cfg),
+		TkQuestionBankMajor:         NewTkQuestionBankMajorClient(cfg),
 		TkQuestionErrorFeedback:     NewTkQuestionErrorFeedbackClient(cfg),
 		TkQuestionSection:           NewTkQuestionSectionClient(cfg),
 		TkSection:                   NewTkSectionClient(cfg),
@@ -436,6 +456,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Attachment:                  NewAttachmentClient(cfg),
 		City:                        NewCityClient(cfg),
 		Collection:                  NewCollectionClient(cfg),
+		GroupCard:                   NewGroupCardClient(cfg),
 		HotSearch:                   NewHotSearchClient(cfg),
 		ImportTask:                  NewImportTaskClient(cfg),
 		InformationClassify:         NewInformationClassifyClient(cfg),
@@ -454,6 +475,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		KcUserClass:                 NewKcUserClassClient(cfg),
 		KcUserCourse:                NewKcUserCourseClient(cfg),
 		KcVideoUploadTask:           NewKcVideoUploadTaskClient(cfg),
+		Level:                       NewLevelClient(cfg),
 		Major:                       NewMajorClient(cfg),
 		MajorDetail:                 NewMajorDetailClient(cfg),
 		MajorDetailTag:              NewMajorDetailTagClient(cfg),
@@ -477,6 +499,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		TkQuestion:                  NewTkQuestionClient(cfg),
 		TkQuestionAnswerOption:      NewTkQuestionAnswerOptionClient(cfg),
 		TkQuestionBank:              NewTkQuestionBankClient(cfg),
+		TkQuestionBankCity:          NewTkQuestionBankCityClient(cfg),
+		TkQuestionBankMajor:         NewTkQuestionBankMajorClient(cfg),
 		TkQuestionErrorFeedback:     NewTkQuestionErrorFeedbackClient(cfg),
 		TkQuestionSection:           NewTkQuestionSectionClient(cfg),
 		TkSection:                   NewTkSectionClient(cfg),
@@ -533,6 +557,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Attachment.Use(hooks...)
 	c.City.Use(hooks...)
 	c.Collection.Use(hooks...)
+	c.GroupCard.Use(hooks...)
 	c.HotSearch.Use(hooks...)
 	c.ImportTask.Use(hooks...)
 	c.InformationClassify.Use(hooks...)
@@ -551,6 +576,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.KcUserClass.Use(hooks...)
 	c.KcUserCourse.Use(hooks...)
 	c.KcVideoUploadTask.Use(hooks...)
+	c.Level.Use(hooks...)
 	c.Major.Use(hooks...)
 	c.MajorDetail.Use(hooks...)
 	c.MajorDetailTag.Use(hooks...)
@@ -574,6 +600,8 @@ func (c *Client) Use(hooks ...Hook) {
 	c.TkQuestion.Use(hooks...)
 	c.TkQuestionAnswerOption.Use(hooks...)
 	c.TkQuestionBank.Use(hooks...)
+	c.TkQuestionBankCity.Use(hooks...)
+	c.TkQuestionBankMajor.Use(hooks...)
 	c.TkQuestionErrorFeedback.Use(hooks...)
 	c.TkQuestionSection.Use(hooks...)
 	c.TkSection.Use(hooks...)
@@ -2071,6 +2099,22 @@ func (c *AttachmentClient) QueryAskAttachments(a *Attachment) *UserAskAnswerAtta
 	return query
 }
 
+// QueryGroupCard queries the group_card edge of a Attachment.
+func (c *AttachmentClient) QueryGroupCard(a *Attachment) *GroupCardQuery {
+	query := &GroupCardQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(attachment.Table, attachment.FieldID, id),
+			sqlgraph.To(groupcard.Table, groupcard.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, attachment.GroupCardTable, attachment.GroupCardColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *AttachmentClient) Hooks() []Hook {
 	hooks := c.hooks.Attachment
@@ -2210,6 +2254,22 @@ func (c *CityClient) QueryUserCity(ci *City) *UserQuery {
 	return query
 }
 
+// QueryQuestionBankCities queries the question_bank_cities edge of a City.
+func (c *CityClient) QueryQuestionBankCities(ci *City) *TkQuestionBankCityQuery {
+	query := &TkQuestionBankCityQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := ci.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(city.Table, city.FieldID, id),
+			sqlgraph.To(tkquestionbankcity.Table, tkquestionbankcity.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, city.QuestionBankCitiesTable, city.QuestionBankCitiesColumn),
+		)
+		fromV = sqlgraph.Neighbors(ci.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *CityClient) Hooks() []Hook {
 	hooks := c.hooks.City
@@ -2321,6 +2381,113 @@ func (c *CollectionClient) QueryQuestion(co *Collection) *TkQuestionQuery {
 func (c *CollectionClient) Hooks() []Hook {
 	hooks := c.hooks.Collection
 	return append(hooks[:len(hooks):len(hooks)], collection.Hooks[:]...)
+}
+
+// GroupCardClient is a client for the GroupCard schema.
+type GroupCardClient struct {
+	config
+}
+
+// NewGroupCardClient returns a client for the GroupCard from the given config.
+func NewGroupCardClient(c config) *GroupCardClient {
+	return &GroupCardClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `groupcard.Hooks(f(g(h())))`.
+func (c *GroupCardClient) Use(hooks ...Hook) {
+	c.hooks.GroupCard = append(c.hooks.GroupCard, hooks...)
+}
+
+// Create returns a create builder for GroupCard.
+func (c *GroupCardClient) Create() *GroupCardCreate {
+	mutation := newGroupCardMutation(c.config, OpCreate)
+	return &GroupCardCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of GroupCard entities.
+func (c *GroupCardClient) CreateBulk(builders ...*GroupCardCreate) *GroupCardCreateBulk {
+	return &GroupCardCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for GroupCard.
+func (c *GroupCardClient) Update() *GroupCardUpdate {
+	mutation := newGroupCardMutation(c.config, OpUpdate)
+	return &GroupCardUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *GroupCardClient) UpdateOne(gc *GroupCard) *GroupCardUpdateOne {
+	mutation := newGroupCardMutation(c.config, OpUpdateOne, withGroupCard(gc))
+	return &GroupCardUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *GroupCardClient) UpdateOneID(id int) *GroupCardUpdateOne {
+	mutation := newGroupCardMutation(c.config, OpUpdateOne, withGroupCardID(id))
+	return &GroupCardUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for GroupCard.
+func (c *GroupCardClient) Delete() *GroupCardDelete {
+	mutation := newGroupCardMutation(c.config, OpDelete)
+	return &GroupCardDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *GroupCardClient) DeleteOne(gc *GroupCard) *GroupCardDeleteOne {
+	return c.DeleteOneID(gc.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *GroupCardClient) DeleteOneID(id int) *GroupCardDeleteOne {
+	builder := c.Delete().Where(groupcard.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &GroupCardDeleteOne{builder}
+}
+
+// Query returns a query builder for GroupCard.
+func (c *GroupCardClient) Query() *GroupCardQuery {
+	return &GroupCardQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a GroupCard entity by its id.
+func (c *GroupCardClient) Get(ctx context.Context, id int) (*GroupCard, error) {
+	return c.Query().Where(groupcard.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *GroupCardClient) GetX(ctx context.Context, id int) *GroupCard {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAttachment queries the attachment edge of a GroupCard.
+func (c *GroupCardClient) QueryAttachment(gc *GroupCard) *AttachmentQuery {
+	query := &AttachmentQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := gc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(groupcard.Table, groupcard.FieldID, id),
+			sqlgraph.To(attachment.Table, attachment.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, groupcard.AttachmentTable, groupcard.AttachmentColumn),
+		)
+		fromV = sqlgraph.Neighbors(gc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *GroupCardClient) Hooks() []Hook {
+	hooks := c.hooks.GroupCard
+	return append(hooks[:len(hooks):len(hooks)], groupcard.Hooks[:]...)
 }
 
 // HotSearchClient is a client for the HotSearch schema.
@@ -4900,6 +5067,113 @@ func (c *KcVideoUploadTaskClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], kcvideouploadtask.Hooks[:]...)
 }
 
+// LevelClient is a client for the Level schema.
+type LevelClient struct {
+	config
+}
+
+// NewLevelClient returns a client for the Level from the given config.
+func NewLevelClient(c config) *LevelClient {
+	return &LevelClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `level.Hooks(f(g(h())))`.
+func (c *LevelClient) Use(hooks ...Hook) {
+	c.hooks.Level = append(c.hooks.Level, hooks...)
+}
+
+// Create returns a create builder for Level.
+func (c *LevelClient) Create() *LevelCreate {
+	mutation := newLevelMutation(c.config, OpCreate)
+	return &LevelCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Level entities.
+func (c *LevelClient) CreateBulk(builders ...*LevelCreate) *LevelCreateBulk {
+	return &LevelCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Level.
+func (c *LevelClient) Update() *LevelUpdate {
+	mutation := newLevelMutation(c.config, OpUpdate)
+	return &LevelUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *LevelClient) UpdateOne(l *Level) *LevelUpdateOne {
+	mutation := newLevelMutation(c.config, OpUpdateOne, withLevel(l))
+	return &LevelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *LevelClient) UpdateOneID(id int) *LevelUpdateOne {
+	mutation := newLevelMutation(c.config, OpUpdateOne, withLevelID(id))
+	return &LevelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Level.
+func (c *LevelClient) Delete() *LevelDelete {
+	mutation := newLevelMutation(c.config, OpDelete)
+	return &LevelDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *LevelClient) DeleteOne(l *Level) *LevelDeleteOne {
+	return c.DeleteOneID(l.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *LevelClient) DeleteOneID(id int) *LevelDeleteOne {
+	builder := c.Delete().Where(level.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &LevelDeleteOne{builder}
+}
+
+// Query returns a query builder for Level.
+func (c *LevelClient) Query() *LevelQuery {
+	return &LevelQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Level entity by its id.
+func (c *LevelClient) Get(ctx context.Context, id int) (*Level, error) {
+	return c.Query().Where(level.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *LevelClient) GetX(ctx context.Context, id int) *Level {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryLevelQuestionBanks queries the level_question_banks edge of a Level.
+func (c *LevelClient) QueryLevelQuestionBanks(l *Level) *TkQuestionBankQuery {
+	query := &TkQuestionBankQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := l.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(level.Table, level.FieldID, id),
+			sqlgraph.To(tkquestionbank.Table, tkquestionbank.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, level.LevelQuestionBanksTable, level.LevelQuestionBanksColumn),
+		)
+		fromV = sqlgraph.Neighbors(l.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *LevelClient) Hooks() []Hook {
+	hooks := c.hooks.Level
+	return append(hooks[:len(hooks):len(hooks)], level.Hooks[:]...)
+}
+
 // MajorClient is a client for the Major schema.
 type MajorClient struct {
 	config
@@ -5042,6 +5316,22 @@ func (c *MajorClient) QueryCourses(m *Major) *KcCourseQuery {
 			sqlgraph.From(major.Table, major.FieldID, id),
 			sqlgraph.To(kccourse.Table, kccourse.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, major.CoursesTable, major.CoursesPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryQuestionBankMajors queries the question_bank_majors edge of a Major.
+func (c *MajorClient) QueryQuestionBankMajors(m *Major) *TkQuestionBankMajorQuery {
+	query := &TkQuestionBankMajorQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(major.Table, major.FieldID, id),
+			sqlgraph.To(tkquestionbankmajor.Table, tkquestionbankmajor.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, major.QuestionBankMajorsTable, major.QuestionBankMajorsColumn),
 		)
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
 		return fromV, nil
@@ -8090,6 +8380,22 @@ func (c *TkQuestionBankClient) QueryItemCategory(tqb *TkQuestionBank) *ItemCateg
 	return query
 }
 
+// QueryLevel queries the level edge of a TkQuestionBank.
+func (c *TkQuestionBankClient) QueryLevel(tqb *TkQuestionBank) *LevelQuery {
+	query := &LevelQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := tqb.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tkquestionbank.Table, tkquestionbank.FieldID, id),
+			sqlgraph.To(level.Table, level.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, tkquestionbank.LevelTable, tkquestionbank.LevelColumn),
+		)
+		fromV = sqlgraph.Neighbors(tqb.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryAdmin queries the admin edge of a TkQuestionBank.
 func (c *TkQuestionBankClient) QueryAdmin(tqb *TkQuestionBank) *AdminQuery {
 	query := &AdminQuery{config: c.config}
@@ -8234,10 +8540,288 @@ func (c *TkQuestionBankClient) QueryKnowledgePoints(tqb *TkQuestionBank) *TkKnow
 	return query
 }
 
+// QueryCityQuestionBanks queries the city_question_banks edge of a TkQuestionBank.
+func (c *TkQuestionBankClient) QueryCityQuestionBanks(tqb *TkQuestionBank) *TkQuestionBankCityQuery {
+	query := &TkQuestionBankCityQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := tqb.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tkquestionbank.Table, tkquestionbank.FieldID, id),
+			sqlgraph.To(tkquestionbankcity.Table, tkquestionbankcity.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, tkquestionbank.CityQuestionBanksTable, tkquestionbank.CityQuestionBanksColumn),
+		)
+		fromV = sqlgraph.Neighbors(tqb.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMajorQuestionBanks queries the major_question_banks edge of a TkQuestionBank.
+func (c *TkQuestionBankClient) QueryMajorQuestionBanks(tqb *TkQuestionBank) *TkQuestionBankMajorQuery {
+	query := &TkQuestionBankMajorQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := tqb.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tkquestionbank.Table, tkquestionbank.FieldID, id),
+			sqlgraph.To(tkquestionbankmajor.Table, tkquestionbankmajor.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, tkquestionbank.MajorQuestionBanksTable, tkquestionbank.MajorQuestionBanksColumn),
+		)
+		fromV = sqlgraph.Neighbors(tqb.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *TkQuestionBankClient) Hooks() []Hook {
 	hooks := c.hooks.TkQuestionBank
 	return append(hooks[:len(hooks):len(hooks)], tkquestionbank.Hooks[:]...)
+}
+
+// TkQuestionBankCityClient is a client for the TkQuestionBankCity schema.
+type TkQuestionBankCityClient struct {
+	config
+}
+
+// NewTkQuestionBankCityClient returns a client for the TkQuestionBankCity from the given config.
+func NewTkQuestionBankCityClient(c config) *TkQuestionBankCityClient {
+	return &TkQuestionBankCityClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `tkquestionbankcity.Hooks(f(g(h())))`.
+func (c *TkQuestionBankCityClient) Use(hooks ...Hook) {
+	c.hooks.TkQuestionBankCity = append(c.hooks.TkQuestionBankCity, hooks...)
+}
+
+// Create returns a create builder for TkQuestionBankCity.
+func (c *TkQuestionBankCityClient) Create() *TkQuestionBankCityCreate {
+	mutation := newTkQuestionBankCityMutation(c.config, OpCreate)
+	return &TkQuestionBankCityCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of TkQuestionBankCity entities.
+func (c *TkQuestionBankCityClient) CreateBulk(builders ...*TkQuestionBankCityCreate) *TkQuestionBankCityCreateBulk {
+	return &TkQuestionBankCityCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for TkQuestionBankCity.
+func (c *TkQuestionBankCityClient) Update() *TkQuestionBankCityUpdate {
+	mutation := newTkQuestionBankCityMutation(c.config, OpUpdate)
+	return &TkQuestionBankCityUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TkQuestionBankCityClient) UpdateOne(tqbc *TkQuestionBankCity) *TkQuestionBankCityUpdateOne {
+	mutation := newTkQuestionBankCityMutation(c.config, OpUpdateOne, withTkQuestionBankCity(tqbc))
+	return &TkQuestionBankCityUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TkQuestionBankCityClient) UpdateOneID(id int) *TkQuestionBankCityUpdateOne {
+	mutation := newTkQuestionBankCityMutation(c.config, OpUpdateOne, withTkQuestionBankCityID(id))
+	return &TkQuestionBankCityUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for TkQuestionBankCity.
+func (c *TkQuestionBankCityClient) Delete() *TkQuestionBankCityDelete {
+	mutation := newTkQuestionBankCityMutation(c.config, OpDelete)
+	return &TkQuestionBankCityDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *TkQuestionBankCityClient) DeleteOne(tqbc *TkQuestionBankCity) *TkQuestionBankCityDeleteOne {
+	return c.DeleteOneID(tqbc.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *TkQuestionBankCityClient) DeleteOneID(id int) *TkQuestionBankCityDeleteOne {
+	builder := c.Delete().Where(tkquestionbankcity.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TkQuestionBankCityDeleteOne{builder}
+}
+
+// Query returns a query builder for TkQuestionBankCity.
+func (c *TkQuestionBankCityClient) Query() *TkQuestionBankCityQuery {
+	return &TkQuestionBankCityQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a TkQuestionBankCity entity by its id.
+func (c *TkQuestionBankCityClient) Get(ctx context.Context, id int) (*TkQuestionBankCity, error) {
+	return c.Query().Where(tkquestionbankcity.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TkQuestionBankCityClient) GetX(ctx context.Context, id int) *TkQuestionBankCity {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryTkQuestionBank queries the tk_question_bank edge of a TkQuestionBankCity.
+func (c *TkQuestionBankCityClient) QueryTkQuestionBank(tqbc *TkQuestionBankCity) *TkQuestionBankQuery {
+	query := &TkQuestionBankQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := tqbc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tkquestionbankcity.Table, tkquestionbankcity.FieldID, id),
+			sqlgraph.To(tkquestionbank.Table, tkquestionbank.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, tkquestionbankcity.TkQuestionBankTable, tkquestionbankcity.TkQuestionBankColumn),
+		)
+		fromV = sqlgraph.Neighbors(tqbc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCity queries the city edge of a TkQuestionBankCity.
+func (c *TkQuestionBankCityClient) QueryCity(tqbc *TkQuestionBankCity) *CityQuery {
+	query := &CityQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := tqbc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tkquestionbankcity.Table, tkquestionbankcity.FieldID, id),
+			sqlgraph.To(city.Table, city.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, tkquestionbankcity.CityTable, tkquestionbankcity.CityColumn),
+		)
+		fromV = sqlgraph.Neighbors(tqbc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *TkQuestionBankCityClient) Hooks() []Hook {
+	hooks := c.hooks.TkQuestionBankCity
+	return append(hooks[:len(hooks):len(hooks)], tkquestionbankcity.Hooks[:]...)
+}
+
+// TkQuestionBankMajorClient is a client for the TkQuestionBankMajor schema.
+type TkQuestionBankMajorClient struct {
+	config
+}
+
+// NewTkQuestionBankMajorClient returns a client for the TkQuestionBankMajor from the given config.
+func NewTkQuestionBankMajorClient(c config) *TkQuestionBankMajorClient {
+	return &TkQuestionBankMajorClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `tkquestionbankmajor.Hooks(f(g(h())))`.
+func (c *TkQuestionBankMajorClient) Use(hooks ...Hook) {
+	c.hooks.TkQuestionBankMajor = append(c.hooks.TkQuestionBankMajor, hooks...)
+}
+
+// Create returns a create builder for TkQuestionBankMajor.
+func (c *TkQuestionBankMajorClient) Create() *TkQuestionBankMajorCreate {
+	mutation := newTkQuestionBankMajorMutation(c.config, OpCreate)
+	return &TkQuestionBankMajorCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of TkQuestionBankMajor entities.
+func (c *TkQuestionBankMajorClient) CreateBulk(builders ...*TkQuestionBankMajorCreate) *TkQuestionBankMajorCreateBulk {
+	return &TkQuestionBankMajorCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for TkQuestionBankMajor.
+func (c *TkQuestionBankMajorClient) Update() *TkQuestionBankMajorUpdate {
+	mutation := newTkQuestionBankMajorMutation(c.config, OpUpdate)
+	return &TkQuestionBankMajorUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TkQuestionBankMajorClient) UpdateOne(tqbm *TkQuestionBankMajor) *TkQuestionBankMajorUpdateOne {
+	mutation := newTkQuestionBankMajorMutation(c.config, OpUpdateOne, withTkQuestionBankMajor(tqbm))
+	return &TkQuestionBankMajorUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TkQuestionBankMajorClient) UpdateOneID(id int) *TkQuestionBankMajorUpdateOne {
+	mutation := newTkQuestionBankMajorMutation(c.config, OpUpdateOne, withTkQuestionBankMajorID(id))
+	return &TkQuestionBankMajorUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for TkQuestionBankMajor.
+func (c *TkQuestionBankMajorClient) Delete() *TkQuestionBankMajorDelete {
+	mutation := newTkQuestionBankMajorMutation(c.config, OpDelete)
+	return &TkQuestionBankMajorDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *TkQuestionBankMajorClient) DeleteOne(tqbm *TkQuestionBankMajor) *TkQuestionBankMajorDeleteOne {
+	return c.DeleteOneID(tqbm.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *TkQuestionBankMajorClient) DeleteOneID(id int) *TkQuestionBankMajorDeleteOne {
+	builder := c.Delete().Where(tkquestionbankmajor.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TkQuestionBankMajorDeleteOne{builder}
+}
+
+// Query returns a query builder for TkQuestionBankMajor.
+func (c *TkQuestionBankMajorClient) Query() *TkQuestionBankMajorQuery {
+	return &TkQuestionBankMajorQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a TkQuestionBankMajor entity by its id.
+func (c *TkQuestionBankMajorClient) Get(ctx context.Context, id int) (*TkQuestionBankMajor, error) {
+	return c.Query().Where(tkquestionbankmajor.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TkQuestionBankMajorClient) GetX(ctx context.Context, id int) *TkQuestionBankMajor {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryTkQuestionBank queries the tk_question_bank edge of a TkQuestionBankMajor.
+func (c *TkQuestionBankMajorClient) QueryTkQuestionBank(tqbm *TkQuestionBankMajor) *TkQuestionBankQuery {
+	query := &TkQuestionBankQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := tqbm.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tkquestionbankmajor.Table, tkquestionbankmajor.FieldID, id),
+			sqlgraph.To(tkquestionbank.Table, tkquestionbank.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, tkquestionbankmajor.TkQuestionBankTable, tkquestionbankmajor.TkQuestionBankColumn),
+		)
+		fromV = sqlgraph.Neighbors(tqbm.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMajor queries the major edge of a TkQuestionBankMajor.
+func (c *TkQuestionBankMajorClient) QueryMajor(tqbm *TkQuestionBankMajor) *MajorQuery {
+	query := &MajorQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := tqbm.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tkquestionbankmajor.Table, tkquestionbankmajor.FieldID, id),
+			sqlgraph.To(major.Table, major.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, tkquestionbankmajor.MajorTable, tkquestionbankmajor.MajorColumn),
+		)
+		fromV = sqlgraph.Neighbors(tqbm.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *TkQuestionBankMajorClient) Hooks() []Hook {
+	hooks := c.hooks.TkQuestionBankMajor
+	return append(hooks[:len(hooks):len(hooks)], tkquestionbankmajor.Hooks[:]...)
 }
 
 // TkQuestionErrorFeedbackClient is a client for the TkQuestionErrorFeedback schema.

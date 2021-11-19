@@ -36,6 +36,7 @@ type hooks struct {
 	Attachment                  []ent.Hook
 	City                        []ent.Hook
 	Collection                  []ent.Hook
+	GroupCard                   []ent.Hook
 	HotSearch                   []ent.Hook
 	ImportTask                  []ent.Hook
 	InformationClassify         []ent.Hook
@@ -54,6 +55,7 @@ type hooks struct {
 	KcUserClass                 []ent.Hook
 	KcUserCourse                []ent.Hook
 	KcVideoUploadTask           []ent.Hook
+	Level                       []ent.Hook
 	Major                       []ent.Hook
 	MajorDetail                 []ent.Hook
 	MajorDetailTag              []ent.Hook
@@ -77,6 +79,8 @@ type hooks struct {
 	TkQuestion                  []ent.Hook
 	TkQuestionAnswerOption      []ent.Hook
 	TkQuestionBank              []ent.Hook
+	TkQuestionBankCity          []ent.Hook
+	TkQuestionBankMajor         []ent.Hook
 	TkQuestionErrorFeedback     []ent.Hook
 	TkQuestionSection           []ent.Hook
 	TkSection                   []ent.Hook

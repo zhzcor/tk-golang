@@ -41,13 +41,13 @@ type User struct {
 	// Username holds the value of the "username" field.
 	Username string `json:"username"`
 	// Status holds the value of the "status" field.
-	// 学员状态：预留
+	// 学员状态：1：启用，2：禁用
 	Status uint8 `json:"status"`
 	// Sex holds the value of the "sex" field.
 	// 性别，1：男，2：女，3：未知
 	Sex uint8 `json:"sex"`
 	// RegFrom holds the value of the "reg_from" field.
-	// 用户注册的来源，1：系统同步，2:系统注册，3：人工添加，4：用户注册
+	// 用户注册的来源，1：APP注册-ios，2:APP注册-安卓，3：H5注册，4：微信小程序注册，5：后台添加
 	RegFrom uint8 `json:"reg_from"`
 	// CardType holds the value of the "card_type" field.
 	// 证件类型，1：无，2：身份证，3：居住证，4：护照，5：港澳台身份证

@@ -1106,6 +1106,34 @@ func HasUserCityWith(preds ...predicate.User) predicate.City {
 	})
 }
 
+// HasQuestionBankCities applies the HasEdge predicate on the "question_bank_cities" edge.
+func HasQuestionBankCities() predicate.City {
+	return predicate.City(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(QuestionBankCitiesTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, QuestionBankCitiesTable, QuestionBankCitiesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasQuestionBankCitiesWith applies the HasEdge predicate on the "question_bank_cities" edge with a given conditions (other predicates).
+func HasQuestionBankCitiesWith(preds ...predicate.TkQuestionBankCity) predicate.City {
+	return predicate.City(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(QuestionBankCitiesInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, QuestionBankCitiesTable, QuestionBankCitiesColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.City) predicate.City {
 	return predicate.City(func(s *sql.Selector) {

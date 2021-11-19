@@ -164,6 +164,19 @@ func (f CollectionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return f(ctx, mv)
 }
 
+// The GroupCardFunc type is an adapter to allow the use of ordinary
+// function as GroupCard mutator.
+type GroupCardFunc func(context.Context, *ent.GroupCardMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f GroupCardFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.GroupCardMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.GroupCardMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The HotSearchFunc type is an adapter to allow the use of ordinary
 // function as HotSearch mutator.
 type HotSearchFunc func(context.Context, *ent.HotSearchMutation) (ent.Value, error)
@@ -394,6 +407,19 @@ func (f KcVideoUploadTaskFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.
 	mv, ok := m.(*ent.KcVideoUploadTaskMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.KcVideoUploadTaskMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The LevelFunc type is an adapter to allow the use of ordinary
+// function as Level mutator.
+type LevelFunc func(context.Context, *ent.LevelMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f LevelFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.LevelMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.LevelMutation", m)
 	}
 	return f(ctx, mv)
 }
@@ -693,6 +719,32 @@ func (f TkQuestionBankFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Val
 	mv, ok := m.(*ent.TkQuestionBankMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TkQuestionBankMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The TkQuestionBankCityFunc type is an adapter to allow the use of ordinary
+// function as TkQuestionBankCity mutator.
+type TkQuestionBankCityFunc func(context.Context, *ent.TkQuestionBankCityMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TkQuestionBankCityFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.TkQuestionBankCityMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TkQuestionBankCityMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The TkQuestionBankMajorFunc type is an adapter to allow the use of ordinary
+// function as TkQuestionBankMajor mutator.
+type TkQuestionBankMajorFunc func(context.Context, *ent.TkQuestionBankMajorMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TkQuestionBankMajorFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.TkQuestionBankMajorMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TkQuestionBankMajorMutation", m)
 	}
 	return f(ctx, mv)
 }

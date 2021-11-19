@@ -10,6 +10,7 @@ import (
 	"tkserver/internal/store/ent/city"
 	"tkserver/internal/store/ent/kcclass"
 	"tkserver/internal/store/ent/kccourse"
+	"tkserver/internal/store/ent/tkquestionbankcity"
 	"tkserver/internal/store/ent/user"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -184,6 +185,21 @@ func (cc *CityCreate) AddUserCity(u ...*User) *CityCreate {
 		ids[i] = u[i].ID
 	}
 	return cc.AddUserCityIDs(ids...)
+}
+
+// AddQuestionBankCityIDs adds the "question_bank_cities" edge to the TkQuestionBankCity entity by IDs.
+func (cc *CityCreate) AddQuestionBankCityIDs(ids ...int) *CityCreate {
+	cc.mutation.AddQuestionBankCityIDs(ids...)
+	return cc
+}
+
+// AddQuestionBankCities adds the "question_bank_cities" edges to the TkQuestionBankCity entity.
+func (cc *CityCreate) AddQuestionBankCities(t ...*TkQuestionBankCity) *CityCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return cc.AddQuestionBankCityIDs(ids...)
 }
 
 // Mutation returns the CityMutation object of the builder.
@@ -436,6 +452,25 @@ func (cc *CityCreate) createSpec() (*City, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := cc.mutation.QuestionBankCitiesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   city.QuestionBankCitiesTable,
+			Columns: []string{city.QuestionBankCitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankcity.FieldID,
 				},
 			},
 		}

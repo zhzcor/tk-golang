@@ -16,6 +16,7 @@ import (
 	"tkserver/internal/store/ent/attachment"
 	"tkserver/internal/store/ent/city"
 	"tkserver/internal/store/ent/collection"
+	"tkserver/internal/store/ent/groupcard"
 	"tkserver/internal/store/ent/hotsearch"
 	"tkserver/internal/store/ent/importtask"
 	"tkserver/internal/store/ent/informationclassify"
@@ -29,6 +30,7 @@ import (
 	"tkserver/internal/store/ent/kcuserclass"
 	"tkserver/internal/store/ent/kcusercourse"
 	"tkserver/internal/store/ent/kcvideouploadtask"
+	"tkserver/internal/store/ent/level"
 	"tkserver/internal/store/ent/major"
 	"tkserver/internal/store/ent/majordetail"
 	"tkserver/internal/store/ent/majordetailtag"
@@ -51,6 +53,8 @@ import (
 	"tkserver/internal/store/ent/tkquestion"
 	"tkserver/internal/store/ent/tkquestionansweroption"
 	"tkserver/internal/store/ent/tkquestionbank"
+	"tkserver/internal/store/ent/tkquestionbankcity"
+	"tkserver/internal/store/ent/tkquestionbankmajor"
 	"tkserver/internal/store/ent/tkquestionerrorfeedback"
 	"tkserver/internal/store/ent/tkquestionsection"
 	"tkserver/internal/store/ent/tksection"
@@ -293,6 +297,25 @@ func (cuo *CollectionUpdateOne) SoftDelete() *CollectionUpdateOne {
 
 func (cq *CollectionQuery) SoftDelete() *CollectionQuery {
 	return cq.Where(collection.DeletedAtIsNil())
+}
+
+func (gcc *GroupCardCreate) SoftDelete() *GroupCardCreate {
+	gcc.SetDeletedAt(time.Now())
+	return gcc
+}
+
+func (gcu *GroupCardUpdate) SoftDelete() *GroupCardUpdate {
+	gcu.SetDeletedAt(time.Now())
+	return gcu
+}
+
+func (gcuo *GroupCardUpdateOne) SoftDelete() *GroupCardUpdateOne {
+	gcuo.SetDeletedAt(time.Now())
+	return gcuo
+}
+
+func (gcq *GroupCardQuery) SoftDelete() *GroupCardQuery {
+	return gcq.Where(groupcard.DeletedAtIsNil())
 }
 
 func (hsc *HotSearchCreate) SoftDelete() *HotSearchCreate {
@@ -540,6 +563,25 @@ func (kvutuo *KcVideoUploadTaskUpdateOne) SoftDelete() *KcVideoUploadTaskUpdateO
 
 func (kvutq *KcVideoUploadTaskQuery) SoftDelete() *KcVideoUploadTaskQuery {
 	return kvutq.Where(kcvideouploadtask.DeletedAtIsNil())
+}
+
+func (lc *LevelCreate) SoftDelete() *LevelCreate {
+	lc.SetDeletedAt(time.Now())
+	return lc
+}
+
+func (lu *LevelUpdate) SoftDelete() *LevelUpdate {
+	lu.SetDeletedAt(time.Now())
+	return lu
+}
+
+func (luo *LevelUpdateOne) SoftDelete() *LevelUpdateOne {
+	luo.SetDeletedAt(time.Now())
+	return luo
+}
+
+func (lq *LevelQuery) SoftDelete() *LevelQuery {
+	return lq.Where(level.DeletedAtIsNil())
 }
 
 func (mc *MajorCreate) SoftDelete() *MajorCreate {
@@ -958,6 +1000,44 @@ func (tqbuo *TkQuestionBankUpdateOne) SoftDelete() *TkQuestionBankUpdateOne {
 
 func (tqbq *TkQuestionBankQuery) SoftDelete() *TkQuestionBankQuery {
 	return tqbq.Where(tkquestionbank.DeletedAtIsNil())
+}
+
+func (tqbcc *TkQuestionBankCityCreate) SoftDelete() *TkQuestionBankCityCreate {
+	tqbcc.SetDeletedAt(time.Now())
+	return tqbcc
+}
+
+func (tqbcu *TkQuestionBankCityUpdate) SoftDelete() *TkQuestionBankCityUpdate {
+	tqbcu.SetDeletedAt(time.Now())
+	return tqbcu
+}
+
+func (tqbcuo *TkQuestionBankCityUpdateOne) SoftDelete() *TkQuestionBankCityUpdateOne {
+	tqbcuo.SetDeletedAt(time.Now())
+	return tqbcuo
+}
+
+func (tqbcq *TkQuestionBankCityQuery) SoftDelete() *TkQuestionBankCityQuery {
+	return tqbcq.Where(tkquestionbankcity.DeletedAtIsNil())
+}
+
+func (tqbmc *TkQuestionBankMajorCreate) SoftDelete() *TkQuestionBankMajorCreate {
+	tqbmc.SetDeletedAt(time.Now())
+	return tqbmc
+}
+
+func (tqbmu *TkQuestionBankMajorUpdate) SoftDelete() *TkQuestionBankMajorUpdate {
+	tqbmu.SetDeletedAt(time.Now())
+	return tqbmu
+}
+
+func (tqbmuo *TkQuestionBankMajorUpdateOne) SoftDelete() *TkQuestionBankMajorUpdateOne {
+	tqbmuo.SetDeletedAt(time.Now())
+	return tqbmuo
+}
+
+func (tqbmq *TkQuestionBankMajorQuery) SoftDelete() *TkQuestionBankMajorQuery {
+	return tqbmq.Where(tkquestionbankmajor.DeletedAtIsNil())
 }
 
 func (tqefc *TkQuestionErrorFeedbackCreate) SoftDelete() *TkQuestionErrorFeedbackCreate {

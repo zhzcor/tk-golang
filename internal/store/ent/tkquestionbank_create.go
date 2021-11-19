@@ -10,12 +10,15 @@ import (
 	"tkserver/internal/store/ent/admin"
 	"tkserver/internal/store/ent/itemcategory"
 	"tkserver/internal/store/ent/kccourse"
+	"tkserver/internal/store/ent/level"
 	"tkserver/internal/store/ent/tkchapter"
 	"tkserver/internal/store/ent/tkexampaper"
 	"tkserver/internal/store/ent/tkexamquestiontype"
 	"tkserver/internal/store/ent/tkknowledgepoint"
 	"tkserver/internal/store/ent/tkquestion"
 	"tkserver/internal/store/ent/tkquestionbank"
+	"tkserver/internal/store/ent/tkquestionbankcity"
+	"tkserver/internal/store/ent/tkquestionbankmajor"
 	"tkserver/internal/store/ent/tkuserquestionbankrecord"
 	"tkserver/internal/store/ent/tkuserquestionrecord"
 
@@ -148,9 +151,28 @@ func (tqbc *TkQuestionBankCreate) SetNillableItemCategoryID(i *int) *TkQuestionB
 	return tqbc
 }
 
+// SetLevelID sets the "level_id" field.
+func (tqbc *TkQuestionBankCreate) SetLevelID(i int) *TkQuestionBankCreate {
+	tqbc.mutation.SetLevelID(i)
+	return tqbc
+}
+
+// SetNillableLevelID sets the "level_id" field if the given value is not nil.
+func (tqbc *TkQuestionBankCreate) SetNillableLevelID(i *int) *TkQuestionBankCreate {
+	if i != nil {
+		tqbc.SetLevelID(*i)
+	}
+	return tqbc
+}
+
 // SetItemCategory sets the "item_category" edge to the ItemCategory entity.
 func (tqbc *TkQuestionBankCreate) SetItemCategory(i *ItemCategory) *TkQuestionBankCreate {
 	return tqbc.SetItemCategoryID(i.ID)
+}
+
+// SetLevel sets the "level" edge to the Level entity.
+func (tqbc *TkQuestionBankCreate) SetLevel(l *Level) *TkQuestionBankCreate {
+	return tqbc.SetLevelID(l.ID)
 }
 
 // SetAdminID sets the "admin" edge to the Admin entity by ID.
@@ -290,6 +312,36 @@ func (tqbc *TkQuestionBankCreate) AddKnowledgePoints(t ...*TkKnowledgePoint) *Tk
 		ids[i] = t[i].ID
 	}
 	return tqbc.AddKnowledgePointIDs(ids...)
+}
+
+// AddCityQuestionBankIDs adds the "city_question_banks" edge to the TkQuestionBankCity entity by IDs.
+func (tqbc *TkQuestionBankCreate) AddCityQuestionBankIDs(ids ...int) *TkQuestionBankCreate {
+	tqbc.mutation.AddCityQuestionBankIDs(ids...)
+	return tqbc
+}
+
+// AddCityQuestionBanks adds the "city_question_banks" edges to the TkQuestionBankCity entity.
+func (tqbc *TkQuestionBankCreate) AddCityQuestionBanks(t ...*TkQuestionBankCity) *TkQuestionBankCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tqbc.AddCityQuestionBankIDs(ids...)
+}
+
+// AddMajorQuestionBankIDs adds the "major_question_banks" edge to the TkQuestionBankMajor entity by IDs.
+func (tqbc *TkQuestionBankCreate) AddMajorQuestionBankIDs(ids ...int) *TkQuestionBankCreate {
+	tqbc.mutation.AddMajorQuestionBankIDs(ids...)
+	return tqbc
+}
+
+// AddMajorQuestionBanks adds the "major_question_banks" edges to the TkQuestionBankMajor entity.
+func (tqbc *TkQuestionBankCreate) AddMajorQuestionBanks(t ...*TkQuestionBankMajor) *TkQuestionBankCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tqbc.AddMajorQuestionBankIDs(ids...)
 }
 
 // Mutation returns the TkQuestionBankMutation object of the builder.
@@ -483,6 +535,26 @@ func (tqbc *TkQuestionBankCreate) createSpec() (*TkQuestionBank, *sqlgraph.Creat
 		_node.ItemCategoryID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
+	if nodes := tqbc.mutation.LevelIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tkquestionbank.LevelTable,
+			Columns: []string{tkquestionbank.LevelColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: level.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.LevelID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	if nodes := tqbc.mutation.AdminIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -647,6 +719,44 @@ func (tqbc *TkQuestionBankCreate) createSpec() (*TkQuestionBank, *sqlgraph.Creat
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: tkknowledgepoint.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tqbc.mutation.CityQuestionBanksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tkquestionbank.CityQuestionBanksTable,
+			Columns: []string{tkquestionbank.CityQuestionBanksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankcity.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tqbc.mutation.MajorQuestionBanksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tkquestionbank.MajorQuestionBanksTable,
+			Columns: []string{tkquestionbank.MajorQuestionBanksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankmajor.FieldID,
 				},
 			},
 		}

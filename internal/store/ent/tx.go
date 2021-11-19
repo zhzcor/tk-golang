@@ -36,6 +36,8 @@ type Tx struct {
 	City *CityClient
 	// Collection is the client for interacting with the Collection builders.
 	Collection *CollectionClient
+	// GroupCard is the client for interacting with the GroupCard builders.
+	GroupCard *GroupCardClient
 	// HotSearch is the client for interacting with the HotSearch builders.
 	HotSearch *HotSearchClient
 	// ImportTask is the client for interacting with the ImportTask builders.
@@ -72,6 +74,8 @@ type Tx struct {
 	KcUserCourse *KcUserCourseClient
 	// KcVideoUploadTask is the client for interacting with the KcVideoUploadTask builders.
 	KcVideoUploadTask *KcVideoUploadTaskClient
+	// Level is the client for interacting with the Level builders.
+	Level *LevelClient
 	// Major is the client for interacting with the Major builders.
 	Major *MajorClient
 	// MajorDetail is the client for interacting with the MajorDetail builders.
@@ -118,6 +122,10 @@ type Tx struct {
 	TkQuestionAnswerOption *TkQuestionAnswerOptionClient
 	// TkQuestionBank is the client for interacting with the TkQuestionBank builders.
 	TkQuestionBank *TkQuestionBankClient
+	// TkQuestionBankCity is the client for interacting with the TkQuestionBankCity builders.
+	TkQuestionBankCity *TkQuestionBankCityClient
+	// TkQuestionBankMajor is the client for interacting with the TkQuestionBankMajor builders.
+	TkQuestionBankMajor *TkQuestionBankMajorClient
 	// TkQuestionErrorFeedback is the client for interacting with the TkQuestionErrorFeedback builders.
 	TkQuestionErrorFeedback *TkQuestionErrorFeedbackClient
 	// TkQuestionSection is the client for interacting with the TkQuestionSection builders.
@@ -295,6 +303,7 @@ func (tx *Tx) init() {
 	tx.Attachment = NewAttachmentClient(tx.config)
 	tx.City = NewCityClient(tx.config)
 	tx.Collection = NewCollectionClient(tx.config)
+	tx.GroupCard = NewGroupCardClient(tx.config)
 	tx.HotSearch = NewHotSearchClient(tx.config)
 	tx.ImportTask = NewImportTaskClient(tx.config)
 	tx.InformationClassify = NewInformationClassifyClient(tx.config)
@@ -313,6 +322,7 @@ func (tx *Tx) init() {
 	tx.KcUserClass = NewKcUserClassClient(tx.config)
 	tx.KcUserCourse = NewKcUserCourseClient(tx.config)
 	tx.KcVideoUploadTask = NewKcVideoUploadTaskClient(tx.config)
+	tx.Level = NewLevelClient(tx.config)
 	tx.Major = NewMajorClient(tx.config)
 	tx.MajorDetail = NewMajorDetailClient(tx.config)
 	tx.MajorDetailTag = NewMajorDetailTagClient(tx.config)
@@ -336,6 +346,8 @@ func (tx *Tx) init() {
 	tx.TkQuestion = NewTkQuestionClient(tx.config)
 	tx.TkQuestionAnswerOption = NewTkQuestionAnswerOptionClient(tx.config)
 	tx.TkQuestionBank = NewTkQuestionBankClient(tx.config)
+	tx.TkQuestionBankCity = NewTkQuestionBankCityClient(tx.config)
+	tx.TkQuestionBankMajor = NewTkQuestionBankMajorClient(tx.config)
 	tx.TkQuestionErrorFeedback = NewTkQuestionErrorFeedbackClient(tx.config)
 	tx.TkQuestionSection = NewTkQuestionSectionClient(tx.config)
 	tx.TkSection = NewTkSectionClient(tx.config)

@@ -6,18 +6,18 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-//地区
-type City struct {
+//层次
+type Level struct {
 	ent.Schema
 }
 
-func (City) Mixin() []ent.Mixin {
+func (Level) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		CommonMixin{},
 	}
 }
 
-func (City) Fields() []ent.Field {
+func (Level) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").Default("").Comment("名称"),
 		field.Uint8("status").Default(1).Comment("状态：1、锁定。2:生效"),
@@ -27,12 +27,8 @@ func (City) Fields() []ent.Field {
 	}
 }
 
-func (City) Edges() []ent.Edge {
+func (Level) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("kc_class", KcClass.Type),                        //班级
-		edge.To("course", KcCourse.Type),                         //课程
-		edge.To("user_city", User.Type),                          //用户地区
-		edge.To("question_bank_cities", TkQuestionBankCity.Type), //题库地区中间表
-
+		edge.To("level_question_banks", TkQuestionBank.Type), //题库所属层次
 	}
 }

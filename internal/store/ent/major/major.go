@@ -39,6 +39,8 @@ const (
 	EdgeKcClasses = "kc_classes"
 	// EdgeCourses holds the string denoting the courses edge name in mutations.
 	EdgeCourses = "courses"
+	// EdgeQuestionBankMajors holds the string denoting the question_bank_majors edge name in mutations.
+	EdgeQuestionBankMajors = "question_bank_majors"
 	// Table holds the table name of the major in the database.
 	Table = "majors"
 	// TeachersTable is the table the holds the teachers relation/edge. The primary key declared below.
@@ -63,6 +65,13 @@ const (
 	// CoursesInverseTable is the table name for the KcCourse entity.
 	// It exists in this package in order to avoid circular dependency with the "kccourse" package.
 	CoursesInverseTable = "kc_courses"
+	// QuestionBankMajorsTable is the table the holds the question_bank_majors relation/edge.
+	QuestionBankMajorsTable = "tk_question_bank_majors"
+	// QuestionBankMajorsInverseTable is the table name for the TkQuestionBankMajor entity.
+	// It exists in this package in order to avoid circular dependency with the "tkquestionbankmajor" package.
+	QuestionBankMajorsInverseTable = "tk_question_bank_majors"
+	// QuestionBankMajorsColumn is the table column denoting the question_bank_majors relation/edge.
+	QuestionBankMajorsColumn = "major_id"
 )
 
 // Columns holds all SQL columns for major fields.

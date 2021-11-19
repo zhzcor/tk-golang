@@ -218,13 +218,13 @@ func (ac *AdminCreate) SetNillableAdminAvatarID(i *int) *AdminCreate {
 	return ac
 }
 
-// SetRemark sets the "Remark" field.
+// SetRemark sets the "remark" field.
 func (ac *AdminCreate) SetRemark(s string) *AdminCreate {
 	ac.mutation.SetRemark(s)
 	return ac
 }
 
-// SetNillableRemark sets the "Remark" field if the given value is not nil.
+// SetNillableRemark sets the "remark" field if the given value is not nil.
 func (ac *AdminCreate) SetNillableRemark(s *string) *AdminCreate {
 	if s != nil {
 		ac.SetRemark(*s)
@@ -550,7 +550,7 @@ func (ac *AdminCreate) check() error {
 		return &ValidationError{Name: "status", err: errors.New("ent: missing required field \"status\"")}
 	}
 	if _, ok := ac.mutation.Remark(); !ok {
-		return &ValidationError{Name: "Remark", err: errors.New("ent: missing required field \"Remark\"")}
+		return &ValidationError{Name: "remark", err: errors.New("ent: missing required field \"remark\"")}
 	}
 	return nil
 }

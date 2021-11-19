@@ -9,6 +9,7 @@ import (
 	"tkserver/internal/store/ent/admin"
 	"tkserver/internal/store/ent/advertise"
 	"tkserver/internal/store/ent/attachment"
+	"tkserver/internal/store/ent/groupcard"
 	"tkserver/internal/store/ent/kcclass"
 	"tkserver/internal/store/ent/kccourse"
 	"tkserver/internal/store/ent/kccoursesmallcategory"
@@ -432,6 +433,21 @@ func (au *AttachmentUpdate) AddAskAttachments(u ...*UserAskAnswerAttachment) *At
 	return au.AddAskAttachmentIDs(ids...)
 }
 
+// AddGroupCardIDs adds the "group_card" edge to the GroupCard entity by IDs.
+func (au *AttachmentUpdate) AddGroupCardIDs(ids ...int) *AttachmentUpdate {
+	au.mutation.AddGroupCardIDs(ids...)
+	return au
+}
+
+// AddGroupCard adds the "group_card" edges to the GroupCard entity.
+func (au *AttachmentUpdate) AddGroupCard(g ...*GroupCard) *AttachmentUpdate {
+	ids := make([]int, len(g))
+	for i := range g {
+		ids[i] = g[i].ID
+	}
+	return au.AddGroupCardIDs(ids...)
+}
+
 // Mutation returns the AttachmentMutation object of the builder.
 func (au *AttachmentUpdate) Mutation() *AttachmentMutation {
 	return au.mutation
@@ -726,6 +742,27 @@ func (au *AttachmentUpdate) RemoveAskAttachments(u ...*UserAskAnswerAttachment) 
 		ids[i] = u[i].ID
 	}
 	return au.RemoveAskAttachmentIDs(ids...)
+}
+
+// ClearGroupCard clears all "group_card" edges to the GroupCard entity.
+func (au *AttachmentUpdate) ClearGroupCard() *AttachmentUpdate {
+	au.mutation.ClearGroupCard()
+	return au
+}
+
+// RemoveGroupCardIDs removes the "group_card" edge to GroupCard entities by IDs.
+func (au *AttachmentUpdate) RemoveGroupCardIDs(ids ...int) *AttachmentUpdate {
+	au.mutation.RemoveGroupCardIDs(ids...)
+	return au
+}
+
+// RemoveGroupCard removes "group_card" edges to GroupCard entities.
+func (au *AttachmentUpdate) RemoveGroupCard(g ...*GroupCard) *AttachmentUpdate {
+	ids := make([]int, len(g))
+	for i := range g {
+		ids[i] = g[i].ID
+	}
+	return au.RemoveGroupCardIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1720,6 +1757,60 @@ func (au *AttachmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if au.mutation.GroupCardCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   attachment.GroupCardTable,
+			Columns: []string{attachment.GroupCardColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: groupcard.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.RemovedGroupCardIDs(); len(nodes) > 0 && !au.mutation.GroupCardCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   attachment.GroupCardTable,
+			Columns: []string{attachment.GroupCardColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: groupcard.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.GroupCardIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   attachment.GroupCardTable,
+			Columns: []string{attachment.GroupCardColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: groupcard.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, au.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{attachment.Label}
@@ -2132,6 +2223,21 @@ func (auo *AttachmentUpdateOne) AddAskAttachments(u ...*UserAskAnswerAttachment)
 	return auo.AddAskAttachmentIDs(ids...)
 }
 
+// AddGroupCardIDs adds the "group_card" edge to the GroupCard entity by IDs.
+func (auo *AttachmentUpdateOne) AddGroupCardIDs(ids ...int) *AttachmentUpdateOne {
+	auo.mutation.AddGroupCardIDs(ids...)
+	return auo
+}
+
+// AddGroupCard adds the "group_card" edges to the GroupCard entity.
+func (auo *AttachmentUpdateOne) AddGroupCard(g ...*GroupCard) *AttachmentUpdateOne {
+	ids := make([]int, len(g))
+	for i := range g {
+		ids[i] = g[i].ID
+	}
+	return auo.AddGroupCardIDs(ids...)
+}
+
 // Mutation returns the AttachmentMutation object of the builder.
 func (auo *AttachmentUpdateOne) Mutation() *AttachmentMutation {
 	return auo.mutation
@@ -2426,6 +2532,27 @@ func (auo *AttachmentUpdateOne) RemoveAskAttachments(u ...*UserAskAnswerAttachme
 		ids[i] = u[i].ID
 	}
 	return auo.RemoveAskAttachmentIDs(ids...)
+}
+
+// ClearGroupCard clears all "group_card" edges to the GroupCard entity.
+func (auo *AttachmentUpdateOne) ClearGroupCard() *AttachmentUpdateOne {
+	auo.mutation.ClearGroupCard()
+	return auo
+}
+
+// RemoveGroupCardIDs removes the "group_card" edge to GroupCard entities by IDs.
+func (auo *AttachmentUpdateOne) RemoveGroupCardIDs(ids ...int) *AttachmentUpdateOne {
+	auo.mutation.RemoveGroupCardIDs(ids...)
+	return auo
+}
+
+// RemoveGroupCard removes "group_card" edges to GroupCard entities.
+func (auo *AttachmentUpdateOne) RemoveGroupCard(g ...*GroupCard) *AttachmentUpdateOne {
+	ids := make([]int, len(g))
+	for i := range g {
+		ids[i] = g[i].ID
+	}
+	return auo.RemoveGroupCardIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -3436,6 +3563,60 @@ func (auo *AttachmentUpdateOne) sqlSave(ctx context.Context) (_node *Attachment,
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: useraskanswerattachment.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if auo.mutation.GroupCardCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   attachment.GroupCardTable,
+			Columns: []string{attachment.GroupCardColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: groupcard.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.RemovedGroupCardIDs(); len(nodes) > 0 && !auo.mutation.GroupCardCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   attachment.GroupCardTable,
+			Columns: []string{attachment.GroupCardColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: groupcard.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.GroupCardIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   attachment.GroupCardTable,
+			Columns: []string{attachment.GroupCardColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: groupcard.FieldID,
 				},
 			},
 		}

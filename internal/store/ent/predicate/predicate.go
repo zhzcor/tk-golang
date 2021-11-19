@@ -42,6 +42,9 @@ type City func(*sql.Selector)
 // Collection is the predicate function for collection builders.
 type Collection func(*sql.Selector)
 
+// GroupCard is the predicate function for groupcard builders.
+type GroupCard func(*sql.Selector)
+
 // HotSearch is the predicate function for hotsearch builders.
 type HotSearch func(*sql.Selector)
 
@@ -95,6 +98,9 @@ type KcUserCourse func(*sql.Selector)
 
 // KcVideoUploadTask is the predicate function for kcvideouploadtask builders.
 type KcVideoUploadTask func(*sql.Selector)
+
+// Level is the predicate function for level builders.
+type Level func(*sql.Selector)
 
 // Major is the predicate function for major builders.
 type Major func(*sql.Selector)
@@ -164,6 +170,12 @@ type TkQuestionAnswerOption func(*sql.Selector)
 
 // TkQuestionBank is the predicate function for tkquestionbank builders.
 type TkQuestionBank func(*sql.Selector)
+
+// TkQuestionBankCity is the predicate function for tkquestionbankcity builders.
+type TkQuestionBankCity func(*sql.Selector)
+
+// TkQuestionBankMajor is the predicate function for tkquestionbankmajor builders.
+type TkQuestionBankMajor func(*sql.Selector)
 
 // TkQuestionErrorFeedback is the predicate function for tkquestionerrorfeedback builders.
 type TkQuestionErrorFeedback func(*sql.Selector)

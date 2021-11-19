@@ -2,4 +2,4 @@
 
 package ent
 
-// The schema-stitching logic is generated in gserver/internal/store/ent/runtime/runtime.go
+// The schema-stitching logic is generated in tkserver/internal/store/ent/runtime/runtime.go

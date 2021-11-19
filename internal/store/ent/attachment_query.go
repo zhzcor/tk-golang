@@ -11,6 +11,7 @@ import (
 	"tkserver/internal/store/ent/admin"
 	"tkserver/internal/store/ent/advertise"
 	"tkserver/internal/store/ent/attachment"
+	"tkserver/internal/store/ent/groupcard"
 	"tkserver/internal/store/ent/kcclass"
 	"tkserver/internal/store/ent/kccourse"
 	"tkserver/internal/store/ent/kccoursesmallcategory"
@@ -54,6 +55,7 @@ type AttachmentQuery struct {
 	withOrderAttachment          *KcCourseSmallCategoryQuery
 	withVideoTaskAttachment      *KcVideoUploadTaskQuery
 	withAskAttachments           *UserAskAnswerAttachmentQuery
+	withGroupCard                *GroupCardQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -442,6 +444,28 @@ func (aq *AttachmentQuery) QueryAskAttachments() *UserAskAnswerAttachmentQuery {
 	return query
 }
 
+// QueryGroupCard chains the current query on the "group_card" edge.
+func (aq *AttachmentQuery) QueryGroupCard() *GroupCardQuery {
+	query := &GroupCardQuery{config: aq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := aq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := aq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(attachment.Table, attachment.FieldID, selector),
+			sqlgraph.To(groupcard.Table, groupcard.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, attachment.GroupCardTable, attachment.GroupCardColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first Attachment entity from the query.
 // Returns a *NotFoundError when no Attachment was found.
 func (aq *AttachmentQuery) First(ctx context.Context) (*Attachment, error) {
@@ -639,6 +663,7 @@ func (aq *AttachmentQuery) Clone() *AttachmentQuery {
 		withOrderAttachment:          aq.withOrderAttachment.Clone(),
 		withVideoTaskAttachment:      aq.withVideoTaskAttachment.Clone(),
 		withAskAttachments:           aq.withAskAttachments.Clone(),
+		withGroupCard:                aq.withGroupCard.Clone(),
 		// clone intermediate query.
 		sql:  aq.sql.Clone(),
 		path: aq.path,
@@ -821,6 +846,17 @@ func (aq *AttachmentQuery) WithAskAttachments(opts ...func(*UserAskAnswerAttachm
 	return aq
 }
 
+// WithGroupCard tells the query-builder to eager-load the nodes that are connected to
+// the "group_card" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AttachmentQuery) WithGroupCard(opts ...func(*GroupCardQuery)) *AttachmentQuery {
+	query := &GroupCardQuery{config: aq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	aq.withGroupCard = query
+	return aq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -886,7 +922,7 @@ func (aq *AttachmentQuery) sqlAll(ctx context.Context) ([]*Attachment, error) {
 	var (
 		nodes       = []*Attachment{}
 		_spec       = aq.querySpec()
-		loadedTypes = [16]bool{
+		loadedTypes = [17]bool{
 			aq.withMajorDetailCoverImg != nil,
 			aq.withMajorDetailSubjectImg != nil,
 			aq.withMajorTeacherAttachment != nil,
@@ -903,6 +939,7 @@ func (aq *AttachmentQuery) sqlAll(ctx context.Context) ([]*Attachment, error) {
 			aq.withOrderAttachment != nil,
 			aq.withVideoTaskAttachment != nil,
 			aq.withAskAttachments != nil,
+			aq.withGroupCard != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -1399,6 +1436,31 @@ func (aq *AttachmentQuery) sqlAll(ctx context.Context) ([]*Attachment, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "attachment_id" returned %v for node %v`, fk, n.ID)
 			}
 			node.Edges.AskAttachments = append(node.Edges.AskAttachments, n)
+		}
+	}
+
+	if query := aq.withGroupCard; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Attachment)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.GroupCard = []*GroupCard{}
+		}
+		query.Where(predicate.GroupCard(func(s *sql.Selector) {
+			s.Where(sql.InValues(attachment.GroupCardColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.AttachmentID
+			node, ok := nodeids[fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "attachment_id" returned %v for node %v`, fk, n.ID)
+			}
+			node.Edges.GroupCard = append(node.Edges.GroupCard, n)
 		}
 	}
 

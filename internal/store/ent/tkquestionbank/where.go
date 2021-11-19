@@ -156,6 +156,13 @@ func ItemCategoryID(v int) predicate.TkQuestionBank {
 	})
 }
 
+// LevelID applies equality check predicate on the "level_id" field. It's identical to LevelIDEQ.
+func LevelID(v int) predicate.TkQuestionBank {
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLevelID), v))
+	})
+}
+
 // UUIDEQ applies the EQ predicate on the "uuid" field.
 func UUIDEQ(v string) predicate.TkQuestionBank {
 	return predicate.TkQuestionBank(func(s *sql.Selector) {
@@ -924,6 +931,68 @@ func ItemCategoryIDNotNil() predicate.TkQuestionBank {
 	})
 }
 
+// LevelIDEQ applies the EQ predicate on the "level_id" field.
+func LevelIDEQ(v int) predicate.TkQuestionBank {
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLevelID), v))
+	})
+}
+
+// LevelIDNEQ applies the NEQ predicate on the "level_id" field.
+func LevelIDNEQ(v int) predicate.TkQuestionBank {
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldLevelID), v))
+	})
+}
+
+// LevelIDIn applies the In predicate on the "level_id" field.
+func LevelIDIn(vs ...int) predicate.TkQuestionBank {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldLevelID), v...))
+	})
+}
+
+// LevelIDNotIn applies the NotIn predicate on the "level_id" field.
+func LevelIDNotIn(vs ...int) predicate.TkQuestionBank {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldLevelID), v...))
+	})
+}
+
+// LevelIDIsNil applies the IsNil predicate on the "level_id" field.
+func LevelIDIsNil() predicate.TkQuestionBank {
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldLevelID)))
+	})
+}
+
+// LevelIDNotNil applies the NotNil predicate on the "level_id" field.
+func LevelIDNotNil() predicate.TkQuestionBank {
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldLevelID)))
+	})
+}
+
 // HasItemCategory applies the HasEdge predicate on the "item_category" edge.
 func HasItemCategory() predicate.TkQuestionBank {
 	return predicate.TkQuestionBank(func(s *sql.Selector) {
@@ -943,6 +1012,34 @@ func HasItemCategoryWith(preds ...predicate.ItemCategory) predicate.TkQuestionBa
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(ItemCategoryInverseTable, FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, ItemCategoryTable, ItemCategoryColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasLevel applies the HasEdge predicate on the "level" edge.
+func HasLevel() predicate.TkQuestionBank {
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(LevelTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, LevelTable, LevelColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasLevelWith applies the HasEdge predicate on the "level" edge with a given conditions (other predicates).
+func HasLevelWith(preds ...predicate.Level) predicate.TkQuestionBank {
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(LevelInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, LevelTable, LevelColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
@@ -1195,6 +1292,62 @@ func HasKnowledgePointsWith(preds ...predicate.TkKnowledgePoint) predicate.TkQue
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(KnowledgePointsInverseTable, FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, KnowledgePointsTable, KnowledgePointsColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasCityQuestionBanks applies the HasEdge predicate on the "city_question_banks" edge.
+func HasCityQuestionBanks() predicate.TkQuestionBank {
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(CityQuestionBanksTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CityQuestionBanksTable, CityQuestionBanksColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasCityQuestionBanksWith applies the HasEdge predicate on the "city_question_banks" edge with a given conditions (other predicates).
+func HasCityQuestionBanksWith(preds ...predicate.TkQuestionBankCity) predicate.TkQuestionBank {
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(CityQuestionBanksInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CityQuestionBanksTable, CityQuestionBanksColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasMajorQuestionBanks applies the HasEdge predicate on the "major_question_banks" edge.
+func HasMajorQuestionBanks() predicate.TkQuestionBank {
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(MajorQuestionBanksTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, MajorQuestionBanksTable, MajorQuestionBanksColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMajorQuestionBanksWith applies the HasEdge predicate on the "major_question_banks" edge with a given conditions (other predicates).
+func HasMajorQuestionBanksWith(preds ...predicate.TkQuestionBankMajor) predicate.TkQuestionBank {
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(MajorQuestionBanksInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, MajorQuestionBanksTable, MajorQuestionBanksColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

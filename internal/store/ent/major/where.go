@@ -1134,6 +1134,34 @@ func HasCoursesWith(preds ...predicate.KcCourse) predicate.Major {
 	})
 }
 
+// HasQuestionBankMajors applies the HasEdge predicate on the "question_bank_majors" edge.
+func HasQuestionBankMajors() predicate.Major {
+	return predicate.Major(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(QuestionBankMajorsTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, QuestionBankMajorsTable, QuestionBankMajorsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasQuestionBankMajorsWith applies the HasEdge predicate on the "question_bank_majors" edge with a given conditions (other predicates).
+func HasQuestionBankMajorsWith(preds ...predicate.TkQuestionBankMajor) predicate.Major {
+	return predicate.Major(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(QuestionBankMajorsInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, QuestionBankMajorsTable, QuestionBankMajorsColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Major) predicate.Major {
 	return predicate.Major(func(s *sql.Selector) {

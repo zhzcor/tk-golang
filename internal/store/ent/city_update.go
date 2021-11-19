@@ -10,6 +10,7 @@ import (
 	"tkserver/internal/store/ent/kcclass"
 	"tkserver/internal/store/ent/kccourse"
 	"tkserver/internal/store/ent/predicate"
+	"tkserver/internal/store/ent/tkquestionbankcity"
 	"tkserver/internal/store/ent/user"
 
 	"entgo.io/ent/dialect/sql"
@@ -197,6 +198,21 @@ func (cu *CityUpdate) AddUserCity(u ...*User) *CityUpdate {
 	return cu.AddUserCityIDs(ids...)
 }
 
+// AddQuestionBankCityIDs adds the "question_bank_cities" edge to the TkQuestionBankCity entity by IDs.
+func (cu *CityUpdate) AddQuestionBankCityIDs(ids ...int) *CityUpdate {
+	cu.mutation.AddQuestionBankCityIDs(ids...)
+	return cu
+}
+
+// AddQuestionBankCities adds the "question_bank_cities" edges to the TkQuestionBankCity entity.
+func (cu *CityUpdate) AddQuestionBankCities(t ...*TkQuestionBankCity) *CityUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return cu.AddQuestionBankCityIDs(ids...)
+}
+
 // Mutation returns the CityMutation object of the builder.
 func (cu *CityUpdate) Mutation() *CityMutation {
 	return cu.mutation
@@ -263,6 +279,27 @@ func (cu *CityUpdate) RemoveUserCity(u ...*User) *CityUpdate {
 		ids[i] = u[i].ID
 	}
 	return cu.RemoveUserCityIDs(ids...)
+}
+
+// ClearQuestionBankCities clears all "question_bank_cities" edges to the TkQuestionBankCity entity.
+func (cu *CityUpdate) ClearQuestionBankCities() *CityUpdate {
+	cu.mutation.ClearQuestionBankCities()
+	return cu
+}
+
+// RemoveQuestionBankCityIDs removes the "question_bank_cities" edge to TkQuestionBankCity entities by IDs.
+func (cu *CityUpdate) RemoveQuestionBankCityIDs(ids ...int) *CityUpdate {
+	cu.mutation.RemoveQuestionBankCityIDs(ids...)
+	return cu
+}
+
+// RemoveQuestionBankCities removes "question_bank_cities" edges to TkQuestionBankCity entities.
+func (cu *CityUpdate) RemoveQuestionBankCities(t ...*TkQuestionBankCity) *CityUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return cu.RemoveQuestionBankCityIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -593,6 +630,60 @@ func (cu *CityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if cu.mutation.QuestionBankCitiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   city.QuestionBankCitiesTable,
+			Columns: []string{city.QuestionBankCitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankcity.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.RemovedQuestionBankCitiesIDs(); len(nodes) > 0 && !cu.mutation.QuestionBankCitiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   city.QuestionBankCitiesTable,
+			Columns: []string{city.QuestionBankCitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankcity.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.QuestionBankCitiesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   city.QuestionBankCitiesTable,
+			Columns: []string{city.QuestionBankCitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankcity.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, cu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{city.Label}
@@ -779,6 +870,21 @@ func (cuo *CityUpdateOne) AddUserCity(u ...*User) *CityUpdateOne {
 	return cuo.AddUserCityIDs(ids...)
 }
 
+// AddQuestionBankCityIDs adds the "question_bank_cities" edge to the TkQuestionBankCity entity by IDs.
+func (cuo *CityUpdateOne) AddQuestionBankCityIDs(ids ...int) *CityUpdateOne {
+	cuo.mutation.AddQuestionBankCityIDs(ids...)
+	return cuo
+}
+
+// AddQuestionBankCities adds the "question_bank_cities" edges to the TkQuestionBankCity entity.
+func (cuo *CityUpdateOne) AddQuestionBankCities(t ...*TkQuestionBankCity) *CityUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return cuo.AddQuestionBankCityIDs(ids...)
+}
+
 // Mutation returns the CityMutation object of the builder.
 func (cuo *CityUpdateOne) Mutation() *CityMutation {
 	return cuo.mutation
@@ -845,6 +951,27 @@ func (cuo *CityUpdateOne) RemoveUserCity(u ...*User) *CityUpdateOne {
 		ids[i] = u[i].ID
 	}
 	return cuo.RemoveUserCityIDs(ids...)
+}
+
+// ClearQuestionBankCities clears all "question_bank_cities" edges to the TkQuestionBankCity entity.
+func (cuo *CityUpdateOne) ClearQuestionBankCities() *CityUpdateOne {
+	cuo.mutation.ClearQuestionBankCities()
+	return cuo
+}
+
+// RemoveQuestionBankCityIDs removes the "question_bank_cities" edge to TkQuestionBankCity entities by IDs.
+func (cuo *CityUpdateOne) RemoveQuestionBankCityIDs(ids ...int) *CityUpdateOne {
+	cuo.mutation.RemoveQuestionBankCityIDs(ids...)
+	return cuo
+}
+
+// RemoveQuestionBankCities removes "question_bank_cities" edges to TkQuestionBankCity entities.
+func (cuo *CityUpdateOne) RemoveQuestionBankCities(t ...*TkQuestionBankCity) *CityUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return cuo.RemoveQuestionBankCityIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -1191,6 +1318,60 @@ func (cuo *CityUpdateOne) sqlSave(ctx context.Context) (_node *City, err error) 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if cuo.mutation.QuestionBankCitiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   city.QuestionBankCitiesTable,
+			Columns: []string{city.QuestionBankCitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankcity.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.RemovedQuestionBankCitiesIDs(); len(nodes) > 0 && !cuo.mutation.QuestionBankCitiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   city.QuestionBankCitiesTable,
+			Columns: []string{city.QuestionBankCitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankcity.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.QuestionBankCitiesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   city.QuestionBankCitiesTable,
+			Columns: []string{city.QuestionBankCitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tkquestionbankcity.FieldID,
 				},
 			},
 		}

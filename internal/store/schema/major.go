@@ -31,8 +31,8 @@ func (Major) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("teachers", Teacher.Type).Ref("majors"), //老师-专业（多）
 		edge.To("major_detail", MajorDetail.Type).Unique(),
-		edge.To("kc_classes", KcClass.Type), //班级-专业（多）
-		edge.To("courses", KcCourse.Type),   //课程-专业（多）
-
+		edge.To("kc_classes", KcClass.Type),                       //班级-专业（多）
+		edge.To("courses", KcCourse.Type),                         //课程-专业（多）
+		edge.To("question_bank_majors", TkQuestionBankMajor.Type), //题库专业中间表
 	}
 }
