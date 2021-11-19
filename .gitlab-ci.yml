@@ -32,22 +32,22 @@ deploy:
     only:
     - devloop
     script:
-      - ssh root@10.16.0.23 "ps -ef|grep gserver | grep -v grep | awk '{print \$2}'| xargs kill -9 " || true
-      - scp  $PWD/bin/gserver  root@10.16.0.23:~/gserver/bin/
-      - ssh root@10.16.0.23 "nohup ~/gserver/bin/gserver server -l :8088 >/dev/null 2>&1 &"
+      - ssh root@10.16.0.23 "ps -ef|grep tkserver | grep -v grep | awk '{print \$2}'| xargs kill -9 " || true
+      - scp  $PWD/bin/tkserver  root@10.16.0.23:~/tkserver/bin/
+      - ssh root@10.16.0.23 "nohup ~/tkserver/bin/tkserver server -l :8088 >/dev/null 2>&1 &"
 deploy_prerelease:
     stage: deploy
     only:
     - master
     script:
-      - ssh root@182.151.10.143 "ps -ef|grep gserver | grep -v grep | awk '{print \$2}'| xargs kill -9 " || true
-      - scp  $PWD/bin/gserver  root@182.151.10.143:~/gserver/bin/
-      - ssh root@182.151.10.143 "nohup ~/gserver/bin/gserver server -l :8088 >/www/wwwlogs/gserver.log 2>&1 &"
+      - ssh root@182.151.10.143 "ps -ef|grep tkserver | grep -v grep | awk '{print \$2}'| xargs kill -9 " || true
+      - scp  $PWD/bin/tkserver  root@182.151.10.143:~/tkserver/bin/
+      - ssh root@182.151.10.143 "nohup ~/tkserver/bin/tkserver server -l :8088 >/www/wwwlogs/tkserver.log 2>&1 &"
 deploy_release:
     stage: deploy
     only:
     - release
     script:
-      - ssh root@47.106.188.165 "supervisorctl stop gserver"
-      - scp  $PWD/bin/gserver  root@47.106.188.165/xueyuan-api.sensmind.com/:~/gserver/bin/
-      - ssh root@47.106.188.165 "supervisorctl start gserver"
+      - ssh root@47.106.188.165 "supervisorctl stop tkserver"
+      - scp  $PWD/bin/tkserver  root@47.106.188.165/xueyuan-api.sensmind.com/:~/tkserver/bin/
+      - ssh root@47.106.188.165 "supervisorctl start tkserver"
