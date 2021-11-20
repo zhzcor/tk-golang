@@ -11,6 +11,7 @@ import (
 	"tkserver/internal/store"
 	"tkserver/internal/store/ent"
 	"tkserver/internal/store/ent/admin"
+	attachment2 "tkserver/internal/store/ent/attachment"
 	"tkserver/internal/store/ent/kccourse"
 	"tkserver/internal/store/ent/kccoursesmallcategory"
 	"tkserver/internal/store/ent/kccourseteacher"
@@ -494,28 +495,25 @@ func GetUserDetailById(ctx *gin.Context) (interface{}, error) {
 			}
 			return err
 		}
-		res.ID = user.ID
+		res.Id = user.ID
 		res.Phone = user.Phone
 		res.Username = user.Username
-		res.Nickname = user.Nickname
-		res.Birthday = user.Birthday
-		res.Email = user.Email
-		res.CardType = user.CardType
-		res.IDCard = user.IDCard
-		res.Sex = user.Sex
+		res.CardType = int(user.CardType)
+		res.IdCard = user.IDCard
+		res.Sex = int(user.Sex)
 		res.SignRemark = user.SignRemark
-		res.CityName = ""
-		res.ItemCategoryName = ""
-		res.ParentItemCategoryName = ""
-		if !app2.IsNil(user.Edges.City) {
-			res.CityName = user.Edges.City.Name
-		}
-		if !app2.IsNil(user.Edges.Cate) {
-			res.ItemCategoryName = user.Edges.Cate.Name
-			if !app2.IsNil(user.Edges.Cate.Edges.Parent) {
-				res.ParentItemCategoryName = user.Edges.Cate.Edges.Parent.Name
+		res.Avatar = ""
+		res.AvatarId = 0
+		if user.Avatar != "" {
+			res.Avatar = app2.GetOssHost() + user.Avatar
+			attachment, err := store.WithContext(ctx).Attachment.Query().Where(attachment2.Filename(user.Avatar)).First(ctx)
+			if err == nil {
+				res.AvatarId = attachment.ID
 			}
 		}
+		res.CreatedAt = user.CreatedAt
+		res.RegFrom = int(user.RegFrom)
+		res.Status = int(user.Status)
 		return nil
 	})
 	if err != nil {

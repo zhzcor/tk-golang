@@ -27,21 +27,16 @@ type SimpleUserInfoByPage struct {
 	Page PageResponse             `json:"page"`
 }
 type SimpleUserInfoResponse struct {
-	Id             int       `json:"id"`
-	Username       string    `json:"username"`
-	Phone          string    `json:"phone"`
-	AvatarUrl      string    `json:"avatar_url"`
-	CreatedAt      time.Time `json:"created_at"`
-	CardType       int       `json:"card_type"`
-	IdCard         string    `json:"id_card"`
-	Sex            int       `json:"sex"`
-	Birthday       time.Time `json:"birthday"`
-	CityId         int       `json:"city_id"`
-	CityName       string    `json:"city_name"`
-	CateId         int       `json:"cate_id"`
-	CateName       string    `json:"cate_name"`
-	ParentCateId   int       `json:"parent_cate_id"`
-	ParentCateName string    `json:"parent_catename"`
+	Id        int       `json:"id"`
+	Username  string    `json:"username"`
+	Phone     string    `json:"phone"`
+	AvatarUrl string    `json:"avatar_url"`
+	CreatedAt time.Time `json:"created_at"`
+	CardType  int       `json:"card_type"`
+	IdCard    string    `json:"id_card"`
+	Sex       int       `json:"sex"`
+	Status    int       `json:"status"`
+	RegFrom   int       `json:"reg_from"`
 }
 
 type SimpleTeacherInfoByPage struct {

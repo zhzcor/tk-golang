@@ -151,10 +151,10 @@ func Use(engine *gin.Engine) {
 	adminManagerGroup.POST("/operator_log_page_list", ResponseToJSON(admin.GetAdminOperationLogByPage)) //操作日志
 	adminManagerGroup.POST("/login_user_page_list", ResponseToJSON(admin.GetLoginUserByPage))           //app登录日志
 
-	adminManagerGroup.POST("/user_list", ResponseToJSON(admin.GetSimpleUserInfo))           //根据条件获取学员姓名手机号列表(分页)
-	adminManagerGroup.POST("/user_detail_by_id", ResponseToJSON(admin.GetUserDetailById))   //id获取用户详情
-	adminManagerGroup.POST("/boss_user_by_phone", ResponseToJSON(admin.GetBossUserByPhone)) //手机号获取工作台用户信息
-	adminManagerGroup.POST("/user_set", ResponseToJSON(admin.SetUser))                      //添加（编辑）用户
+	adminManagerGroup.POST("/user_list", ResponseToJSON(admin.GetSimpleUserInfo))         //根据条件获取学员姓名手机号列表(分页)
+	adminManagerGroup.POST("/user_detail_by_id", ResponseToJSON(admin.GetUserDetailById)) //id获取用户详情
+	//adminManagerGroup.POST("/boss_user_by_phone", ResponseToJSON(admin.GetBossUserByPhone)) //手机号获取工作台用户信息
+	adminManagerGroup.POST("/user_set", ResponseToJSON(admin.SetUser)) //添加（编辑）用户
 
 	adminManagerGroup.POST("/teacher_list", ResponseToJSON(admin.GetSimpleTeacherInfo))  //根据条件获取老师姓名手机号列表（分页）
 	adminManagerGroup.POST("/teacher_set", ResponseToJSON(admin.SetTeacher))             //添加（编辑）老师

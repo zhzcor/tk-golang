@@ -50,8 +50,11 @@ type SyncAdminFromBoss struct {
 }
 
 type GetUserInfo struct {
-	Phone    string `json:"phone" form:"phone"`
-	Username string `json:"username" form:"username"`
+	Phone     string     `json:"phone" form:"phone"`
+	Username  string     `json:"username" form:"username"`
+	RegFrom   int        `json:"reg_from" form:"reg_from"`
+	StartDate *time.Time `json:"start_date" form:"start_date"`
+	EndDate   *time.Time `json:"end_date" form:"end_date"`
 	PageInfo
 }
 
@@ -138,13 +141,18 @@ type PhoneRequest struct {
 
 type SetUser struct {
 	IdPtrNillable
-	Phone      *string    `json:"phone"  form:"phone" binding:"required"`
-	Username   *string    `json:"username" form:"username" binding:"required"`
-	IdCard     *string    `json:"id_card" form:"id_card"`
-	CardType   *int       `json:"card_type" form:"card_type"`
-	BossUserId *int       `json:"boss_user_id" form:"boss_user_id"`
-	Sex        *int       `json:"sex" form:"sex"`
-	Birthday   *time.Time `json:"birthday" form:"birthday"`
-	CityId     int        `json:"city_id" form:"city_id"`
-	CateId     int        `json:"cate_id" form:"cate_id"`
+	Phone           *string    `json:"phone"  form:"phone" binding:"required"`
+	Username        *string    `json:"username" form:"username"`
+	IdCard          *string    `json:"id_card" form:"id_card"`
+	CardType        *int       `json:"card_type" form:"card_type"`
+	BossUserId      *int       `json:"boss_user_id" form:"boss_user_id"`
+	Sex             *int       `json:"sex" form:"sex"`
+	Birthday        *time.Time `json:"birthday" form:"birthday"`
+	CityId          int        `json:"city_id" form:"city_id"`
+	CateId          int        `json:"cate_id" form:"cate_id"`
+	Status          *int       `json:"status" form:"status" binding:"required,gte=1,lte=2"`
+	Password        *string    `json:"password" form:"password"`
+	ConfirmPassword *string    `json:"confirm_password" form:"confirm_password"`
+	AvatarId        int        `json:"avatar_id" form:"avatar_id"`
+	SignRemark      *string    `json:"sign_remark" form:"sign_remark"`
 }

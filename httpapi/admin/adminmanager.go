@@ -247,7 +247,7 @@ func DelRole(ctx *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-//根据条件获取学员姓名手机号列表
+//学员列表
 func GetSimpleUserInfo(ctx *gin.Context) (interface{}, error) {
 	var req request.GetUserInfo
 	res := response.SimpleUserInfoByPage{
@@ -267,15 +267,19 @@ func GetSimpleUserInfo(ctx *gin.Context) (interface{}, error) {
 		if !app2.StringIsEmpty(req.Username) {
 			query = query.Where(user.UsernameContains(req.Username))
 		}
+		if req.RegFrom > 0 {
+			query = query.Where(user.RegFrom(uint8(req.RegFrom)))
+		}
+		if !app2.IsNil(req.StartDate) && !app2.IsNil(req.EndDate) {
+			query = query.Where(user.CreatedAtGTE(*req.StartDate)).Where(user.CreatedAtLTE(*req.EndDate))
+		}
 		count, err := query.Clone().Count(ctx)
 		if err != nil {
 			return err
 		}
 		res.Page.Total = count
 
-		resp, err := query.WithCate(func(query *ent.ItemCategoryQuery) {
-			query.WithParent()
-		}).WithCity().ForPage(req.Page, req.PageSize).Order(ent.Desc("id")).All(ctx)
+		resp, err := query.ForPage(req.Page, req.PageSize).Order(ent.Desc("id")).All(ctx)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				return nil
@@ -288,30 +292,12 @@ func GetSimpleUserInfo(ctx *gin.Context) (interface{}, error) {
 			resDetail.Id = v.ID
 			resDetail.Username = v.Username
 			resDetail.Phone = v.Phone
-			resDetail.AvatarUrl = app2.GetOssHost() + v.Avatar
 			resDetail.IdCard = v.IDCard
 			resDetail.CardType = int(v.CardType)
 			resDetail.CreatedAt = *v.CreatedAt
 			resDetail.Sex = int(v.Sex)
-			if !app2.IsNil(v.Birthday) {
-				resDetail.Birthday = *v.Birthday
-			}
-			resDetail.CityId = v.FromCityID
-			resDetail.CateId = v.FromItemCategoryID
-			resDetail.ParentCateId = 0
-			resDetail.CityName = ""
-			resDetail.CateName = ""
-			resDetail.ParentCateName = ""
-			if !app2.IsNil(v.Edges.City) {
-				resDetail.CityName = v.Edges.City.Name
-			}
-			if !app2.IsNil(v.Edges.Cate) {
-				resDetail.CateName = v.Edges.Cate.Name
-				if !app2.IsNil(v.Edges.Cate.Edges.Parent) {
-					resDetail.ParentCateName = v.Edges.Cate.Edges.Parent.Name
-					resDetail.ParentCateId = v.Edges.Cate.Edges.Parent.ID
-				}
-			}
+			resDetail.RegFrom = int(v.RegFrom)
+			resDetail.Status = int(v.Status)
 			res.List = append(res.List, resDetail)
 		}
 		return nil

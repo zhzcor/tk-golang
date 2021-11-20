@@ -655,14 +655,21 @@ func (a AdminManager) AddUser(ctx context.Context, req request.SetUser) (int, er
 	if fined {
 		return 0, errorno.NewErr(errorno.DataExistsError)
 	}
-	creation := s.User.Create().
-		SetUsername(*req.Username).
-		SetPhone(*req.Phone).
-		SetPassword(*req.Phone)
-
-	if !app.IsNil(req.BossUserId) {
-		creation = creation.SetBossUserID(*req.BossUserId)
+	if app.IsNil(req.Password) || *req.Password != *req.ConfirmPassword {
+		return 0, errorno.NewErr(errorno.PasswordError)
 	}
+	creation := s.User.Create().
+		SetPhone(*req.Phone).
+		SetStatus(uint8(*req.Status)).
+		SetPassword(*req.Password).
+		SetRegFrom(5)
+
+	if !app.IsNil(req.Username) {
+		creation = creation.SetUsername(*req.Username)
+	}
+	//if !app.IsNil(req.BossUserId) {
+	//	creation = creation.SetBossUserID(*req.BossUserId)
+	//}
 	if !app.IsNil(req.IdCard) {
 		creation = creation.SetIDCard(*req.IdCard)
 	}
@@ -672,14 +679,23 @@ func (a AdminManager) AddUser(ctx context.Context, req request.SetUser) (int, er
 	if !app.IsNil(req.Sex) {
 		creation = creation.SetSex(uint8(*req.Sex))
 	}
-	if !app.IsNil(req.Birthday) {
-		creation = creation.SetBirthday(*req.Birthday)
+	//if !app.IsNil(req.Birthday) {
+	//	creation = creation.SetBirthday(*req.Birthday)
+	//}
+	//if req.CityId > 0 {
+	//	creation = creation.SetFromCityID(req.CityId)
+	//}
+	//if req.CateId > 0 {
+	//	creation = creation.SetFromItemCategoryID(req.CateId)
+	//}
+	if !app.IsNil(req.SignRemark) {
+		creation = creation.SetSignRemark(*req.SignRemark)
 	}
-	if req.CityId > 0 {
-		creation = creation.SetFromCityID(req.CityId)
-	}
-	if req.CateId > 0 {
-		creation = creation.SetFromItemCategoryID(req.CateId)
+	if req.AvatarId > 0 {
+		avatarInfo, err := s.Attachment.Query().Where(attachment.ID(req.AvatarId)).First(ctx)
+		if err == nil {
+			creation = creation.SetAvatar(avatarInfo.Filename)
+		}
 	}
 	userDetail, err := creation.Save(ctx)
 
@@ -704,11 +720,11 @@ func (a AdminManager) UpdateUser(ctx context.Context, req request.SetUser) (int,
 		return 0, errorno.NewErr(errorno.DataExistsError)
 	}
 	creation := s.User.UpdateOneID(*req.Id).
-		SetUsername(*req.Username).
-		SetPhone(*req.Phone)
+		SetPhone(*req.Phone).
+		SetStatus(uint8(*req.Status))
 
-	if !app.IsNil(req.BossUserId) {
-		creation = creation.SetBossUserID(*req.BossUserId)
+	if !app.IsNil(req.Username) {
+		creation = creation.SetUsername(*req.Username)
 	}
 	if !app.IsNil(req.IdCard) {
 		creation = creation.SetIDCard(*req.IdCard)
@@ -719,14 +735,23 @@ func (a AdminManager) UpdateUser(ctx context.Context, req request.SetUser) (int,
 	if !app.IsNil(req.Sex) {
 		creation = creation.SetSex(uint8(*req.Sex))
 	}
-	if !app.IsNil(req.Birthday) {
-		creation = creation.SetBirthday(*req.Birthday)
+	//if !app.IsNil(req.Birthday) {
+	//	creation = creation.SetBirthday(*req.Birthday)
+	//}
+	//if req.CityId > 0 {
+	//	creation = creation.SetFromCityID(req.CityId)
+	//}
+	//if req.CateId > 0 {
+	//	creation = creation.SetFromItemCategoryID(req.CateId)
+	//}
+	if !app.IsNil(req.SignRemark) {
+		creation = creation.SetSignRemark(*req.SignRemark)
 	}
-	if req.CityId > 0 {
-		creation = creation.SetFromCityID(req.CityId)
-	}
-	if req.CateId > 0 {
-		creation = creation.SetFromItemCategoryID(req.CateId)
+	if req.AvatarId > 0 {
+		avatarInfo, err := s.Attachment.Query().Where(attachment.ID(req.AvatarId)).First(ctx)
+		if err == nil {
+			creation = creation.SetAvatar(avatarInfo.Filename)
+		}
 	}
 	userDetail, err := creation.Save(ctx)
 	if err != nil {

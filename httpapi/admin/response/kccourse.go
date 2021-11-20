@@ -56,11 +56,18 @@ type CourseUserDetail struct {
 }
 
 type UserDetail struct {
-	ent.User
-	ItemCategoryName       string `json:"item_category_name"`
-	CityName               string `json:"city_name"`
-	ParentItemCategoryId   int    `json:"parent_item_category_id"`
-	ParentItemCategoryName string `json:"parent_item_category_name"`
+	Id         int        `json:"id"`
+	Phone      string     `json:"phone"`
+	Username   string     `json:"username"`
+	CardType   int        `json:"card_type"`
+	IdCard     string     `json:"id_card"`
+	Sex        int        `json:"sex"`
+	SignRemark string     `json:"sign_remark"`
+	Avatar     string     `json:"avatar"`
+	AvatarId   int        `json:"avatar_id"`
+	CreatedAt  *time.Time `json:"created_at"`
+	RegFrom    int        `json:"reg_from"`
+	Status     int        `json:"status"`
 }
 
 type CourseQuestionBank struct {
