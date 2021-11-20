@@ -1,18 +1,14 @@
 package admin
 
 import (
-	"bytes"
 	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"io/ioutil"
-	"net/http"
 	"tkserver/httpapi/admin/request"
 	"tkserver/httpapi/admin/response"
 	"tkserver/internal/app"
-	"tkserver/internal/config"
 	"tkserver/internal/errorno"
 	"tkserver/internal/store"
 	"tkserver/internal/store/ent"
@@ -39,7 +35,7 @@ func LoginAdmin(ctx *gin.Context) (interface{}, error) {
 	}
 	adminDetail, err := s.Admin.Query().
 		Where(admin.Phone(req.Phone)).
-		Where(admin.IsActive(1)).
+		//Where(admin.IsActive(1)).
 		WithRoles(func(query *ent.RoleQuery) {
 			query.SoftDelete()
 		}).WithAdminAttachments().First(ctx)
@@ -410,9 +406,6 @@ func GetAdminListByPage(ctx *gin.Context) (interface{}, error) {
 		if !app2.IsNil(req.RealName) {
 			query = query.Where(admin.RealNameContains(*req.RealName))
 		}
-		if !app2.IsNil(req.RoleId) {
-			query = query.Where(admin.HasRolesWith(role.ID(*req.RoleId)))
-		}
 
 		count, err := query.Count(ctx)
 		if err != nil {
@@ -434,22 +427,11 @@ func GetAdminListByPage(ctx *gin.Context) (interface{}, error) {
 
 		for _, v := range list {
 			detail := response.AdminDetail{}
-			detail.ID = v.ID
+			detail.Id = v.ID
 			detail.RealName = v.RealName
 			detail.Phone = v.Phone
-			detail.Email = v.Email
-			detail.Status = v.Status
-			detail.Platform = v.Platform
-			detail.CreatedAt = v.CreatedAt
+			detail.Status = int(v.Status)
 			detail.Remark = v.Remark
-			detail.Password = "******"
-			detail.RoleId = 0
-			detail.RoleName = ""
-			if !app2.IsNil(v.Edges.Roles) && len(v.Edges.Roles) > 0 {
-				role := v.Edges.Roles[len(v.Edges.Roles)-1]
-				detail.RoleId = role.ID
-				detail.RoleName = role.Name
-			}
 			res.List = append(res.List, detail)
 		}
 		return nil
@@ -469,9 +451,16 @@ func SetAdmin(ctx *gin.Context) (interface{}, error) {
 	}
 	a := app.AdminManager{}
 	err = store.WithTx(ctx, func(ctx context.Context) error {
-		_, err := a.UpdateAdmin(ctx, req)
-		if err != nil {
-			return err
+		if !app2.IsNil(req.Id) { //编辑
+			_, err := a.UpdateAdmin(ctx, req)
+			if err != nil {
+				return err
+			}
+		} else {
+			_, err := a.AddAdmin(ctx, req)
+			if err != nil {
+				return err
+			}
 		}
 		return nil
 	})
@@ -888,60 +877,60 @@ func ThirdLoginAdmin(ctx *gin.Context) (interface{}, error) {
 }
 
 //id获取工作台学员信息
-func GetBossUserByPhone(ctx *gin.Context) (interface{}, error) {
-	var req request.PhoneRequest
-	err := ctx.Bind(&req)
-	if err != nil {
-		return nil, err
-	}
-	resDetail := response.UserInfoDetail{}
-
-	reqDetail := make(map[string]string)
-	reqDetail["phone"] = *req.Phone
-	bytesData, err := json.Marshal(reqDetail)
-	if err != nil {
-		return nil, err
-	}
-	reader := bytes.NewReader(bytesData)
-	url := config.ServerConfig.BossHost + "/api/v3/user_sync/by_phone"
-	requestInfo, err := http.NewRequest("POST", url, reader)
-	if err != nil {
-		return nil, err
-	}
-	requestInfo.Header.Set("Content-Type", "application/json;charset=UTF-8")
-	client := http.Client{}
-	resp, err := client.Do(requestInfo)
-	if err != nil {
-		return nil, err
-	}
-	respBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var tempMap map[string]interface{}
-	err = json.Unmarshal(respBytes, &tempMap)
-	if err != nil {
-		return nil, err
-	}
-
-	if tempMap["res_info"] != "ok" {
-		return nil, errorno.NewErr(errorno.Errno{
-			Code:    20001,
-			Message: "数据不存在",
-		})
-	}
-
-	userDetailData, err := json.Marshal(tempMap["data"])
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal(userDetailData, &resDetail)
-	if err != nil {
-		return nil, err
-	}
-	return resDetail, nil
-}
+//func GetBossUserByPhone(ctx *gin.Context) (interface{}, error) {
+//	var req request.PhoneRequest
+//	err := ctx.Bind(&req)
+//	if err != nil {
+//		return nil, err
+//	}
+//	resDetail := response.UserInfoDetail{}
+//
+//	reqDetail := make(map[string]string)
+//	reqDetail["phone"] = *req.Phone
+//	bytesData, err := json.Marshal(reqDetail)
+//	if err != nil {
+//		return nil, err
+//	}
+//	reader := bytes.NewReader(bytesData)
+//	url := config.ServerConfig.BossHost + "/api/v3/user_sync/by_phone"
+//	requestInfo, err := http.NewRequest("POST", url, reader)
+//	if err != nil {
+//		return nil, err
+//	}
+//	requestInfo.Header.Set("Content-Type", "application/json;charset=UTF-8")
+//	client := http.Client{}
+//	resp, err := client.Do(requestInfo)
+//	if err != nil {
+//		return nil, err
+//	}
+//	respBytes, err := ioutil.ReadAll(resp.Body)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	var tempMap map[string]interface{}
+//	err = json.Unmarshal(respBytes, &tempMap)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	if tempMap["res_info"] != "ok" {
+//		return nil, errorno.NewErr(errorno.Errno{
+//			Code:    20001,
+//			Message: "数据不存在",
+//		})
+//	}
+//
+//	userDetailData, err := json.Marshal(tempMap["data"])
+//	if err != nil {
+//		return nil, err
+//	}
+//	err = json.Unmarshal(userDetailData, &resDetail)
+//	if err != nil {
+//		return nil, err
+//	}
+//	return resDetail, nil
+//}
 
 //添加（编辑）用户
 func SetUser(ctx *gin.Context) (interface{}, error) {

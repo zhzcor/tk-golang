@@ -62,10 +62,11 @@ type GetAdminPageListResponse struct {
 }
 
 type AdminDetail struct {
-	ent.Admin
-	RoleName string `json:"role_name"`
-	RoleId   int    `json:"role_id"`
-	Password string `json:"password"`
+	Id       int    `json:"id"`
+	RealName string `json:"real_name"`
+	Phone    string `json:"phone"`
+	Remark   string `json:"remark"`
+	Status   int    `json:"status"`
 }
 
 type RoleDetail struct {

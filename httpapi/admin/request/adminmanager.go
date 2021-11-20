@@ -69,18 +69,18 @@ type GetAdminPageList struct {
 	Phone    *string `json:"phone" form:"phone"`
 	RealName *string `json:"real_name" form:"real_name"`
 	Status   *int    `json:"status" form:"status"`
-	RoleId   *int    `json:"role_id" form:"role_id"`
 	PageInfo
 }
 
 type SetAdminRequest struct {
-	Id *int `json:"id" form:"id" binding:"required"`
-	//Phone    *string `json:"phone" form:"phone" binding:"required"`
-	//RealName *string `json:"real_name" form:"real_name" binding:"required"`
-	Password *string `json:"password" form:"password"`
-	RoleId   *int    `json:"role_id" form:"role_id" binding:"required"`
-	Remark   *string `json:"remark" form:"remark`
-	//Email    *string `json:"email" form:"email" binding:"required"`
+	Id              *int    `json:"id" form:"id"`
+	Phone           *string `json:"phone" form:"phone" binding:"required"`
+	RealName        *string `json:"real_name" form:"real_name" binding:"required"`
+	Password        *string `json:"password" form:"password"`
+	ConfirmPassword *string `json:"confirm_password" form:"confirm_password"`
+	//RoleId   *int    `json:"role_id" form:"role_id" binding:"required"`
+	Remark *string `json:"remark" form:"remark`
+	//Email  *string `json:"email" form:"email" binding:"required"`
 }
 
 type SetAdminStatus struct {

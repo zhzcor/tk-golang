@@ -337,17 +337,65 @@ func (a AdminManager) UpdateAdmin(ctx context.Context, req request.SetAdminReque
 	if errorno := a.AdminIdExist(ctx, *req.Id); errorno != nil {
 		return 0, errorno
 	}
-	md := s.Admin.UpdateOneID(*req.Id).
-		ClearRoles()
-	if *req.RoleId > 0 {
-		md = md.AddRoleIDs(*req.RoleId)
+	md := s.Admin.UpdateOneID(*req.Id)
+	if !app.IsNil(req.Remark) {
+		md = md.SetRemark(*req.Remark)
+	} else {
+		md = md.SetRemark("")
 	}
+	if !app.IsNil(req.RealName) {
+		md = md.SetRealName(*req.RealName)
+	} else {
+		md = md.SetRealName("")
+	}
+	if !app.IsNil(req.Password) {
+		if app.IsNil(req.ConfirmPassword) {
+			return 0, errorno.NewErr(errorno.Errno{
+				Code:    10009,
+				Message: "请输入确认密码",
+			})
+
+		}
+		if *req.Password != *req.ConfirmPassword {
+			return 0, errorno.NewErr(errorno.PasswordError)
+		}
+		md = md.SetPassword(*req.Password)
+	}
+	res, err := md.Save(ctx)
+	if err != nil {
+		return 0, errorno.NewStoreErr(err)
+	}
+	return res.ID, nil
+}
+
+//新增管理员
+func (a AdminManager) AddAdmin(ctx context.Context, req request.SetAdminRequest) (int, error) {
+	s := store.WithContext(ctx)
+	fined, err := s.Admin.
+		Query().SoftDelete().
+		Where(admin.Phone(*req.Phone)).
+		Exist(ctx)
+	if err != nil {
+		return 0, errorno.NewStoreErr(err)
+	}
+	if fined {
+		return 0, errorno.NewErr(errorno.DataExistsError)
+	}
+	md := s.Admin.Create().
+		SetPhone(*req.Phone).
+		SetRealName(*req.RealName)
 	if !app.IsNil(req.Remark) {
 		md = md.SetRemark(*req.Remark)
 	}
-	//if !app.IsNil(req.Password) {
-	//	md = md.SetPassword(*req.Password)
-	//}
+
+	if !app.IsNil(req.Password) {
+		if *req.Password != *req.ConfirmPassword {
+			return 0, errorno.NewErr(errorno.PasswordError)
+		}
+		md = md.SetPassword(*req.Password)
+	} else {
+		md = md.SetPassword(*req.Phone)
+	}
 	res, err := md.Save(ctx)
 	if err != nil {
 		return 0, errorno.NewStoreErr(err)
@@ -722,15 +770,20 @@ func (a AdminManager) UpdateUser(ctx context.Context, req request.SetUser) (int,
 	creation := s.User.UpdateOneID(*req.Id).
 		SetPhone(*req.Phone).
 		SetStatus(uint8(*req.Status))
-
 	if !app.IsNil(req.Username) {
 		creation = creation.SetUsername(*req.Username)
+	} else {
+		creation = creation.SetUsername("")
 	}
 	if !app.IsNil(req.IdCard) {
 		creation = creation.SetIDCard(*req.IdCard)
+	} else {
+		creation = creation.SetIDCard("")
 	}
 	if !app.IsNil(req.CardType) {
 		creation = creation.SetCardType(uint8(*req.CardType))
+	} else {
+		creation = creation.SetCardType(1)
 	}
 	if !app.IsNil(req.Sex) {
 		creation = creation.SetSex(uint8(*req.Sex))
@@ -746,12 +799,16 @@ func (a AdminManager) UpdateUser(ctx context.Context, req request.SetUser) (int,
 	//}
 	if !app.IsNil(req.SignRemark) {
 		creation = creation.SetSignRemark(*req.SignRemark)
+	} else {
+		creation = creation.SetSignRemark("")
 	}
 	if req.AvatarId > 0 {
 		avatarInfo, err := s.Attachment.Query().Where(attachment.ID(req.AvatarId)).First(ctx)
 		if err == nil {
 			creation = creation.SetAvatar(avatarInfo.Filename)
 		}
+	} else {
+		creation = creation.SetAvatar("")
 	}
 	userDetail, err := creation.Save(ctx)
 	if err != nil {

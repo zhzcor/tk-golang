@@ -133,17 +133,17 @@ func Use(engine *gin.Engine) {
 
 	//管理员管理
 	adminManagerGroup := adminGroup.Group("/manager").Use(AdminAuthMiddleware())
-	adminManagerGroup.POST("/index_statistic", ResponseToJSON(admin.GetIndexStatistic))     //首页统计
-	adminManagerGroup.POST("/role_add", ResponseToJSON(admin.AddRole))                      //添加角色
-	adminManagerGroup.POST("/role_status", ResponseToJSON(admin.SetRoleStatus))             //设置管理员状态
-	adminManagerGroup.POST("/role_list", ResponseToJSON(admin.GetRoleList))                 //角色列表（无分页）
-	adminManagerGroup.POST("/role_page_list", ResponseToJSON(admin.GetRoleListByPage))      //角色列表（分页）
-	adminManagerGroup.POST("/role_del", ResponseToJSON(admin.DelRole))                      //删除角色
-	adminManagerGroup.POST("/admin_set", ResponseToJSON(admin.SetAdmin))                    //编辑管理员
-	adminManagerGroup.POST("/admin_page_list", ResponseToJSON(admin.GetAdminListByPage))    //管理员列表（分页）
-	adminManagerGroup.POST("/admin_status", ResponseToJSON(admin.SetAdminStatus))           //设置管理员状态
-	adminManagerGroup.POST("/role_permission_add", ResponseToJSON(admin.AddRolePermission)) //角色添加权限
-	adminManagerGroup.POST("/role_permission_get", ResponseToJSON(admin.GetRolePermission)) //获取角色权限
+	//adminManagerGroup.POST("/index_statistic", ResponseToJSON(admin.GetIndexStatistic))     //首页统计
+	//adminManagerGroup.POST("/role_add", ResponseToJSON(admin.AddRole))                      //添加角色
+	//adminManagerGroup.POST("/role_status", ResponseToJSON(admin.SetRoleStatus))             //设置管理员状态
+	//adminManagerGroup.POST("/role_list", ResponseToJSON(admin.GetRoleList))                 //角色列表（无分页）
+	//adminManagerGroup.POST("/role_page_list", ResponseToJSON(admin.GetRoleListByPage))      //角色列表（分页）
+	//adminManagerGroup.POST("/role_del", ResponseToJSON(admin.DelRole))                      //删除角色
+	adminManagerGroup.POST("/admin_set", ResponseToJSON(admin.SetAdmin))                 //编辑管理员
+	adminManagerGroup.POST("/admin_page_list", ResponseToJSON(admin.GetAdminListByPage)) //管理员列表（分页）
+	adminManagerGroup.POST("/admin_status", ResponseToJSON(admin.SetAdminStatus))        //设置管理员状态
+	//adminManagerGroup.POST("/role_permission_add", ResponseToJSON(admin.AddRolePermission)) //角色添加权限
+	//adminManagerGroup.POST("/role_permission_get", ResponseToJSON(admin.GetRolePermission)) //获取角色权限
 
 	adminManagerGroup.POST("/password_reset", ResponseToJSON(admin.ResetPassword))                      //重置密码
 	adminManagerGroup.POST("/avatar_upload", ResponseToJSON(admin.UpdateAdminAvatar))                   //上传头像
