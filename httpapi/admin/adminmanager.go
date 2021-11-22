@@ -35,7 +35,7 @@ func LoginAdmin(ctx *gin.Context) (interface{}, error) {
 	}
 	adminDetail, err := s.Admin.Query().
 		Where(admin.Phone(req.Phone)).
-		//Where(admin.IsActive(1)).
+		Where(admin.Status(1)).
 		WithRoles(func(query *ent.RoleQuery) {
 			query.SoftDelete()
 		}).WithAdminAttachments().First(ctx)

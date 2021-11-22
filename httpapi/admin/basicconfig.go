@@ -24,6 +24,7 @@ import (
 	"tkserver/internal/store/ent/itemcategory"
 	"tkserver/internal/store/ent/kccourse"
 	"tkserver/internal/store/ent/kccoursesmallcategory"
+	"tkserver/internal/store/ent/level"
 	"tkserver/internal/store/ent/major"
 	"tkserver/internal/store/ent/tkquestion"
 	"tkserver/internal/store/ent/user"
@@ -46,13 +47,13 @@ func SetCity(ctx *gin.Context) (interface{}, error) {
 	remark := ""
 	err = store.WithTx(ctx, func(ctx context.Context) error {
 		if req.Id > 0 { //编辑
-			_, err := bc.UpdateCity(ctx, req.Name, req.Code, req.Desc, req.Id, req.SortOrder)
+			_, err := bc.UpdateCity(ctx, req.Name, req.Id, req.SortOrder)
 			if err != nil {
 				return err
 			}
 			remark = fmt.Sprintf("%s:%s", "编辑地区", req.Name)
 		} else {
-			_, err := bc.AddCity(ctx, req.Name, req.Code, req.Desc, req.SortOrder)
+			_, err := bc.AddCity(ctx, req.Name, req.SortOrder)
 			if err != nil {
 				return err
 			}
@@ -123,9 +124,6 @@ func GetCityByPage(ctx *gin.Context) (interface{}, error) {
 		if !app2.StringIsEmpty(req.Name) {
 			cityQuery = cityQuery.Where(city.Name(req.Name))
 		}
-		if !app2.StringIsEmpty(req.Code) {
-			cityQuery = cityQuery.Where(city.Code(req.Code))
-		}
 		if !app2.IsNil(req.Status) {
 			cityQuery = cityQuery.Where(city.Status(uint8(*req.Status)))
 		}
@@ -191,9 +189,9 @@ func GetCityAll(ctx *gin.Context) (interface{}, error) {
 	return cityList, nil
 }
 
-//添加（编辑）项目
-func SetItemCategory(ctx *gin.Context) (interface{}, error) {
-	var req request.SetItemCategory
+//添加（编辑）层次
+func SetLevel(ctx *gin.Context) (interface{}, error) {
+	var req request.SetBasicTag
 	err := ctx.Bind(&req)
 	if err != nil {
 		return nil, err
@@ -203,24 +201,148 @@ func SetItemCategory(ctx *gin.Context) (interface{}, error) {
 	adminId := ctx.GetInt(app.GlobalAdminId)
 	remark := ""
 	err = store.WithTx(ctx, func(ctx context.Context) error {
-		if req.Pid > 0 {
-			finded, err := store.WithContext(ctx).ItemCategory.Query().SoftDelete().
-				Where(itemcategory.ID(req.Pid)).Exist(ctx)
+		if req.Id > 0 { //编辑
+			_, err := bc.UpdateLevel(ctx, req.Name, req.Id, req.SortOrder)
 			if err != nil {
 				return err
 			}
-			if !finded {
-				return errorno.NewErr(errorno.PidNotfoundError)
+			remark = fmt.Sprintf("%s:%s", "编辑层次", req.Name)
+		} else {
+			_, err := bc.AddLevel(ctx, req.Name, req.SortOrder)
+			if err != nil {
+				return err
 			}
+			remark = fmt.Sprintf("%s:%s", "添加层次", req.Name)
 		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	_ = cm.SetOperationLog(ctx, adminId, remark)
+	return nil, nil
+}
+
+//删除层次
+func DelLevel(ctx *gin.Context) (interface{}, error) {
+	var req request.IdOnly
+	err := ctx.Bind(&req)
+	if err != nil {
+		return nil, err
+	}
+	bc := app.BasicConfig{}
+	err = store.WithTx(ctx, func(ctx context.Context) error {
+		err = bc.DelLevel(ctx, req.Id)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
+//地区查询(带分页)
+func GetLevelByPage(ctx *gin.Context) (interface{}, error) {
+	var req request.BasicTagPageList
+	err := ctx.Bind(&req)
+	if err != nil {
+		return nil, err
+	}
+	var res response.LevelListSuccess
+	err = store.WithTx(ctx, func(ctx context.Context) error {
+		//offset, pageSize := helper.GetPageOffset(req.Page, req.PageSize)
+		levelQuery := store.WithContext(ctx).Level.Query().SoftDelete()
+		if !app2.StringIsEmpty(req.Name) {
+			levelQuery = levelQuery.Where(level.Name(req.Name))
+		}
+		if !app2.IsNil(req.Status) {
+			levelQuery = levelQuery.Where(level.Status(uint8(*req.Status)))
+		}
+
+		count, err := levelQuery.Count(ctx)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return nil
+			}
+			return err
+		}
+		res.Page.Total = count
+
+		levelQuery = levelQuery.ForPage(req.Page, req.PageSize).Order(ent.Desc("id"))
+		list, err := levelQuery.All(ctx)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return nil
+			}
+			return err
+		}
+		res.List = list
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+//地区查询（无分页）
+func GetLevelAll(ctx *gin.Context) (interface{}, error) {
+	var req request.BasicTagPageList
+	err := ctx.Bind(&req)
+	if err != nil {
+		return nil, err
+	}
+	var levelList ent.Levels
+	err = store.WithTx(ctx, func(ctx context.Context) error {
+		levelQuery := store.WithContext(ctx).Level.Query().SoftDelete()
+		if !app2.StringIsEmpty(req.Name) {
+			levelQuery = levelQuery.Where(level.Name(req.Name))
+		}
+		if !app2.StringIsEmpty(req.Code) {
+			levelQuery = levelQuery.Where(level.Code(req.Code))
+		}
+		if !app2.IsNil(req.Status) {
+			levelQuery = levelQuery.Where(level.Status(uint8(*req.Status)))
+		}
+		list, err := levelQuery.All(ctx)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return nil
+			}
+			return err
+		}
+		levelList = list
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return levelList, nil
+}
+
+//添加（编辑）项目
+func SetItemCategory(ctx *gin.Context) (interface{}, error) {
+	var req request.SetBasicTag
+	err := ctx.Bind(&req)
+	if err != nil {
+		return nil, err
+	}
+	bc := app.BasicConfig{}
+	cm := app.Common{}
+	adminId := ctx.GetInt(app.GlobalAdminId)
+	remark := ""
+	err = store.WithTx(ctx, func(ctx context.Context) error {
 		if req.Id > 0 { //编辑
-			_, err := bc.UpdateItemCategory(ctx, req.Name, req.Code, req.Desc, req.Id, req.SortOrder, req.Pid)
+			_, err := bc.UpdateItemCategory(ctx, req.Name, req.Id, req.SortOrder)
 			if err != nil {
 				return err
 			}
 			remark = fmt.Sprintf("%s:%s", "编辑项目", req.Name)
 		} else {
-			_, err := bc.AddItemCategory(ctx, req.Name, req.Code, req.Desc, req.SortOrder, req.Pid)
+			_, err := bc.AddItemCategory(ctx, req.Name, req.SortOrder)
 			if err != nil {
 				return err
 			}
@@ -306,7 +428,7 @@ func GetItemCategoryByPage(ctx *gin.Context) (interface{}, error) {
 			return err
 		}
 		res.Page.Total = count
-		query = query.ForPage(req.Page, req.PageSize).WithChildren().Order(ent.Desc("id"))
+		query = query.ForPage(req.Page, req.PageSize).Order(ent.Desc("id"))
 
 		list, err := query.All(ctx)
 		if err != nil {
@@ -321,13 +443,10 @@ func GetItemCategoryByPage(ctx *gin.Context) (interface{}, error) {
 			detail.Name = v.Name
 			detail.SortOrder = v.SortOrder
 			detail.CreatedAt = v.CreatedAt
-			detail.Status = v.Status
-			detail.Pid = v.Pid
-			detail.Code = v.Code
-			detail.Children = ent.ItemCategories{}
-			if !app2.IsNil(v.Edges.Children) && len(v.Edges.Children) > 0 {
-				detail.Children = v.Edges.Children
-			}
+			//detail.Status = v.Status
+			//detail.Pid = v.Pid
+			//detail.Code = v.Code
+
 			res.List = append(res.List, detail)
 		}
 		return nil
@@ -386,13 +505,13 @@ func SetMajor(ctx *gin.Context) (interface{}, error) {
 	remark := ""
 	err = store.WithTx(ctx, func(ctx context.Context) error {
 		if req.Id > 0 { //编辑
-			_, err := bc.UpdateMajor(ctx, req.Name, req.Code, req.Desc, req.Id, req.SortOrder)
+			_, err := bc.UpdateMajor(ctx, req.Name, req.Id, req.SortOrder)
 			if err != nil {
 				return err
 			}
 			remark = fmt.Sprintf("%s:%s", "编辑专业", req.Name)
 		} else {
-			_, err := bc.AddMajor(ctx, req.Name, req.Code, req.Desc, req.SortOrder)
+			_, err := bc.AddMajor(ctx, req.Name, req.SortOrder)
 			if err != nil {
 				return err
 			}
