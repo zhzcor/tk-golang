@@ -11,10 +11,10 @@ type SetBasicTag struct {
 	Desc      string `json:"desc" form:"desc"`
 }
 
-type SetItemCategory struct {
-	SetBasicTag
-	Pid int `json:"pid" form:"pid"`
-}
+//type SetItemCategory struct {
+//	SetBasicTag
+//	//Pid int `json:"pid" form:"pid"`
+//}
 
 //基础标签分页查询
 type BasicTagPageList struct {

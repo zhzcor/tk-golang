@@ -7,6 +7,11 @@ type CityListSuccess struct {
 	Page PageResponse `json:"page"`
 }
 
+type LevelListSuccess struct {
+	List ent.Levels   `json:"list"`
+	Page PageResponse `json:"page"`
+}
+
 type ItemCategoryListSuccess struct {
 	List []ItemDetail `json:"list"`
 	Page PageResponse `json:"page"`

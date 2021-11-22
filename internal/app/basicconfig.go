@@ -12,6 +12,7 @@ import (
 	"tkserver/internal/store/ent/attachment"
 	"tkserver/internal/store/ent/city"
 	"tkserver/internal/store/ent/itemcategory"
+	"tkserver/internal/store/ent/level"
 	"tkserver/internal/store/ent/major"
 )
 
@@ -19,7 +20,7 @@ type BasicConfig struct {
 }
 
 //添加地区
-func (b BasicConfig) AddCity(ctx context.Context, cityName, code, desc string, sortOrder int) (int, error) {
+func (b BasicConfig) AddCity(ctx context.Context, cityName string, sortOrder int) (int, error) {
 	s := store.WithContext(ctx)
 	fined, err := s.City.
 		Query().
@@ -33,8 +34,6 @@ func (b BasicConfig) AddCity(ctx context.Context, cityName, code, desc string, s
 	}
 	newCity, err := s.City.Create().
 		SetName(cityName).
-		SetCode(code).
-		SetDesc(desc).
 		SetSortOrder(sortOrder).
 		Save(ctx)
 	if err != nil {
@@ -44,7 +43,7 @@ func (b BasicConfig) AddCity(ctx context.Context, cityName, code, desc string, s
 }
 
 //编辑地区
-func (b BasicConfig) UpdateCity(ctx context.Context, cityName, code, desc string, id, sortOrder int) (int, error) {
+func (b BasicConfig) UpdateCity(ctx context.Context, cityName string, id, sortOrder int) (int, error) {
 	s := store.WithContext(ctx)
 	fined, err := s.City.
 		Query().
@@ -59,8 +58,6 @@ func (b BasicConfig) UpdateCity(ctx context.Context, cityName, code, desc string
 	}
 	newCity, err := s.City.UpdateOneID(id).
 		SetName(cityName).
-		SetCode(code).
-		SetDesc(desc).
 		SetSortOrder(sortOrder).
 		Save(ctx)
 	if err != nil {
@@ -115,13 +112,92 @@ func (b BasicConfig) CityIdExist(ctx context.Context, id int) error {
 	return nil
 }
 
+//添加地区
+func (b BasicConfig) AddLevel(ctx context.Context, levelName string, sortOrder int) (int, error) {
+	s := store.WithContext(ctx)
+	fined, err := s.Level.
+		Query().
+		Where(level.Name(levelName)).
+		Exist(ctx)
+	if err != nil {
+		return 0, errorno.NewStoreErr(err)
+	}
+	if fined {
+		return 0, errorno.NewErr(errorno.DataExistsError)
+	}
+	newLevel, err := s.Level.Create().
+		SetName(levelName).
+		SetSortOrder(sortOrder).
+		Save(ctx)
+	if err != nil {
+		return 0, errorno.NewStoreErr(err)
+	}
+	return newLevel.ID, nil
+}
+
+//编辑地区
+func (b BasicConfig) UpdateLevel(ctx context.Context, levelName string, id, sortOrder int) (int, error) {
+	s := store.WithContext(ctx)
+	fined, err := s.Level.
+		Query().
+		Where(level.Name(levelName)).
+		Where(level.IDNEQ(id)).
+		Exist(ctx)
+	if err != nil {
+		return 0, errorno.NewStoreErr(err)
+	}
+	if fined {
+		return 0, errorno.NewErr(errorno.DataExistsError)
+	}
+	newCity, err := s.Level.UpdateOneID(id).
+		SetName(levelName).
+		SetSortOrder(sortOrder).
+		Save(ctx)
+	if err != nil {
+		return 0, errorno.NewStoreErr(err)
+	}
+	return newCity.ID, nil
+}
+
+//删除地区
+func (b BasicConfig) DelLevel(ctx context.Context, id int) error {
+	s := store.WithContext(ctx)
+	if errorno := b.LevelIdExist(ctx, id); errorno != nil {
+		return errorno
+	}
+	_, err := s.Level.UpdateOneID(id).SoftDelete().Save(ctx)
+	if err != nil {
+		return errorno.NewStoreErr(err)
+	}
+	return nil
+}
+
+//id判断地区是否存着
+func (b BasicConfig) LevelIdExist(ctx context.Context, id int) error {
+	s := store.WithContext(ctx)
+	fined, err := s.Level.
+		Query().
+		Where(level.ID(id)).
+		Where(level.DeletedAtIsNil()).
+		Exist(ctx)
+	if err != nil {
+		return errorno.NewStoreErr(err)
+	}
+	if !fined {
+		return errorno.NewErr(errorno.Errno{
+			Code:    20001,
+			Message: "层次不存在",
+		})
+	}
+	return nil
+}
+
 //添加项目
-func (b BasicConfig) AddItemCategory(ctx context.Context, Name, code, desc string, sortOrder, pid int) (int, error) {
+func (b BasicConfig) AddItemCategory(ctx context.Context, Name string, sortOrder int) (int, error) {
 	s := store.WithContext(ctx)
 	fined, err := s.ItemCategory.
 		Query().
 		Where(itemcategory.Name(Name)).
-		Where(itemcategory.Pid(pid)).
 		Exist(ctx)
 	if err != nil {
 		return 0, errorno.NewStoreErr(err)
@@ -131,12 +207,7 @@ func (b BasicConfig) AddItemCategory(ctx context.Context, Name, code, desc strin
 	}
 	addItem := s.ItemCategory.Create().
 		SetName(Name).
-		SetCode(code).
-		SetDesc(desc).
 		SetSortOrder(sortOrder)
-	if pid != 0 {
-		addItem = addItem.SetPid(pid)
-	}
 	newItem, err := addItem.Save(ctx)
 	if err != nil {
 		return 0, errorno.NewStoreErr(err)
@@ -145,13 +216,12 @@ func (b BasicConfig) AddItemCategory(ctx context.Context, Name, code, desc strin
 }
 
 //编辑项目
-func (b BasicConfig) UpdateItemCategory(ctx context.Context, Name, code, desc string, id, sortOrder, pid int) (int, error) {
+func (b BasicConfig) UpdateItemCategory(ctx context.Context, Name string, id, sortOrder int) (int, error) {
 	s := store.WithContext(ctx)
 	fined, err := s.ItemCategory.
 		Query().
 		Where(itemcategory.Name(Name)).
 		Where(itemcategory.IDNEQ(id)).
-		Where(itemcategory.Pid(pid)).
 		Exist(ctx)
 	if err != nil {
 		return 0, errorno.NewStoreErr(err)
@@ -161,12 +231,8 @@ func (b BasicConfig) UpdateItemCategory(ctx context.Context, Name, code, desc st
 	}
 	updateItem := s.ItemCategory.UpdateOneID(id).
 		SetName(Name).
-		SetCode(code).
-		SetDesc(desc).
 		SetSortOrder(sortOrder)
-	if pid != 0 {
-		updateItem = updateItem.SetPid(pid)
-	}
+
 	newItem, err := updateItem.Save(ctx)
 	if err != nil {
 		return 0, errorno.NewStoreErr(err)
@@ -221,7 +287,7 @@ func (b BasicConfig) ItemIdExist(ctx context.Context, id int) error {
 }
 
 //添加专业
-func (b BasicConfig) AddMajor(ctx context.Context, Name, code, desc string, sortOrder int) (int, error) {
+func (b BasicConfig) AddMajor(ctx context.Context, Name string, sortOrder int) (int, error) {
 	s := store.WithContext(ctx)
 	fined, err := s.Major.
 		Query().
@@ -235,8 +301,6 @@ func (b BasicConfig) AddMajor(ctx context.Context, Name, code, desc string, sort
 	}
 	newItem, err := s.Major.Create().
 		SetName(Name).
-		SetCode(code).
-		SetDesc(desc).
 		SetSortOrder(sortOrder).
 		Save(ctx)
 	if err != nil {
@@ -246,7 +310,7 @@ func (b BasicConfig) AddMajor(ctx context.Context, Name, code, desc string, sort
 }
 
 //编辑专业
-func (b BasicConfig) UpdateMajor(ctx context.Context, Name, code, desc string, id, sortOrder int) (int, error) {
+func (b BasicConfig) UpdateMajor(ctx context.Context, Name string, id, sortOrder int) (int, error) {
 	s := store.WithContext(ctx)
 	fined, err := s.Major.
 		Query().
@@ -261,8 +325,6 @@ func (b BasicConfig) UpdateMajor(ctx context.Context, Name, code, desc string, i
 	}
 	newItem, err := s.Major.UpdateOneID(id).
 		SetName(Name).
-		SetCode(code).
-		SetDesc(desc).
 		SetSortOrder(sortOrder).
 		Save(ctx)
 	if err != nil {

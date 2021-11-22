@@ -95,35 +95,39 @@ func Use(engine *gin.Engine) {
 
 	//app后台接口
 	//no auth
-	adminGroup := engine.Group("/admin")                                                //不带auth认证
-	adminGroup.POST("/other/sync_user", ResponseToJSON(admin.SyncUserFromBoss))         //boss后台同步学员
-	adminGroup.POST("/other/sync_admin", ResponseToJSON(admin.SyncAdminFromBoss))       //boss后台同步管理员
-	adminGroup.POST("/other/login", ResponseToJSON(admin.LoginAdmin))                   //登录
-	adminGroup.POST("/other/bjy_callback_set", ResponseToJSON(admin.SetBjyCallbackUrl)) //设置百家云回调
-	adminGroup.POST("/other/bjy_class_callback", admin.ClassCallbackHandler())          //上下课回调
-	adminGroup.POST("/other/bjy_order_callback", admin.VideosCallbackHandler())         //点播（回放）回调
-	adminGroup.POST("/other/oss_callback", ResponseToJSON(admin.OssCallbackHandler))    //oss回调
-	adminGroup.POST("/other/third_login", ResponseToJSON(admin.ThirdLoginAdmin))        //钉钉登录
+	adminGroup := engine.Group("/admin") //不带auth认证
+	//adminGroup.POST("/other/sync_user", ResponseToJSON(admin.SyncUserFromBoss))         //boss后台同步学员
+	//adminGroup.POST("/other/sync_admin", ResponseToJSON(admin.SyncAdminFromBoss))       //boss后台同步管理员
+	adminGroup.POST("/other/login", ResponseToJSON(admin.LoginAdmin)) //登录
+	//adminGroup.POST("/other/bjy_callback_set", ResponseToJSON(admin.SetBjyCallbackUrl)) //设置百家云回调
+	//adminGroup.POST("/other/bjy_class_callback", admin.ClassCallbackHandler())          //上下课回调
+	//adminGroup.POST("/other/bjy_order_callback", admin.VideosCallbackHandler())         //点播（回放）回调
+	adminGroup.POST("/other/oss_callback", ResponseToJSON(admin.OssCallbackHandler)) //oss回调
+	//adminGroup.POST("/other/third_login", ResponseToJSON(admin.ThirdLoginAdmin))        //钉钉登录
 
 	//基础配置(字典管理)
 	basicConfigGroup := adminGroup.Group("/basic_config").Use(AdminAuthMiddleware())
 	basicConfigGroup.POST("/oss/auth", ResponseToJSON(admin.AuthOss))
 	//地区、项目、专业
-	basicConfigGroup.POST("/city_set", ResponseToJSON(admin.SetCity))                     //添加（编辑）地区
-	basicConfigGroup.POST("/city_del", ResponseToJSON(admin.DelCity))                     //删除地区
-	basicConfigGroup.POST("/city_status", ResponseToJSON(admin.SetCityStatus))            //设置地区状态
-	basicConfigGroup.POST("/city_page_list", ResponseToJSON(admin.GetCityByPage))         //地区列表(分页)
-	basicConfigGroup.POST("/city_list", ResponseToJSON(admin.GetCityAll))                 //地区列表(无分页)
-	basicConfigGroup.POST("/item_set", ResponseToJSON(admin.SetItemCategory))             //添加（编辑）项目
-	basicConfigGroup.POST("/item_del", ResponseToJSON(admin.DelItemCategory))             //删除项目
-	basicConfigGroup.POST("/item_status", ResponseToJSON(admin.SetItemStatus))            //设置项目状态
+	basicConfigGroup.POST("/city_set", ResponseToJSON(admin.SetCity)) //添加（编辑）地区
+	basicConfigGroup.POST("/city_del", ResponseToJSON(admin.DelCity)) //删除地区
+	//basicConfigGroup.POST("/city_status", ResponseToJSON(admin.SetCityStatus))            //设置地区状态
+	basicConfigGroup.POST("/city_page_list", ResponseToJSON(admin.GetCityByPage)) //地区列表(分页)
+	basicConfigGroup.POST("/city_list", ResponseToJSON(admin.GetCityAll))         //地区列表(无分页)
+	basicConfigGroup.POST("/item_set", ResponseToJSON(admin.SetItemCategory))     //添加（编辑）项目
+	basicConfigGroup.POST("/item_del", ResponseToJSON(admin.DelItemCategory))     //删除项目
+	//basicConfigGroup.POST("/item_status", ResponseToJSON(admin.SetItemStatus))            //设置项目状态
 	basicConfigGroup.POST("/item_page_list", ResponseToJSON(admin.GetItemCategoryByPage)) //项目列表(分页)
 	basicConfigGroup.POST("/item_list", ResponseToJSON(admin.GetItemCategoryAll))         //项目列表(无分页)
 	basicConfigGroup.POST("/major_set", ResponseToJSON(admin.SetMajor))                   //添加（编辑）专业
 	basicConfigGroup.POST("/major_del", ResponseToJSON(admin.DelMajor))                   //删除专业
-	basicConfigGroup.POST("/major_status", ResponseToJSON(admin.SetMajorStatus))          //设置专业状态
-	basicConfigGroup.POST("/major_page_list", ResponseToJSON(admin.GetMajorByPage))       //专业列表(分页)
-	basicConfigGroup.POST("/major_list", ResponseToJSON(admin.GetMajorAll))               //专业列表(无分页)
+	//basicConfigGroup.POST("/major_status", ResponseToJSON(admin.SetMajorStatus))          //设置专业状态
+	basicConfigGroup.POST("/major_page_list", ResponseToJSON(admin.GetMajorByPage)) //专业列表(分页)
+	basicConfigGroup.POST("/major_list", ResponseToJSON(admin.GetMajorAll))         //专业列表(无分页)
+	basicConfigGroup.POST("/level_set", ResponseToJSON(admin.SetLevel))             //添加（编辑）层次
+	basicConfigGroup.POST("/level_del", ResponseToJSON(admin.DelLevel))             //删除层次
+	basicConfigGroup.POST("/level_page_list", ResponseToJSON(admin.GetLevelByPage)) //层次列表(分页)
+	basicConfigGroup.POST("/level_list", ResponseToJSON(admin.GetLevelAll))         //层次列表(无分页)
 
 	basicConfigGroup.POST("/agreement_set", ResponseToJSON(admin.SetAppAgreement))             //添加app协议
 	basicConfigGroup.POST("/agreement_get", ResponseToJSON(admin.GetAppAgreement))             //根据协议类型获取协议详情
@@ -133,17 +137,17 @@ func Use(engine *gin.Engine) {
 
 	//管理员管理
 	adminManagerGroup := adminGroup.Group("/manager").Use(AdminAuthMiddleware())
-	adminManagerGroup.POST("/index_statistic", ResponseToJSON(admin.GetIndexStatistic))     //首页统计
-	adminManagerGroup.POST("/role_add", ResponseToJSON(admin.AddRole))                      //添加角色
-	adminManagerGroup.POST("/role_status", ResponseToJSON(admin.SetRoleStatus))             //设置管理员状态
-	adminManagerGroup.POST("/role_list", ResponseToJSON(admin.GetRoleList))                 //角色列表（无分页）
-	adminManagerGroup.POST("/role_page_list", ResponseToJSON(admin.GetRoleListByPage))      //角色列表（分页）
-	adminManagerGroup.POST("/role_del", ResponseToJSON(admin.DelRole))                      //删除角色
-	adminManagerGroup.POST("/admin_set", ResponseToJSON(admin.SetAdmin))                    //编辑管理员
-	adminManagerGroup.POST("/admin_page_list", ResponseToJSON(admin.GetAdminListByPage))    //管理员列表（分页）
-	adminManagerGroup.POST("/admin_status", ResponseToJSON(admin.SetAdminStatus))           //设置管理员状态
-	adminManagerGroup.POST("/role_permission_add", ResponseToJSON(admin.AddRolePermission)) //角色添加权限
-	adminManagerGroup.POST("/role_permission_get", ResponseToJSON(admin.GetRolePermission)) //获取角色权限
+	//adminManagerGroup.POST("/index_statistic", ResponseToJSON(admin.GetIndexStatistic))     //首页统计
+	//adminManagerGroup.POST("/role_add", ResponseToJSON(admin.AddRole))                      //添加角色
+	//adminManagerGroup.POST("/role_status", ResponseToJSON(admin.SetRoleStatus))             //设置管理员状态
+	//adminManagerGroup.POST("/role_list", ResponseToJSON(admin.GetRoleList))                 //角色列表（无分页）
+	//adminManagerGroup.POST("/role_page_list", ResponseToJSON(admin.GetRoleListByPage))      //角色列表（分页）
+	//adminManagerGroup.POST("/role_del", ResponseToJSON(admin.DelRole))                      //删除角色
+	adminManagerGroup.POST("/admin_set", ResponseToJSON(admin.SetAdmin))                 //编辑管理员
+	adminManagerGroup.POST("/admin_page_list", ResponseToJSON(admin.GetAdminListByPage)) //管理员列表（分页）
+	adminManagerGroup.POST("/admin_status", ResponseToJSON(admin.SetAdminStatus))        //设置管理员状态
+	//adminManagerGroup.POST("/role_permission_add", ResponseToJSON(admin.AddRolePermission)) //角色添加权限
+	//adminManagerGroup.POST("/role_permission_get", ResponseToJSON(admin.GetRolePermission)) //获取角色权限
 
 	adminManagerGroup.POST("/password_reset", ResponseToJSON(admin.ResetPassword))                      //重置密码
 	adminManagerGroup.POST("/avatar_upload", ResponseToJSON(admin.UpdateAdminAvatar))                   //上传头像
