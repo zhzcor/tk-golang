@@ -18,14 +18,19 @@ import (
 	"tkserver/internal/store"
 	"tkserver/internal/store/ent"
 	"tkserver/internal/store/ent/collection"
+	"tkserver/internal/store/ent/itemcategory"
 	"tkserver/internal/store/ent/kcuserclass"
 	"tkserver/internal/store/ent/kcusercourse"
+	"tkserver/internal/store/ent/level"
+	"tkserver/internal/store/ent/major"
 	"tkserver/internal/store/ent/makeuserquestionrecord"
 	"tkserver/internal/store/ent/tkchapter"
 	"tkserver/internal/store/ent/tkexampaper"
 	"tkserver/internal/store/ent/tkexampartitionquestionlink"
 	"tkserver/internal/store/ent/tkquestion"
 	"tkserver/internal/store/ent/tkquestionbank"
+	"tkserver/internal/store/ent/tkquestionbankcity"
+	"tkserver/internal/store/ent/tkquestionbankmajor"
 	"tkserver/internal/store/ent/tkquestionsection"
 	"tkserver/internal/store/ent/tkuserexamscorerecord"
 	"tkserver/internal/store/ent/tkuserquestionbankrecord"
@@ -52,6 +57,12 @@ const (
 
 //题库首页
 func GetQuestionIndex(ctx *gin.Context) (interface{}, error) {
+	var req request.QuestionIndex
+	err := ctx.Bind(&req)
+	if err != nil {
+		return nil, errorno.NewParamErr(err)
+	}
+
 	s := store.WithContext(ctx)
 	uid, _ := ctx.Get("uid")
 	//班级课程
@@ -141,6 +152,119 @@ func GetQuestionIndex(ctx *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
+//tk专业题库标签
+func GetQuestionBankTag(ctx *gin.Context) (interface{}, error) {
+	ca := cache.CommCache
+	Key := cache.QuestionBankTag
+	if data, ok := ca.Get(Key); ok {
+		return data, nil
+	}
+
+	s := store.WithContext(ctx)
+	leveList := s.Level.Query().SoftDelete().Where(level.Status(1)).Order(ent.Asc(level.FieldSortOrder)).AllX(ctx)
+	majorList := s.Major.Query().SoftDelete().Where(major.Status(1)).Order(ent.Asc(major.FieldSortOrder)).AllX(ctx)
+	itemList := s.ItemCategory.Query().SoftDelete().Where(itemcategory.Status(1)).Order(ent.Asc(itemcategory.FieldSortOrder)).AllX(ctx)
+
+	if len(leveList) == 0 && len(majorList) == 0 && len(itemList) == 0 {
+		return nil, nil
+	}
+
+	res := response.QuestionMajorCheck{
+		LevelList:        []response.LevelList{},
+		MajorList:        []response.MajorList{},
+		ItemCategoryList: []response.ItemCategoryList{},
+	}
+
+	for _, v := range leveList {
+		var re response.LevelList
+		re.LeveId = v.ID
+		re.LeveName = v.Name
+		res.LevelList = append(res.LevelList, re)
+	}
+
+	for _, v := range majorList {
+		var re response.MajorList
+		re.MajorId = v.ID
+		re.MajorName = v.Name
+		res.MajorList = append(res.MajorList, re)
+	}
+
+	for _, v := range itemList {
+		var re response.ItemCategoryList
+		re.ItemId = v.ID
+		re.ItemName = v.Name
+		res.ItemCategoryList = append(res.ItemCategoryList, re)
+	}
+
+	ca.Set(Key, res)
+
+	return res, nil
+}
+
+//题库筛选
+func GetMajorQuestionBankList(ctx *gin.Context) (interface{}, error) {
+	var req request.MajorsQuestionBank
+	err := ctx.Bind(&req)
+	if err != nil {
+		return nil, errorno.NewParamErr(err)
+	}
+
+	ca := cache.CommCache
+	Key := cache.QuestionBankCheckTag +strconv.Itoa(req.LevelId)+strconv.Itoa(req.MajorId)+strconv.Itoa(req.ItemCategoryId)+strconv.Itoa(req.CityId)
+	if data, ok := ca.Get(Key); ok {
+		return data, nil
+	}
+	s := store.WithContext(ctx)
+
+	CityIds := s.TkQuestionBankCity.Query().SoftDelete().Where(tkquestionbankcity.CityID(req.CityId)).AllX(ctx)
+
+	bankIds := []int{}
+	questionCityIds := []int{}
+	for _, v := range CityIds {
+		questionCityIds = append(questionCityIds, v.QuestionBankID)
+	}
+	bankIds = questionCityIds
+
+	if req.MajorId > 0 && req.CityId > 0 {
+		majorListIds := s.TkQuestionBankMajor.Query().SoftDelete().Where(tkquestionbankmajor.MajorID(req.MajorId)).AllX(ctx)
+		questionMajorIds := []int{}
+		for _, v := range majorListIds {
+			questionMajorIds = append(questionMajorIds, v.QuestionBankID)
+		}
+
+		bankIds = app2.SliceIntersect(questionCityIds, questionMajorIds)
+
+	}
+
+	if len(bankIds) == 0 {
+		return nil, nil
+	}
+
+	query := s.TkQuestionBank.Query().SoftDelete().Where(tkquestionbank.Status(1), tkquestionbank.IDIn(bankIds...))
+
+	if req.ItemCategoryId > 0 {
+		query = query.Where(tkquestionbank.ItemCategoryID(req.ItemCategoryId))
+	}
+
+	if req.LevelId > 0 {
+		query = query.Where(tkquestionbank.LevelID(req.LevelId))
+	}
+
+	bankList := query.AllX(ctx)
+
+	list := []response.BankListInfo{}
+	for _, v := range bankList {
+		res := response.BankListInfo{}
+		res.QuestionBankId = v.ID
+		res.QuestionBankName = v.Name
+
+		list = append(list, res)
+	}
+
+	ca.Set(Key,list)
+	return list, nil
+}
+
 //课程下的题库信息
 func GetCourseQuestionBankInfo(ctx *gin.Context) (interface{}, error) {
 	var req request.CourseQuestionBank
@@ -148,13 +272,20 @@ func GetCourseQuestionBankInfo(ctx *gin.Context) (interface{}, error) {
 	if err != nil {
 		return nil, errorno.NewParamErr(err)
 	}
-	uid, _ := ctx.Get("uid")
+
+	//判断是否登录
+	isLoginUid, err := app.Common{}.IsUserLogin(ctx)
+
+	if err != nil {
+		return nil, errorno.NewInternalErr(err)
+	}
+	uid := isLoginUid
 
 	if req.QuestionId == 0 {
-		c := app.Course{}
-		courseBankIds, _ := c.GetUserCourseBankIds(ctx, uid.(int))
-		if len(courseBankIds) > 0 {
-			req.QuestionId = courseBankIds[0]
+		c := app.TkQuestionBank{}
+		bankIds, _ := c.GetCityBankIds(ctx, req.CityId)
+		if len(bankIds) > 0 {
+			req.QuestionId = bankIds[0].ID
 		} else {
 			return nil, nil
 		}
@@ -169,23 +300,26 @@ func GetCourseQuestionBankInfo(ctx *gin.Context) (interface{}, error) {
 	quType := s.TkQuestionBank.Query().Where(tkquestionbank.ID(req.QuestionId)).WithExamQuestionTypes().FirstX(ctx)
 
 	if quType != nil {
-		//查询用户做已刷题数
-		userBankRecode, _ := s.TkUserQuestionBankRecord.Query().Where(tkuserquestionbankrecord.UserID(uid.(int))).
-			Where(tkuserquestionbankrecord.QuestionBankID(req.QuestionId)).First(ctx)
-
 		TypeList.BankId = quType.ID
 		TypeList.QuestionNum = quType.QuestionCount
 		TypeList.QuestionBankName = quType.Name
-		if userBankRecode != nil {
-			TypeList.UserStudyCount = userBankRecode.RecordCount
-			TypeList.Accuracy = math.Ceil(userBankRecode.CorrectRate * 100)
-			TypeList.FinishRate, _ = strconv.ParseFloat(fmt.Sprintf("%.1f", TypeList.UserStudyCount/TypeList.QuestionNum*100), 64)
-			/*strconv.ParseFloat(strconv.FormatFloat(float64(TypeList.UserStudyCount)/float64(TypeList.QuestionNum)*100, 'f', 1, 64), 64)*/
-			/*			TypeList.FinishRate= (userBankRecode.FinishRate) * 100
-			 */
-			totalRecode := TypeList.FinishRate + TypeList.Accuracy
-			TypeList.ForecastScore = math.Ceil(totalRecode / 2)
+
+		if uid > 0 {
+			//查询用户做已刷题数
+			userBankRecode, _ := s.TkUserQuestionBankRecord.Query().Where(tkuserquestionbankrecord.UserID(uid)).
+				Where(tkuserquestionbankrecord.QuestionBankID(req.QuestionId)).First(ctx)
+			if userBankRecode != nil {
+				TypeList.UserStudyCount = userBankRecode.RecordCount
+				TypeList.Accuracy = math.Ceil(userBankRecode.CorrectRate * 100)
+				TypeList.FinishRate, _ = strconv.ParseFloat(fmt.Sprintf("%.1f", TypeList.UserStudyCount/TypeList.QuestionNum*100), 64)
+				/*strconv.ParseFloat(strconv.FormatFloat(float64(TypeList.UserStudyCount)/float64(TypeList.QuestionNum)*100, 'f', 1, 64), 64)*/
+				/*			TypeList.FinishRate= (userBankRecode.FinishRate) * 100
+				 */
+				totalRecode := TypeList.FinishRate + TypeList.Accuracy
+				TypeList.ForecastScore = math.Ceil(totalRecode / 2)
+			}
 		}
+
 		//用户学习在该题库总数
 		var typeSpec = make([]response.TkExamType, 5)
 		for i := 0; i < 5; i++ {
@@ -194,31 +328,32 @@ func GetCourseQuestionBankInfo(ctx *gin.Context) (interface{}, error) {
 			typeSpec[i].TotalCount = 0
 			typeSpec[i].UserCount = 0
 		}
-
-		qulist := s.TkUserQuestionRecord.Query().SoftDelete().Select("id", "question_id", "exam_question_type").Where(tkuserquestionrecord.UserID(uid.(int)), tkuserquestionrecord.QuestionBankID(req.QuestionId)).WithQuestion(func(query *ent.TkQuestionQuery) {
-			query.SoftDelete().Where(tkquestion.PidIsNil())
-		}).AllX(ctx)
-
 		var typeCountMap = make([]int, 6)
 
-		for _, v := range qulist {
-			if v.Edges.Question != nil {
-				switch int(v.ExamQuestionType) {
-				case 1:
-					typeCountMap[0] = typeCountMap[0] + 1
-				case 2:
-					typeCountMap[1] = typeCountMap[1] + 1
-				case 3:
-					typeCountMap[2] = typeCountMap[2] + 1
-				case 4:
-					typeCountMap[3] = typeCountMap[3] + 1
-				case 5:
-					typeCountMap[4] = typeCountMap[4] + 1
-				default:
-					break
-				}
-			}
+		if uid > 0 {
+			qulist := s.TkUserQuestionRecord.Query().SoftDelete().Select("id", "question_id", "exam_question_type").Where(tkuserquestionrecord.UserID(uid), tkuserquestionrecord.QuestionBankID(req.QuestionId)).WithQuestion(func(query *ent.TkQuestionQuery) {
+				query.SoftDelete().Where(tkquestion.PidIsNil())
+			}).AllX(ctx)
 
+			for _, v := range qulist {
+				if v.Edges.Question != nil {
+					switch int(v.ExamQuestionType) {
+					case 1:
+						typeCountMap[0] = typeCountMap[0] + 1
+					case 2:
+						typeCountMap[1] = typeCountMap[1] + 1
+					case 3:
+						typeCountMap[2] = typeCountMap[2] + 1
+					case 4:
+						typeCountMap[3] = typeCountMap[3] + 1
+					case 5:
+						typeCountMap[4] = typeCountMap[4] + 1
+					default:
+						break
+					}
+				}
+
+			}
 		}
 
 		if len(quType.Edges.ExamQuestionTypes) > 0 {

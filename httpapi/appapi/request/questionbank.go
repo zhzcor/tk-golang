@@ -1,9 +1,9 @@
 package request
+
 //通用单个题库ID
 type OnlyQuestionBankId struct {
 	QuestionBankId int `json:"question_bank_id" form:"question_bank_id" binding:"required"`
 }
-
 
 //题库试卷类型接口
 type QuestionBankExamList struct {
@@ -13,21 +13,31 @@ type QuestionBankExamList struct {
 
 //题库首页
 type QuestionIndex struct {
-	ClassId  int `json:"class_id" form:"class_id"`
-	CourseId int `json:"course_id" form:"course_id"`
+	/*	ClassId  int `json:"class_id" form:"class_id"`
+		CourseId int `json:"course_id" form:"course_id"`*/
+	CityId int `json:"city_id" form:"city_id" binding:"required"`
 }
 
-//课程下题库接口
+//地区专业题库题库
+type MajorsQuestionBank struct {
+	LevelId        int `json:"level_id" form:"level_id"`                 //层次id
+	MajorId        int `json:"major_id" form:"major_id"`                 //专业id
+	ItemCategoryId int `json:"item_category_id" form:"item_category_id"` //项目id
+	CityId         int `json:"city_id" form:"city_id" binding:"required"`                   //地区id
+}
+
+//题库接口
 type CourseQuestionBank struct {
 	QuestionId int `json:"question_id" form:"question_id"`
+	CityId     int `json:"city_id" form:"city_id" binding:"required"`
 }
 
 //卷子下题目列表
 type ExamQuestionList struct {
-	Id                 int `json:"id" form:"id" binding:"required"`
+	Id                 int    `json:"id" form:"id" binding:"required"`
 	LookReport         string `json:"look_report"`
-	AnswerAgain        int `json:"answer_again" form:"answer_again"`
-	QuestionUserAction int `json:"question_user_action" form:"question_user_action"` //标示用户是查看题目还是做题 1:做题 0 查看
+	AnswerAgain        int    `json:"answer_again" form:"answer_again"`
+	QuestionUserAction int    `json:"question_user_action" form:"question_user_action"` //标示用户是查看题目还是做题 1:做题 0 查看
 }
 
 //获取章节下题目列表
@@ -35,7 +45,7 @@ type TkCsQuestionsList struct {
 	ChapterId          *int `json:"chapter_id" form:"chapter_id"`
 	SectionId          *int `json:"section_id" form:"section_id"`
 	AnswerAgain        int  `json:"answer_again" form:"answer_again"`
-	QuestionBankId     int `json:"question_bank_id" form:"question_bank_id"`
+	QuestionBankId     int  `json:"question_bank_id" form:"question_bank_id"`
 	QuestionUserAction int  `json:"question_user_action" form:"question_user_action"` //标示用户是查看题目还是做题 1:做题 0 查看
 }
 
@@ -47,7 +57,7 @@ type UserRecodeList struct {
 	SecId             int             `json:"sec_id" form:"sec_id"`                         //小节Id
 	Score             int             `json:"score" form:"score"`
 	RightCount        int             `json:"right_count" form:"right_count"` //答对题数
-	NoCount           int             `json:"no_count" form:"no_count"`    //未作答数
+	NoCount           int             `json:"no_count" form:"no_count"`       //未作答数
 	WrongCount        int             `json:"wrong_count" form:"wrong_count"` //搭错题
 	TotalCount        int             `json:"total_count" form:"total_count"` //总题数
 	Duration          int             `json:"duration" form:"duration"`       //答题时长
@@ -89,9 +99,9 @@ type QuestionDetail struct {
 //题目ID组批量获取题目详情
 type QuestionIdArrDetail struct {
 	QuestionIds []int `json:"question_ids" form:"question_ids" binding:"required"`
-	ExamId     int `json:"exam_id" form:"question_id"`
-	SecId      int `json:"sec_id" form:"sec_id"`
-	ChapterId  int `json:"chapter_id" form:"chapter_id"`
+	ExamId      int   `json:"exam_id" form:"question_id"`
+	SecId       int   `json:"sec_id" form:"sec_id"`
+	ChapterId   int   `json:"chapter_id" form:"chapter_id"`
 }
 
 //增加错题记录

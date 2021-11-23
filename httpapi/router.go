@@ -41,6 +41,9 @@ func Use(engine *gin.Engine) {
 	apiRoute.POST("/set_pwd", ResponseToJSON(appapi.SetPwd))
 	apiRoute.POST("/get_app_agreement", ResponseToJSON(appapi.GetAppAgreement)) //协议
 	apiRoute.POST("/get_app_version", ResponseToJSON(appapi.GetAppVersion))     //版本
+	apiRoute.POST("/get_course_question_bank_info", ResponseToJSON(appapi.GetCourseQuestionBankInfo))//题库分类详情
+	apiRoute.POST("/get_question_bank_tag", ResponseToJSON(appapi.GetQuestionBankTag))//题库标签tag
+	apiRoute.POST("/get_major_question_bank_list", ResponseToJSON(appapi.GetMajorQuestionBankList))//题库列表
 	/*apiRoute.POST("/get_index_info", ResponseToJSON(appapi.GetIndexInfo))      */ //app首页
 
 	apiRouteLogin := apiRoute.Group("/auth").Use(AuthMiddleware())
@@ -50,8 +53,8 @@ func Use(engine *gin.Engine) {
 	apiRouteLogin.POST("/update_phone", ResponseToJSON(appapi.UpdatePhone))                                //修改手机号
 	apiRouteLogin.POST("/user_update_pwd", ResponseToJSON(appapi.UserUpdatePwd))                           //pc原密码修改密码
 	apiRouteLogin.POST("/get_question_index", ResponseToJSON(appapi.GetQuestionIndex))                     //题库首页
-	apiRouteLogin.POST("/get_course_question_bank_info", ResponseToJSON(appapi.GetCourseQuestionBankInfo)) //题库首页
-	apiRouteLogin.POST("/get_question_bank_exam_list", ResponseToJSON(appapi.GetQuestionBankExamList))     //题库试卷分类下列表
+/*	apiRouteLogin.POST("/get_course_question_bank_info", ResponseToJSON(appapi.GetCourseQuestionBankInfo)) //题库首页
+*/	apiRouteLogin.POST("/get_question_bank_exam_list", ResponseToJSON(appapi.GetQuestionBankExamList))     //题库试卷分类下列表
 
 	apiRouteLogin.POST("/get_exa_question_list", ResponseToJSON(appapi.GetQuestionList))                 //试卷分类下列表
 	apiRouteLogin.POST("/get_tk_cs_question_list", ResponseToJSON(appapi.GetTkCsQuestionList))           //章节下题目

@@ -41,6 +41,33 @@ type QuestionIndex struct {
 	CourseId int `json:"course_id" form:"course_id"`
 }
 
+type QuestionMajorCheck struct {
+	LevelList        []LevelList
+	MajorList        []MajorList
+	ItemCategoryList []ItemCategoryList
+}
+
+//level
+type LevelList struct {
+	LeveId   int    `json:"leve_id" form:"leve_id"`
+	LeveName string `json:"leve_name" form:"leve_name"`
+}
+
+type MajorList struct {
+	MajorId   int    `json:"major_id" form:"major_id"`
+	MajorName string `json:"major_name" form:"major_name"`
+}
+
+type ItemCategoryList struct {
+	ItemId   int    `json:"item_id"`
+	ItemName string `json:"item_name"`
+}
+
+type BankListInfo struct {
+	QuestionBankName string `json:"question_bank_name"`
+	QuestionBankId   int    `json:"question_bank_id"`
+}
+
 //课程下题库接口
 type CourseQuestionBank struct {
 	QuestionId int `json:"question_id" form:"question_id"`
