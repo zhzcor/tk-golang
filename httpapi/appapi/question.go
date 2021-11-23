@@ -18,6 +18,7 @@ import (
 	"tkserver/internal/store"
 	"tkserver/internal/store/ent"
 	"tkserver/internal/store/ent/collection"
+	"tkserver/internal/store/ent/groupcard"
 	"tkserver/internal/store/ent/itemcategory"
 	"tkserver/internal/store/ent/kcuserclass"
 	"tkserver/internal/store/ent/kcusercourse"
@@ -264,6 +265,42 @@ func GetMajorQuestionBankList(ctx *gin.Context) (interface{}, error) {
 	ca.Set(Key,list)
 	return list, nil
 }
+
+//学习圈子
+func GetGroupCardList(ctx *gin.Context)(interface{},error){
+	ca := cache.CommCache
+	Key := cache.GroupCardList
+	if data, ok := ca.Get(Key); ok {
+		return data, nil
+	}
+	s := store.WithContext(ctx)
+
+	list := s.GroupCard.Query().SoftDelete().Where(groupcard.Status(1)).WithAttachment(func(query *ent.AttachmentQuery) {
+		query.SoftDelete().Select("id", "filename")
+	}).Order(ent.Asc(groupcard.FieldSortOrder)).AllX(ctx)
+
+	if len(list)==0{
+		return nil,nil
+	}
+
+	res := []response.GroupCardList{}
+
+	for _,v:=range list{
+		re := response.GroupCardList{}
+		re.Id = v.ID
+		re.Name = v.Title
+		re.Desc = v.Desc
+		if v.Edges.Attachment != nil {
+			re.CodeUrl = app2.GetOssHost() + v.Edges.Attachment.Filename
+		}
+
+		res = append(res,re)
+	}
+	ca.Set(Key,res)
+
+	return res,nil
+}
+
 
 //课程下的题库信息
 func GetCourseQuestionBankInfo(ctx *gin.Context) (interface{}, error) {

@@ -42,8 +42,10 @@ func Use(engine *gin.Engine) {
 	apiRoute.POST("/get_app_agreement", ResponseToJSON(appapi.GetAppAgreement)) //协议
 	apiRoute.POST("/get_app_version", ResponseToJSON(appapi.GetAppVersion))     //版本
 	apiRoute.POST("/get_course_question_bank_info", ResponseToJSON(appapi.GetCourseQuestionBankInfo))//题库分类详情
+
 	apiRoute.POST("/get_question_bank_tag", ResponseToJSON(appapi.GetQuestionBankTag))//题库标签tag
 	apiRoute.POST("/get_major_question_bank_list", ResponseToJSON(appapi.GetMajorQuestionBankList))//题库列表
+	apiRoute.POST("/get_group_card_list", ResponseToJSON(appapi.GetGroupCardList))//题库列表
 	/*apiRoute.POST("/get_index_info", ResponseToJSON(appapi.GetIndexInfo))      */ //app首页
 
 	apiRouteLogin := apiRoute.Group("/auth").Use(AuthMiddleware())

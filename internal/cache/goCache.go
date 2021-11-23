@@ -23,6 +23,7 @@ var (
 	ClassCourseListKey    = "class:course:list:"      //班级下课程
 	QuestionBankTag       = "question:tag:list:ssmd"  //题库标签
 	QuestionBankCheckTag  = "question:bank:list:ssmd:" //题库筛选列表
+	GroupCardList  = "group:card:list:ssmd" //学习圈
 
 )
 

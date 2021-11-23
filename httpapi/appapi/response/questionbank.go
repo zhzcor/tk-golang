@@ -68,6 +68,13 @@ type BankListInfo struct {
 	QuestionBankId   int    `json:"question_bank_id"`
 }
 
+type GroupCardList struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+	Desc string `json:"desc"`
+	CodeUrl string `json:"code_url"`
+}
+
 //课程下题库接口
 type CourseQuestionBank struct {
 	QuestionId int `json:"question_id" form:"question_id"`
