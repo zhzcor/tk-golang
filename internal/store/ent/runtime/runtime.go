@@ -1859,6 +1859,10 @@ func init() {
 	tkquestionbankDescQuestionCount := tkquestionbankFields[2].Descriptor()
 	// tkquestionbank.DefaultQuestionCount holds the default value on creation for the question_count field.
 	tkquestionbank.DefaultQuestionCount = tkquestionbankDescQuestionCount.Default.(int)
+	// tkquestionbankDescSortOrder is the schema descriptor for sort_order field.
+	tkquestionbankDescSortOrder := tkquestionbankFields[6].Descriptor()
+	// tkquestionbank.DefaultSortOrder holds the default value on creation for the sort_order field.
+	tkquestionbank.DefaultSortOrder = tkquestionbankDescSortOrder.Default.(int)
 	tkquestionbankcityMixin := schema.TkQuestionBankCity{}.Mixin()
 	tkquestionbankcityMixinHooks0 := tkquestionbankcityMixin[0].Hooks()
 	tkquestionbankcity.Hooks[0] = tkquestionbankcityMixinHooks0[0]

@@ -64384,6 +64384,8 @@ type TkQuestionBankMutation struct {
 	addstatus                    *uint8
 	question_count               *int
 	addquestion_count            *int
+	sort_order                   *int
+	addsort_order                *int
 	clearedFields                map[string]struct{}
 	item_category                *int
 	cleareditem_category         bool
@@ -64981,6 +64983,62 @@ func (m *TkQuestionBankMutation) LevelIDCleared() bool {
 func (m *TkQuestionBankMutation) ResetLevelID() {
 	m.level = nil
 	delete(m.clearedFields, tkquestionbank.FieldLevelID)
+}
+
+// SetSortOrder sets the "sort_order" field.
+func (m *TkQuestionBankMutation) SetSortOrder(i int) {
+	m.sort_order = &i
+	m.addsort_order = nil
+}
+
+// SortOrder returns the value of the "sort_order" field in the mutation.
+func (m *TkQuestionBankMutation) SortOrder() (r int, exists bool) {
+	v := m.sort_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSortOrder returns the old "sort_order" field's value of the TkQuestionBank entity.
+// If the TkQuestionBank object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TkQuestionBankMutation) OldSortOrder(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldSortOrder is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldSortOrder requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSortOrder: %w", err)
+	}
+	return oldValue.SortOrder, nil
+}
+
+// AddSortOrder adds i to the "sort_order" field.
+func (m *TkQuestionBankMutation) AddSortOrder(i int) {
+	if m.addsort_order != nil {
+		*m.addsort_order += i
+	} else {
+		m.addsort_order = &i
+	}
+}
+
+// AddedSortOrder returns the value that was added to the "sort_order" field in this mutation.
+func (m *TkQuestionBankMutation) AddedSortOrder() (r int, exists bool) {
+	v := m.addsort_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSortOrder resets all changes to the "sort_order" field.
+func (m *TkQuestionBankMutation) ResetSortOrder() {
+	m.sort_order = nil
+	m.addsort_order = nil
 }
 
 // ClearItemCategory clears the "item_category" edge to the ItemCategory entity.
@@ -65618,7 +65676,7 @@ func (m *TkQuestionBankMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TkQuestionBankMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.uuid != nil {
 		fields = append(fields, tkquestionbank.FieldUUID)
 	}
@@ -65649,6 +65707,9 @@ func (m *TkQuestionBankMutation) Fields() []string {
 	if m.level != nil {
 		fields = append(fields, tkquestionbank.FieldLevelID)
 	}
+	if m.sort_order != nil {
+		fields = append(fields, tkquestionbank.FieldSortOrder)
+	}
 	return fields
 }
 
@@ -65677,6 +65738,8 @@ func (m *TkQuestionBankMutation) Field(name string) (ent.Value, bool) {
 		return m.ItemCategoryID()
 	case tkquestionbank.FieldLevelID:
 		return m.LevelID()
+	case tkquestionbank.FieldSortOrder:
+		return m.SortOrder()
 	}
 	return nil, false
 }
@@ -65706,6 +65769,8 @@ func (m *TkQuestionBankMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldItemCategoryID(ctx)
 	case tkquestionbank.FieldLevelID:
 		return m.OldLevelID(ctx)
+	case tkquestionbank.FieldSortOrder:
+		return m.OldSortOrder(ctx)
 	}
 	return nil, fmt.Errorf("unknown TkQuestionBank field %s", name)
 }
@@ -65785,6 +65850,13 @@ func (m *TkQuestionBankMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetLevelID(v)
 		return nil
+	case tkquestionbank.FieldSortOrder:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSortOrder(v)
+		return nil
 	}
 	return fmt.Errorf("unknown TkQuestionBank field %s", name)
 }
@@ -65799,6 +65871,9 @@ func (m *TkQuestionBankMutation) AddedFields() []string {
 	if m.addquestion_count != nil {
 		fields = append(fields, tkquestionbank.FieldQuestionCount)
 	}
+	if m.addsort_order != nil {
+		fields = append(fields, tkquestionbank.FieldSortOrder)
+	}
 	return fields
 }
 
@@ -65811,6 +65886,8 @@ func (m *TkQuestionBankMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedStatus()
 	case tkquestionbank.FieldQuestionCount:
 		return m.AddedQuestionCount()
+	case tkquestionbank.FieldSortOrder:
+		return m.AddedSortOrder()
 	}
 	return nil, false
 }
@@ -65833,6 +65910,13 @@ func (m *TkQuestionBankMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddQuestionCount(v)
+		return nil
+	case tkquestionbank.FieldSortOrder:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSortOrder(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TkQuestionBank numeric field %s", name)
@@ -65929,6 +66013,9 @@ func (m *TkQuestionBankMutation) ResetField(name string) error {
 		return nil
 	case tkquestionbank.FieldLevelID:
 		m.ResetLevelID()
+		return nil
+	case tkquestionbank.FieldSortOrder:
+		m.ResetSortOrder()
 		return nil
 	}
 	return fmt.Errorf("unknown TkQuestionBank field %s", name)

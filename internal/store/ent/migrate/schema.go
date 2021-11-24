@@ -1699,6 +1699,7 @@ var (
 		{Name: "name", Type: field.TypeString, Default: ""},
 		{Name: "status", Type: field.TypeUint8, Default: 1},
 		{Name: "question_count", Type: field.TypeInt, Default: 0},
+		{Name: "sort_order", Type: field.TypeInt, Default: 0},
 		{Name: "created_admin_id", Type: field.TypeInt, Nullable: true},
 		{Name: "item_category_id", Type: field.TypeInt, Nullable: true},
 		{Name: "level_id", Type: field.TypeInt, Nullable: true},
@@ -1711,19 +1712,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "tk_question_banks_admins_admin_question_banks",
-				Columns:    []*schema.Column{TkQuestionBanksColumns[8]},
+				Columns:    []*schema.Column{TkQuestionBanksColumns[9]},
 				RefColumns: []*schema.Column{AdminsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "tk_question_banks_item_categories_item_question_banks",
-				Columns:    []*schema.Column{TkQuestionBanksColumns[9]},
+				Columns:    []*schema.Column{TkQuestionBanksColumns[10]},
 				RefColumns: []*schema.Column{ItemCategoriesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "tk_question_banks_levels_level_question_banks",
-				Columns:    []*schema.Column{TkQuestionBanksColumns[10]},
+				Columns:    []*schema.Column{TkQuestionBanksColumns[11]},
 				RefColumns: []*schema.Column{LevelsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

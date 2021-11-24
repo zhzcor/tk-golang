@@ -33,6 +33,8 @@ const (
 	FieldItemCategoryID = "item_category_id"
 	// FieldLevelID holds the string denoting the level_id field in the database.
 	FieldLevelID = "level_id"
+	// FieldSortOrder holds the string denoting the sort_order field in the database.
+	FieldSortOrder = "sort_order"
 	// EdgeItemCategory holds the string denoting the item_category edge name in mutations.
 	EdgeItemCategory = "item_category"
 	// EdgeLevel holds the string denoting the level edge name in mutations.
@@ -167,6 +169,7 @@ var Columns = []string{
 	FieldCreatedAdminID,
 	FieldItemCategoryID,
 	FieldLevelID,
+	FieldSortOrder,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -199,4 +202,6 @@ var (
 	DefaultStatus uint8
 	// DefaultQuestionCount holds the default value on creation for the "question_count" field.
 	DefaultQuestionCount int
+	// DefaultSortOrder holds the default value on creation for the "sort_order" field.
+	DefaultSortOrder int
 )

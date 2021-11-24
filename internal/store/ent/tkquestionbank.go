@@ -45,6 +45,9 @@ type TkQuestionBank struct {
 	// LevelID holds the value of the "level_id" field.
 	// 层次id
 	LevelID int `json:"level_id"`
+	// SortOrder holds the value of the "sort_order" field.
+	// 排序
+	SortOrder int `json:"sort_order"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TkQuestionBankQuery when eager-loading is set.
 	Edges TkQuestionBankEdges `json:"edges"`
@@ -220,7 +223,7 @@ func (*TkQuestionBank) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case tkquestionbank.FieldID, tkquestionbank.FieldStatus, tkquestionbank.FieldQuestionCount, tkquestionbank.FieldCreatedAdminID, tkquestionbank.FieldItemCategoryID, tkquestionbank.FieldLevelID:
+		case tkquestionbank.FieldID, tkquestionbank.FieldStatus, tkquestionbank.FieldQuestionCount, tkquestionbank.FieldCreatedAdminID, tkquestionbank.FieldItemCategoryID, tkquestionbank.FieldLevelID, tkquestionbank.FieldSortOrder:
 			values[i] = new(sql.NullInt64)
 		case tkquestionbank.FieldUUID, tkquestionbank.FieldName:
 			values[i] = new(sql.NullString)
@@ -309,6 +312,12 @@ func (tqb *TkQuestionBank) assignValues(columns []string, values []interface{}) 
 				return fmt.Errorf("unexpected type %T for field level_id", values[i])
 			} else if value.Valid {
 				tqb.LevelID = int(value.Int64)
+			}
+		case tkquestionbank.FieldSortOrder:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field sort_order", values[i])
+			} else if value.Valid {
+				tqb.SortOrder = int(value.Int64)
 			}
 		}
 	}
@@ -429,6 +438,8 @@ func (tqb *TkQuestionBank) String() string {
 	builder.WriteString(fmt.Sprintf("%v", tqb.ItemCategoryID))
 	builder.WriteString(", level_id=")
 	builder.WriteString(fmt.Sprintf("%v", tqb.LevelID))
+	builder.WriteString(", sort_order=")
+	builder.WriteString(fmt.Sprintf("%v", tqb.SortOrder))
 	builder.WriteByte(')')
 	return builder.String()
 }

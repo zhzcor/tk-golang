@@ -230,135 +230,135 @@ func Use(engine *gin.Engine) {
 	tkGroup.POST("/user_question_statistic_list", ResponseToJSON(admin.GetUserQuestionBankStatisticDetailList)) //获取用户做题记录统计详细列表
 
 	//课程
-	kcGroup := adminGroup.Group("/kc").Use(AdminAuthMiddleware())
-	kcGroup.POST("/course_set", ResponseToJSON(admin.SetCourse))                //添加（编辑）课程
-	kcGroup.POST("/course_page_list", ResponseToJSON(admin.CoursePageList))     //课程列表（分页）
-	kcGroup.POST("/course_del", ResponseToJSON(admin.DelCourse))                //删除课程
-	kcGroup.POST("/course_status", ResponseToJSON(admin.SetCourseStatus))       //设置课程状态
-	kcGroup.POST("/course_by_id", ResponseToJSON(admin.GetCourseSmallCateList)) //获取课程下所有章节课时（无分页）
-	kcGroup.POST("/course_detail", ResponseToJSON(admin.GetCourseDetailById))   //id获取课程详情
-	kcGroup.POST("/course_live_list", ResponseToJSON(admin.GetLivePageList))    //直播课程列表
-	kcGroup.POST("/course_simple_list", ResponseToJSON(admin.CourseSimpleList)) //课程id name列表
-
-	kcGroup.POST("/chapter_set", ResponseToJSON(admin.SetKcCourseChapter)) //添加（编辑）课程章
-	kcGroup.POST("/chapter_del", ResponseToJSON(admin.DelKcCourseChapter)) //删除课程章
-	kcGroup.POST("/section_set", ResponseToJSON(admin.SetKcCourseSection)) //添加（编辑）课节
-	kcGroup.POST("/section_del", ResponseToJSON(admin.DelKcCourseSection)) //删除课节
-
-	kcGroup.POST("/course_teacher_add", ResponseToJSON(admin.AddCourseTeacher))                          //添加课程老师
-	kcGroup.POST("/course_teacher_status", ResponseToJSON(admin.SetCourseTeacherStatus))                 //添加课程老师状态
-	kcGroup.POST("/course_teacher_remove", ResponseToJSON(admin.RemoveCourseTeacher))                    //移除课程老师
-	kcGroup.POST("/course_teacher_page_list", ResponseToJSON(admin.GetCourseTeacherPageList))            //课程老师列表（分页¬）
-	kcGroup.POST("/course_teacher_selected_ids", ResponseToJSON(admin.GetSelectedCourserTeacherIdsList)) //获取课程已添加teacher id列表
-
-	kcGroup.POST("/course_user_add", ResponseToJSON(admin.AddCourseUser))                          //添加课程学员
-	kcGroup.POST("/course_user_remove", ResponseToJSON(admin.RemoveCourseUser))                    //移除课程学员
-	kcGroup.POST("/course_user_page_list", ResponseToJSON(admin.GetCourseUserPageList))            //获取课程用户列表（分页）
-	kcGroup.POST("/user_detail_by_id", ResponseToJSON(admin.GetUserDetailById))                    //id获取用户详情
-	kcGroup.POST("/user_course_validity", ResponseToJSON(admin.SetCourseUserValidity))             //设置用户课程有效期
-	kcGroup.POST("/course_user_selected_ids", ResponseToJSON(admin.GetSelectedCourserUserIdsList)) //获取课程已添加user id列表
-
-	kcGroup.POST("/course_question_bank_add", ResponseToJSON(admin.AddCourseQuestionBank))       //添加课程题库
-	kcGroup.POST("/course_question_bank_remove", ResponseToJSON(admin.RemoveCourseQuestionBank)) //移除课程题库
-	kcGroup.POST("/course_question_detail", ResponseToJSON(admin.GetCourseQuestionBankDetail))   //获取课程下题库详情
-
-	kcGroup.POST("/small_cate_set", ResponseToJSON(admin.SetKcCourseSmallCategory))                          //添加(编辑)课时
-	kcGroup.POST("/small_cate_del", ResponseToJSON(admin.DelKcCourseSmallCategory))                          //删除课时
-	kcGroup.POST("/small_cate_by_id", ResponseToJSON(admin.GetSmallCateById))                                //id获取课时详情
-	kcGroup.POST("/small_cate_exam_set", ResponseToJSON(admin.SetKcSmallCategoryExamPaper))                  //添加课时试卷（作业）
-	kcGroup.POST("/small_cate_exam_del", ResponseToJSON(admin.RemoveKcSmallCategoryExamPaper))               //移除课时试卷（作业）
-	kcGroup.POST("/small_cate_exam_list", ResponseToJSON(admin.GetSmallCourseExamPageList))                  //课时试卷、作业列表（分页）
-	kcGroup.POST("/small_cate_selected_exam_list", ResponseToJSON(admin.GetSelectedSmallCourseExamPageList)) //已选中 课时试卷、作业列表（分页）
-
-	kcGroup.POST("/small_cate_false_set", ResponseToJSON(admin.SetFalseVideo))          //添加(编辑)伪直播
-	kcGroup.POST("/small_cate_false_Del", ResponseToJSON(admin.DelFalseVideo))          //删除伪直播
-	kcGroup.POST("/small_cate_false_list", ResponseToJSON(admin.GetFalseVideoPageList)) //课程伪直播列表（分页）
-
-	kcGroup.POST("/small_cate_back_list", ResponseToJSON(admin.GetLiveBackPageList)) //课程直播回放列表（分页）
-	kcGroup.POST("/small_cate_back_reload", ResponseToJSON(admin.UpdateLiveBack))    //课程直播回放重新录制
-	kcGroup.POST("/small_cate_back_replace", ResponseToJSON(admin.ReplaceLiveBack))  //点播替换回放
-
-	kcGroup.POST("/small_cate_question_set", ResponseToJSON(admin.SetKcSmallCategoryQuestion))                       //添加课时练习
-	kcGroup.POST("/small_cate_question_del", ResponseToJSON(admin.RemoveKcSmallCategoryQuestion))                    //移除课时练习
-	kcGroup.POST("/small_cate_question_list", ResponseToJSON(admin.GetSmallCourseQuestionPageList))                  //课时练习列表（分页）
-	kcGroup.POST("/small_cate_selected_question_list", ResponseToJSON(admin.GetSelectedSmallCourseQuestionPageList)) //已选中 课时练习列表（分页）
-
-	kcGroup.POST("/small_cate_attachment_set", ResponseToJSON(admin.SetKcSmallCategoryAttachment))                       //添加课时资料
-	kcGroup.POST("/small_cate_attachment_del", ResponseToJSON(admin.RemoveKcSmallCategoryAttachment))                    //移除课时资料
-	kcGroup.POST("/small_cate_selected_attachment_list", ResponseToJSON(admin.GetSelectedSmallCourseAttachmentPageList)) //已选中 课时资料列表（分页）
-
-	//班级
-	clGroup := adminGroup.Group("/cl").Use(AdminAuthMiddleware())
-	clGroup.POST("/class_set", ResponseToJSON(admin.SetKcClass))          //添加（编辑）班级
-	clGroup.POST("/class_del", ResponseToJSON(admin.DelClass))            //删除班级
-	clGroup.POST("/class_status", ResponseToJSON(admin.SetClassStatus))   //设置班级状态
-	clGroup.POST("/class_detail", ResponseToJSON(admin.ClassDetailById))  //id获取班级详情
-	clGroup.POST("/class_page_list", ResponseToJSON(admin.ClassPageList)) //班级列表（分页）
-
-	clGroup.POST("/class_course_page_list", ResponseToJSON(admin.GetClassCoursePageList))                  //班级下课程列表（分页）
-	clGroup.POST("/class_course_selected_page_list", ResponseToJSON(admin.GetSelectedClassCoursePageList)) //已选中 班级下课程列表（分页）
-	clGroup.POST("/class_course_set", ResponseToJSON(admin.AddClassCourse))                                //添加班级课程
-	clGroup.POST("/class_course_remove", ResponseToJSON(admin.RemoveClassCourse))                          //移除班级课程
-
-	clGroup.POST("/class_teacher_add", ResponseToJSON(admin.AddClassTeacher))                         //添加班级老师
-	clGroup.POST("/class_teacher_status", ResponseToJSON(admin.SetClassTeacherStatus))                //添加班级老师状态
-	clGroup.POST("/class_teacher_remove", ResponseToJSON(admin.RemoveClassTeacher))                   //移除班级老师
-	clGroup.POST("/class_teacher_page_list", ResponseToJSON(admin.GetClassTeacherPageList))           //班级老师列表（分页¬）
-	clGroup.POST("/class_teacher_selected_ids", ResponseToJSON(admin.GetSelectedClassTeacherIdsList)) //获取班级已添加teacher id列表
-
-	clGroup.POST("/class_master_add", ResponseToJSON(admin.AddClassMasterTeacher)) //添加班级班主任
-	clGroup.POST("/class_master_remove", ResponseToJSON(admin.RemoveClassMaster))  //移除班级班主任
-	clGroup.POST("/class_master_get", ResponseToJSON(admin.GetClassMasterTeacher)) //获取班级班主任
-
-	clGroup.POST("/class_user_add", ResponseToJSON(admin.AddClassUser))               //添加班级学员
-	clGroup.POST("/class_user_remove", ResponseToJSON(admin.RemoveClassUser))         //移除班级学员
-	clGroup.POST("/class_user_page_list", ResponseToJSON(admin.GetClassUserPageList)) //获取班级用户列表（分页）
-	//clGroup.POST("/user_detail_by_id", ResponseToJSON(admin.GetUserDetailById))                 //id获取用户详情
-	clGroup.POST("/user_class_validity", ResponseToJSON(admin.AddClassUserValidity))            //设置用户班级有效期
-	clGroup.POST("/class_user_selected_ids", ResponseToJSON(admin.GetSelectedClassUserIdsList)) //获取班级已添加user id列表
+	//kcGroup := adminGroup.Group("/kc").Use(AdminAuthMiddleware())
+	//kcGroup.POST("/course_set", ResponseToJSON(admin.SetCourse))                //添加（编辑）课程
+	//kcGroup.POST("/course_page_list", ResponseToJSON(admin.CoursePageList))     //课程列表（分页）
+	//kcGroup.POST("/course_del", ResponseToJSON(admin.DelCourse))                //删除课程
+	//kcGroup.POST("/course_status", ResponseToJSON(admin.SetCourseStatus))       //设置课程状态
+	//kcGroup.POST("/course_by_id", ResponseToJSON(admin.GetCourseSmallCateList)) //获取课程下所有章节课时（无分页）
+	//kcGroup.POST("/course_detail", ResponseToJSON(admin.GetCourseDetailById))   //id获取课程详情
+	//kcGroup.POST("/course_live_list", ResponseToJSON(admin.GetLivePageList))    //直播课程列表
+	//kcGroup.POST("/course_simple_list", ResponseToJSON(admin.CourseSimpleList)) //课程id name列表
+	//
+	//kcGroup.POST("/chapter_set", ResponseToJSON(admin.SetKcCourseChapter)) //添加（编辑）课程章
+	//kcGroup.POST("/chapter_del", ResponseToJSON(admin.DelKcCourseChapter)) //删除课程章
+	//kcGroup.POST("/section_set", ResponseToJSON(admin.SetKcCourseSection)) //添加（编辑）课节
+	//kcGroup.POST("/section_del", ResponseToJSON(admin.DelKcCourseSection)) //删除课节
+	//
+	//kcGroup.POST("/course_teacher_add", ResponseToJSON(admin.AddCourseTeacher))                          //添加课程老师
+	//kcGroup.POST("/course_teacher_status", ResponseToJSON(admin.SetCourseTeacherStatus))                 //添加课程老师状态
+	//kcGroup.POST("/course_teacher_remove", ResponseToJSON(admin.RemoveCourseTeacher))                    //移除课程老师
+	//kcGroup.POST("/course_teacher_page_list", ResponseToJSON(admin.GetCourseTeacherPageList))            //课程老师列表（分页¬）
+	//kcGroup.POST("/course_teacher_selected_ids", ResponseToJSON(admin.GetSelectedCourserTeacherIdsList)) //获取课程已添加teacher id列表
+	//
+	//kcGroup.POST("/course_user_add", ResponseToJSON(admin.AddCourseUser))                          //添加课程学员
+	//kcGroup.POST("/course_user_remove", ResponseToJSON(admin.RemoveCourseUser))                    //移除课程学员
+	//kcGroup.POST("/course_user_page_list", ResponseToJSON(admin.GetCourseUserPageList))            //获取课程用户列表（分页）
+	//kcGroup.POST("/user_detail_by_id", ResponseToJSON(admin.GetUserDetailById))                    //id获取用户详情
+	//kcGroup.POST("/user_course_validity", ResponseToJSON(admin.SetCourseUserValidity))             //设置用户课程有效期
+	//kcGroup.POST("/course_user_selected_ids", ResponseToJSON(admin.GetSelectedCourserUserIdsList)) //获取课程已添加user id列表
+	//
+	//kcGroup.POST("/course_question_bank_add", ResponseToJSON(admin.AddCourseQuestionBank))       //添加课程题库
+	//kcGroup.POST("/course_question_bank_remove", ResponseToJSON(admin.RemoveCourseQuestionBank)) //移除课程题库
+	//kcGroup.POST("/course_question_detail", ResponseToJSON(admin.GetCourseQuestionBankDetail))   //获取课程下题库详情
+	//
+	//kcGroup.POST("/small_cate_set", ResponseToJSON(admin.SetKcCourseSmallCategory))                          //添加(编辑)课时
+	//kcGroup.POST("/small_cate_del", ResponseToJSON(admin.DelKcCourseSmallCategory))                          //删除课时
+	//kcGroup.POST("/small_cate_by_id", ResponseToJSON(admin.GetSmallCateById))                                //id获取课时详情
+	//kcGroup.POST("/small_cate_exam_set", ResponseToJSON(admin.SetKcSmallCategoryExamPaper))                  //添加课时试卷（作业）
+	//kcGroup.POST("/small_cate_exam_del", ResponseToJSON(admin.RemoveKcSmallCategoryExamPaper))               //移除课时试卷（作业）
+	//kcGroup.POST("/small_cate_exam_list", ResponseToJSON(admin.GetSmallCourseExamPageList))                  //课时试卷、作业列表（分页）
+	//kcGroup.POST("/small_cate_selected_exam_list", ResponseToJSON(admin.GetSelectedSmallCourseExamPageList)) //已选中 课时试卷、作业列表（分页）
+	//
+	//kcGroup.POST("/small_cate_false_set", ResponseToJSON(admin.SetFalseVideo))          //添加(编辑)伪直播
+	//kcGroup.POST("/small_cate_false_Del", ResponseToJSON(admin.DelFalseVideo))          //删除伪直播
+	//kcGroup.POST("/small_cate_false_list", ResponseToJSON(admin.GetFalseVideoPageList)) //课程伪直播列表（分页）
+	//
+	//kcGroup.POST("/small_cate_back_list", ResponseToJSON(admin.GetLiveBackPageList)) //课程直播回放列表（分页）
+	//kcGroup.POST("/small_cate_back_reload", ResponseToJSON(admin.UpdateLiveBack))    //课程直播回放重新录制
+	//kcGroup.POST("/small_cate_back_replace", ResponseToJSON(admin.ReplaceLiveBack))  //点播替换回放
+	//
+	//kcGroup.POST("/small_cate_question_set", ResponseToJSON(admin.SetKcSmallCategoryQuestion))                       //添加课时练习
+	//kcGroup.POST("/small_cate_question_del", ResponseToJSON(admin.RemoveKcSmallCategoryQuestion))                    //移除课时练习
+	//kcGroup.POST("/small_cate_question_list", ResponseToJSON(admin.GetSmallCourseQuestionPageList))                  //课时练习列表（分页）
+	//kcGroup.POST("/small_cate_selected_question_list", ResponseToJSON(admin.GetSelectedSmallCourseQuestionPageList)) //已选中 课时练习列表（分页）
+	//
+	//kcGroup.POST("/small_cate_attachment_set", ResponseToJSON(admin.SetKcSmallCategoryAttachment))                       //添加课时资料
+	//kcGroup.POST("/small_cate_attachment_del", ResponseToJSON(admin.RemoveKcSmallCategoryAttachment))                    //移除课时资料
+	//kcGroup.POST("/small_cate_selected_attachment_list", ResponseToJSON(admin.GetSelectedSmallCourseAttachmentPageList)) //已选中 课时资料列表（分页）
+	//
+	////班级
+	//clGroup := adminGroup.Group("/cl").Use(AdminAuthMiddleware())
+	//clGroup.POST("/class_set", ResponseToJSON(admin.SetKcClass))          //添加（编辑）班级
+	//clGroup.POST("/class_del", ResponseToJSON(admin.DelClass))            //删除班级
+	//clGroup.POST("/class_status", ResponseToJSON(admin.SetClassStatus))   //设置班级状态
+	//clGroup.POST("/class_detail", ResponseToJSON(admin.ClassDetailById))  //id获取班级详情
+	//clGroup.POST("/class_page_list", ResponseToJSON(admin.ClassPageList)) //班级列表（分页）
+	//
+	//clGroup.POST("/class_course_page_list", ResponseToJSON(admin.GetClassCoursePageList))                  //班级下课程列表（分页）
+	//clGroup.POST("/class_course_selected_page_list", ResponseToJSON(admin.GetSelectedClassCoursePageList)) //已选中 班级下课程列表（分页）
+	//clGroup.POST("/class_course_set", ResponseToJSON(admin.AddClassCourse))                                //添加班级课程
+	//clGroup.POST("/class_course_remove", ResponseToJSON(admin.RemoveClassCourse))                          //移除班级课程
+	//
+	//clGroup.POST("/class_teacher_add", ResponseToJSON(admin.AddClassTeacher))                         //添加班级老师
+	//clGroup.POST("/class_teacher_status", ResponseToJSON(admin.SetClassTeacherStatus))                //添加班级老师状态
+	//clGroup.POST("/class_teacher_remove", ResponseToJSON(admin.RemoveClassTeacher))                   //移除班级老师
+	//clGroup.POST("/class_teacher_page_list", ResponseToJSON(admin.GetClassTeacherPageList))           //班级老师列表（分页¬）
+	//clGroup.POST("/class_teacher_selected_ids", ResponseToJSON(admin.GetSelectedClassTeacherIdsList)) //获取班级已添加teacher id列表
+	//
+	//clGroup.POST("/class_master_add", ResponseToJSON(admin.AddClassMasterTeacher)) //添加班级班主任
+	//clGroup.POST("/class_master_remove", ResponseToJSON(admin.RemoveClassMaster))  //移除班级班主任
+	//clGroup.POST("/class_master_get", ResponseToJSON(admin.GetClassMasterTeacher)) //获取班级班主任
+	//
+	//clGroup.POST("/class_user_add", ResponseToJSON(admin.AddClassUser))               //添加班级学员
+	//clGroup.POST("/class_user_remove", ResponseToJSON(admin.RemoveClassUser))         //移除班级学员
+	//clGroup.POST("/class_user_page_list", ResponseToJSON(admin.GetClassUserPageList)) //获取班级用户列表（分页）
+	////clGroup.POST("/user_detail_by_id", ResponseToJSON(admin.GetUserDetailById))                 //id获取用户详情
+	//clGroup.POST("/user_class_validity", ResponseToJSON(admin.AddClassUserValidity))            //设置用户班级有效期
+	//clGroup.POST("/class_user_selected_ids", ResponseToJSON(admin.GetSelectedClassUserIdsList)) //获取班级已添加user id列表
 
 	//社区
-	communityGroup := adminGroup.Group("/community").Use(AdminAuthMiddleware())
-	communityGroup.POST("/activity_type_set", ResponseToJSON(admin.SetActivityType))             //添加（编辑）活动类型
-	communityGroup.POST("/activity_type_del", ResponseToJSON(admin.DelActivityType))             //删除活动类型
-	communityGroup.POST("/activity_type_status", ResponseToJSON(admin.SetActivityTypeStatus))    //设置活动类型状态
-	communityGroup.POST("/activity_type_page_list", ResponseToJSON(admin.GetActivityTypeByPage)) //活动类型列表(分页)
-	communityGroup.POST("/activity_type_list", ResponseToJSON(admin.GetActivityTypeAll))         //活动类型列表(无分页)
-
-	communityGroup.POST("/info_classify_set", ResponseToJSON(admin.SetInformationClassify))             //添加（编辑）资讯分类
-	communityGroup.POST("/info_classify_del", ResponseToJSON(admin.DelInformationClassify))             //删除资讯分类
-	communityGroup.POST("/info_classify_status", ResponseToJSON(admin.SetInformationClassifyStatus))    //设置资讯分类状态
-	communityGroup.POST("/info_classify_page_list", ResponseToJSON(admin.GetInformationClassifyByPage)) //资讯分类列表(分页)
-	communityGroup.POST("/info_classify_list", ResponseToJSON(admin.GetInformationClassifyAll))         //资讯分类列表(无分页)
-
-	communityGroup.POST("/msg_type_set", ResponseToJSON(admin.SetMsgType))             //添加（编辑）消息类型
-	communityGroup.POST("/msg_type_del", ResponseToJSON(admin.DelMsgType))             //删除消息类型
-	communityGroup.POST("/msg_type_status", ResponseToJSON(admin.SetMsgTypeStatus))    //设置消息类型状态
-	communityGroup.POST("/msg_type_page_list", ResponseToJSON(admin.GetMsgTypeByPage)) //消息类型列表(分页)
-	communityGroup.POST("/msg_type_list", ResponseToJSON(admin.GetMsgTypeAll))         //消息类型列表(无分页)
-
-	communityGroup.POST("/hot_search_set", ResponseToJSON(admin.SetHotSearch))             //添加（编辑）热门搜索
-	communityGroup.POST("/hot_search_del", ResponseToJSON(admin.DelHotSearch))             //删除热门搜索
-	communityGroup.POST("/hot_search_status", ResponseToJSON(admin.SetHotSearchStatus))    //设置热门搜索状态
-	communityGroup.POST("/hot_search_page_list", ResponseToJSON(admin.GetHotSearchByPage)) //热门搜索列表(分页)
-	communityGroup.POST("/hot_search_list", ResponseToJSON(admin.GetHotSearchAll))         //热门搜索列表(无分页)
+	//communityGroup := adminGroup.Group("/community").Use(AdminAuthMiddleware())
+	//communityGroup.POST("/activity_type_set", ResponseToJSON(admin.SetActivityType))             //添加（编辑）活动类型
+	//communityGroup.POST("/activity_type_del", ResponseToJSON(admin.DelActivityType))             //删除活动类型
+	//communityGroup.POST("/activity_type_status", ResponseToJSON(admin.SetActivityTypeStatus))    //设置活动类型状态
+	//communityGroup.POST("/activity_type_page_list", ResponseToJSON(admin.GetActivityTypeByPage)) //活动类型列表(分页)
+	//communityGroup.POST("/activity_type_list", ResponseToJSON(admin.GetActivityTypeAll))         //活动类型列表(无分页)
+	//
+	//communityGroup.POST("/info_classify_set", ResponseToJSON(admin.SetInformationClassify))             //添加（编辑）资讯分类
+	//communityGroup.POST("/info_classify_del", ResponseToJSON(admin.DelInformationClassify))             //删除资讯分类
+	//communityGroup.POST("/info_classify_status", ResponseToJSON(admin.SetInformationClassifyStatus))    //设置资讯分类状态
+	//communityGroup.POST("/info_classify_page_list", ResponseToJSON(admin.GetInformationClassifyByPage)) //资讯分类列表(分页)
+	//communityGroup.POST("/info_classify_list", ResponseToJSON(admin.GetInformationClassifyAll))         //资讯分类列表(无分页)
+	//
+	//communityGroup.POST("/msg_type_set", ResponseToJSON(admin.SetMsgType))             //添加（编辑）消息类型
+	//communityGroup.POST("/msg_type_del", ResponseToJSON(admin.DelMsgType))             //删除消息类型
+	//communityGroup.POST("/msg_type_status", ResponseToJSON(admin.SetMsgTypeStatus))    //设置消息类型状态
+	//communityGroup.POST("/msg_type_page_list", ResponseToJSON(admin.GetMsgTypeByPage)) //消息类型列表(分页)
+	//communityGroup.POST("/msg_type_list", ResponseToJSON(admin.GetMsgTypeAll))         //消息类型列表(无分页)
+	//
+	//communityGroup.POST("/hot_search_set", ResponseToJSON(admin.SetHotSearch))             //添加（编辑）热门搜索
+	//communityGroup.POST("/hot_search_del", ResponseToJSON(admin.DelHotSearch))             //删除热门搜索
+	//communityGroup.POST("/hot_search_status", ResponseToJSON(admin.SetHotSearchStatus))    //设置热门搜索状态
+	//communityGroup.POST("/hot_search_page_list", ResponseToJSON(admin.GetHotSearchByPage)) //热门搜索列表(分页)
+	//communityGroup.POST("/hot_search_list", ResponseToJSON(admin.GetHotSearchAll))         //热门搜索列表(无分页)
 
 	//推广管理
-	popGroup := adminGroup.Group("/pop").Use(AdminAuthMiddleware())
-	popGroup.POST("/advertise_set", ResponseToJSON(admin.SetAdvertise))             //添加（编辑）广告
-	popGroup.POST("/advertise_del", ResponseToJSON(admin.DelAdvertise))             //删除广告
-	popGroup.POST("/advertise_status", ResponseToJSON(admin.SetAdvertiseStatus))    //设置广告状态
-	popGroup.POST("/advertise_page_list", ResponseToJSON(admin.GetAdvertiseByPage)) //广告列表(分页)
-
-	popGroup.POST("/poster_set", ResponseToJSON(admin.SetSharePoster))             //添加（编辑）分享海报
-	popGroup.POST("/poster_del", ResponseToJSON(admin.DelSharePoster))             //删除分享海报
-	popGroup.POST("/poster_status", ResponseToJSON(admin.SetSharePosterStatus))    //设置分享海报状态
-	popGroup.POST("/poster_page_list", ResponseToJSON(admin.GetSharePosterByPage)) //分享海报列表(分页)
-
-	popGroup.POST("/message_set", ResponseToJSON(admin.SetMessage))             //添加（编辑）消息
-	popGroup.POST("/message_del", ResponseToJSON(admin.DelMessage))             //删除消息
-	popGroup.POST("/message_status", ResponseToJSON(admin.SetMessageStatus))    //设置消息状态
-	popGroup.POST("/message_page_list", ResponseToJSON(admin.GetMessageByPage)) //消息列表(分页)
+	//popGroup := adminGroup.Group("/pop").Use(AdminAuthMiddleware())
+	//popGroup.POST("/advertise_set", ResponseToJSON(admin.SetAdvertise))             //添加（编辑）广告
+	//popGroup.POST("/advertise_del", ResponseToJSON(admin.DelAdvertise))             //删除广告
+	//popGroup.POST("/advertise_status", ResponseToJSON(admin.SetAdvertiseStatus))    //设置广告状态
+	//popGroup.POST("/advertise_page_list", ResponseToJSON(admin.GetAdvertiseByPage)) //广告列表(分页)
+	//
+	//popGroup.POST("/poster_set", ResponseToJSON(admin.SetSharePoster))             //添加（编辑）分享海报
+	//popGroup.POST("/poster_del", ResponseToJSON(admin.DelSharePoster))             //删除分享海报
+	//popGroup.POST("/poster_status", ResponseToJSON(admin.SetSharePosterStatus))    //设置分享海报状态
+	//popGroup.POST("/poster_page_list", ResponseToJSON(admin.GetSharePosterByPage)) //分享海报列表(分页)
+	//
+	//popGroup.POST("/message_set", ResponseToJSON(admin.SetMessage))             //添加（编辑）消息
+	//popGroup.POST("/message_del", ResponseToJSON(admin.DelMessage))             //删除消息
+	//popGroup.POST("/message_status", ResponseToJSON(admin.SetMessageStatus))    //设置消息状态
+	//popGroup.POST("/message_page_list", ResponseToJSON(admin.GetMessageByPage)) //消息列表(分页)
 }
 
 func ResponseToJSON(h H) gin.HandlerFunc {

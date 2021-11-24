@@ -26,6 +26,7 @@ func (TkQuestionBank) Fields() []ent.Field {
 		field.Int("created_admin_id").Optional().Comment("创建人id"),
 		field.Int("item_category_id").Optional().Comment("项目id"),
 		field.Int("level_id").Optional().Comment("层次id"),
+		field.Int("sort_order").Default(0).Comment("排序"),
 	}
 }
 

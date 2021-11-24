@@ -165,6 +165,20 @@ func (tqbc *TkQuestionBankCreate) SetNillableLevelID(i *int) *TkQuestionBankCrea
 	return tqbc
 }
 
+// SetSortOrder sets the "sort_order" field.
+func (tqbc *TkQuestionBankCreate) SetSortOrder(i int) *TkQuestionBankCreate {
+	tqbc.mutation.SetSortOrder(i)
+	return tqbc
+}
+
+// SetNillableSortOrder sets the "sort_order" field if the given value is not nil.
+func (tqbc *TkQuestionBankCreate) SetNillableSortOrder(i *int) *TkQuestionBankCreate {
+	if i != nil {
+		tqbc.SetSortOrder(*i)
+	}
+	return tqbc
+}
+
 // SetItemCategory sets the "item_category" edge to the ItemCategory entity.
 func (tqbc *TkQuestionBankCreate) SetItemCategory(i *ItemCategory) *TkQuestionBankCreate {
 	return tqbc.SetItemCategoryID(i.ID)
@@ -416,6 +430,10 @@ func (tqbc *TkQuestionBankCreate) defaults() {
 		v := tkquestionbank.DefaultQuestionCount
 		tqbc.mutation.SetQuestionCount(v)
 	}
+	if _, ok := tqbc.mutation.SortOrder(); !ok {
+		v := tkquestionbank.DefaultSortOrder
+		tqbc.mutation.SetSortOrder(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -431,6 +449,9 @@ func (tqbc *TkQuestionBankCreate) check() error {
 	}
 	if _, ok := tqbc.mutation.QuestionCount(); !ok {
 		return &ValidationError{Name: "question_count", err: errors.New("ent: missing required field \"question_count\"")}
+	}
+	if _, ok := tqbc.mutation.SortOrder(); !ok {
+		return &ValidationError{Name: "sort_order", err: errors.New("ent: missing required field \"sort_order\"")}
 	}
 	return nil
 }
@@ -514,6 +535,14 @@ func (tqbc *TkQuestionBankCreate) createSpec() (*TkQuestionBank, *sqlgraph.Creat
 			Column: tkquestionbank.FieldQuestionCount,
 		})
 		_node.QuestionCount = value
+	}
+	if value, ok := tqbc.mutation.SortOrder(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tkquestionbank.FieldSortOrder,
+		})
+		_node.SortOrder = value
 	}
 	if nodes := tqbc.mutation.ItemCategoryIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

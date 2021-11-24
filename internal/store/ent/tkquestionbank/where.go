@@ -163,6 +163,13 @@ func LevelID(v int) predicate.TkQuestionBank {
 	})
 }
 
+// SortOrder applies equality check predicate on the "sort_order" field. It's identical to SortOrderEQ.
+func SortOrder(v int) predicate.TkQuestionBank {
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSortOrder), v))
+	})
+}
+
 // UUIDEQ applies the EQ predicate on the "uuid" field.
 func UUIDEQ(v string) predicate.TkQuestionBank {
 	return predicate.TkQuestionBank(func(s *sql.Selector) {
@@ -990,6 +997,82 @@ func LevelIDIsNil() predicate.TkQuestionBank {
 func LevelIDNotNil() predicate.TkQuestionBank {
 	return predicate.TkQuestionBank(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldLevelID)))
+	})
+}
+
+// SortOrderEQ applies the EQ predicate on the "sort_order" field.
+func SortOrderEQ(v int) predicate.TkQuestionBank {
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSortOrder), v))
+	})
+}
+
+// SortOrderNEQ applies the NEQ predicate on the "sort_order" field.
+func SortOrderNEQ(v int) predicate.TkQuestionBank {
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSortOrder), v))
+	})
+}
+
+// SortOrderIn applies the In predicate on the "sort_order" field.
+func SortOrderIn(vs ...int) predicate.TkQuestionBank {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldSortOrder), v...))
+	})
+}
+
+// SortOrderNotIn applies the NotIn predicate on the "sort_order" field.
+func SortOrderNotIn(vs ...int) predicate.TkQuestionBank {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldSortOrder), v...))
+	})
+}
+
+// SortOrderGT applies the GT predicate on the "sort_order" field.
+func SortOrderGT(v int) predicate.TkQuestionBank {
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldSortOrder), v))
+	})
+}
+
+// SortOrderGTE applies the GTE predicate on the "sort_order" field.
+func SortOrderGTE(v int) predicate.TkQuestionBank {
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldSortOrder), v))
+	})
+}
+
+// SortOrderLT applies the LT predicate on the "sort_order" field.
+func SortOrderLT(v int) predicate.TkQuestionBank {
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldSortOrder), v))
+	})
+}
+
+// SortOrderLTE applies the LTE predicate on the "sort_order" field.
+func SortOrderLTE(v int) predicate.TkQuestionBank {
+	return predicate.TkQuestionBank(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldSortOrder), v))
 	})
 }
 

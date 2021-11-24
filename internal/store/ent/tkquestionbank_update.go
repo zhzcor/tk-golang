@@ -197,6 +197,27 @@ func (tqbu *TkQuestionBankUpdate) ClearLevelID() *TkQuestionBankUpdate {
 	return tqbu
 }
 
+// SetSortOrder sets the "sort_order" field.
+func (tqbu *TkQuestionBankUpdate) SetSortOrder(i int) *TkQuestionBankUpdate {
+	tqbu.mutation.ResetSortOrder()
+	tqbu.mutation.SetSortOrder(i)
+	return tqbu
+}
+
+// SetNillableSortOrder sets the "sort_order" field if the given value is not nil.
+func (tqbu *TkQuestionBankUpdate) SetNillableSortOrder(i *int) *TkQuestionBankUpdate {
+	if i != nil {
+		tqbu.SetSortOrder(*i)
+	}
+	return tqbu
+}
+
+// AddSortOrder adds i to the "sort_order" field.
+func (tqbu *TkQuestionBankUpdate) AddSortOrder(i int) *TkQuestionBankUpdate {
+	tqbu.mutation.AddSortOrder(i)
+	return tqbu
+}
+
 // SetItemCategory sets the "item_category" edge to the ItemCategory entity.
 func (tqbu *TkQuestionBankUpdate) SetItemCategory(i *ItemCategory) *TkQuestionBankUpdate {
 	return tqbu.SetItemCategoryID(i.ID)
@@ -759,6 +780,20 @@ func (tqbu *TkQuestionBankUpdate) sqlSave(ctx context.Context) (n int, err error
 			Type:   field.TypeInt,
 			Value:  value,
 			Column: tkquestionbank.FieldQuestionCount,
+		})
+	}
+	if value, ok := tqbu.mutation.SortOrder(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tkquestionbank.FieldSortOrder,
+		})
+	}
+	if value, ok := tqbu.mutation.AddedSortOrder(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tkquestionbank.FieldSortOrder,
 		})
 	}
 	if tqbu.mutation.ItemCategoryCleared() {
@@ -1582,6 +1617,27 @@ func (tqbuo *TkQuestionBankUpdateOne) ClearLevelID() *TkQuestionBankUpdateOne {
 	return tqbuo
 }
 
+// SetSortOrder sets the "sort_order" field.
+func (tqbuo *TkQuestionBankUpdateOne) SetSortOrder(i int) *TkQuestionBankUpdateOne {
+	tqbuo.mutation.ResetSortOrder()
+	tqbuo.mutation.SetSortOrder(i)
+	return tqbuo
+}
+
+// SetNillableSortOrder sets the "sort_order" field if the given value is not nil.
+func (tqbuo *TkQuestionBankUpdateOne) SetNillableSortOrder(i *int) *TkQuestionBankUpdateOne {
+	if i != nil {
+		tqbuo.SetSortOrder(*i)
+	}
+	return tqbuo
+}
+
+// AddSortOrder adds i to the "sort_order" field.
+func (tqbuo *TkQuestionBankUpdateOne) AddSortOrder(i int) *TkQuestionBankUpdateOne {
+	tqbuo.mutation.AddSortOrder(i)
+	return tqbuo
+}
+
 // SetItemCategory sets the "item_category" edge to the ItemCategory entity.
 func (tqbuo *TkQuestionBankUpdateOne) SetItemCategory(i *ItemCategory) *TkQuestionBankUpdateOne {
 	return tqbuo.SetItemCategoryID(i.ID)
@@ -2168,6 +2224,20 @@ func (tqbuo *TkQuestionBankUpdateOne) sqlSave(ctx context.Context) (_node *TkQue
 			Type:   field.TypeInt,
 			Value:  value,
 			Column: tkquestionbank.FieldQuestionCount,
+		})
+	}
+	if value, ok := tqbuo.mutation.SortOrder(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tkquestionbank.FieldSortOrder,
+		})
+	}
+	if value, ok := tqbuo.mutation.AddedSortOrder(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tkquestionbank.FieldSortOrder,
 		})
 	}
 	if tqbuo.mutation.ItemCategoryCleared() {
