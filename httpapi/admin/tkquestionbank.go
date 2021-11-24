@@ -15,11 +15,12 @@ import (
 	"tkserver/internal/store"
 	"tkserver/internal/store/ent"
 	"tkserver/internal/store/ent/admin"
-	"tkserver/internal/store/ent/itemcategory"
 	"tkserver/internal/store/ent/tkchapter"
 	"tkserver/internal/store/ent/tkknowledgepoint"
 	"tkserver/internal/store/ent/tkquestion"
 	"tkserver/internal/store/ent/tkquestionbank"
+	"tkserver/internal/store/ent/tkquestionbankcity"
+	"tkserver/internal/store/ent/tkquestionbankmajor"
 	"tkserver/internal/store/ent/tkquestionerrorfeedback"
 	"tkserver/internal/store/ent/tkquestionsection"
 	"tkserver/internal/store/ent/tksection"
@@ -42,13 +43,15 @@ func SetTkQuestionBank(ctx *gin.Context) (interface{}, error) {
 	remark := ""
 	err = store.WithTx(ctx, func(ctx context.Context) error {
 		if !app2.IsNil(req.Id) { //编辑
-			_, err := tk.UpdateTkQuestionBank(ctx, *req.Id, *req.ItemId, *req.Name)
+			_, err := tk.UpdateTkQuestionBank(ctx, *req.Id, *req.ItemId, *req.Name,
+				*req.LevelId, req.CityIds, req.MajorIds, req.SortOrder)
 			if err != nil {
 				return err
 			}
 			remark = fmt.Sprintf("%s:%s", "编辑题库", *req.Name)
 		} else {
-			_, err := tk.AddTkQuestionBank(ctx, *req.ItemId, *req.Name, adminId)
+			_, err := tk.AddTkQuestionBank(ctx, *req.ItemId, *req.Name, adminId,
+				*req.LevelId, req.CityIds, req.MajorIds, req.SortOrder)
 			if err != nil {
 				return err
 			}
@@ -114,12 +117,18 @@ func GetTkQuestionBankByPage(ctx *gin.Context) (interface{}, error) {
 		return nil, err
 	}
 	res := response.TkBankListSuccess{
-		List: []response.TkQuestionBank{},
+		List: []response.TkQuestionBankDetail{},
 	}
-	var tkBank response.TkQuestionBank
+	var tkBank response.TkQuestionBankDetail
 	err = store.WithTx(ctx, func(ctx context.Context) error {
 		s := store.WithContext(ctx)
-		query := s.TkQuestionBank.Query().SoftDelete()
+		query := s.TkQuestionBank.Query().SoftDelete().
+			WithCityQuestionBanks(func(query *ent.TkQuestionBankCityQuery) {
+				query.WithCity()
+			}).
+			WithMajorQuestionBanks(func(query *ent.TkQuestionBankMajorQuery) {
+				query.WithMajor()
+			})
 		if !app2.IsNil(req.Name) {
 			query = query.Where(tkquestionbank.NameContains(*req.Name)).SoftDelete()
 		}
@@ -130,16 +139,20 @@ func GetTkQuestionBankByPage(ctx *gin.Context) (interface{}, error) {
 			query = query.Where(tkquestionbank.Status(uint8(*req.Status)))
 		}
 		if !app2.IsNil(req.ItemId) {
-			items, err := s.ItemCategory.Query().
-				Where(itemcategory.Or(itemcategory.Pid(*req.ItemId), itemcategory.ID(*req.ItemId))).
-				IDs(ctx)
-			if err != nil {
-				if err == sql.ErrNoRows {
-					return nil
-				}
-				return err
-			}
-			query = query.Where(tkquestionbank.ItemCategoryIDIn(items...))
+			query = query.Where(tkquestionbank.ItemCategoryID(*req.ItemId))
+		}
+		if !app2.IsNil(req.LevelId) {
+			query = query.Where(tkquestionbank.LevelID(*req.LevelId))
+		}
+		if !app2.IsNil(req.MajorId) { //专业
+			query = query.Where(tkquestionbank.HasMajorQuestionBanksWith(
+				tkquestionbankmajor.MajorID(*req.MajorId),
+				tkquestionbankmajor.DeletedAtIsNil()))
+		}
+		if !app2.IsNil(req.CityId) {
+			query = query.Where(tkquestionbank.HasCityQuestionBanksWith(
+				tkquestionbankcity.CityID(*req.CityId),
+				tkquestionbankcity.DeletedAtIsNil()))
 		}
 		count, err := query.Count(ctx)
 		if err != nil {
@@ -161,9 +174,7 @@ func GetTkQuestionBankByPage(ctx *gin.Context) (interface{}, error) {
 		res.Statistic.DisableCount = count - enableCount
 
 		list, err := query.WithAdmin().
-			WithItemCategory(func(query *ent.ItemCategoryQuery) {
-				query.WithParent()
-			}).ForPage(req.Page, req.PageSize).Order(ent.Desc("id")).All(ctx)
+			WithItemCategory().WithLevel().ForPage(req.Page, req.PageSize).Order(ent.Desc("id")).All(ctx)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				return nil
@@ -172,23 +183,47 @@ func GetTkQuestionBankByPage(ctx *gin.Context) (interface{}, error) {
 		}
 		for _, v := range list {
 			tkBank.ID = v.ID
-			tkBank.Status = v.Status
+			tkBank.Status = int(v.Status)
 			tkBank.Name = v.Name
+			tkBank.SortOrder = v.SortOrder
 			tkBank.CreatedAdminID = v.CreatedAdminID
 			tkBank.CreatedAt = v.CreatedAt
 			tkBank.QuestionCount = v.QuestionCount
 			tkBank.ItemCategoryID = v.ItemCategoryID
-			tkBank.ItemCategoryName = v.Edges.ItemCategory.Name
+			tkBank.ItemCategoryName = ""
+			if !app2.IsNil(v.Edges.ItemCategory) {
+				tkBank.ItemCategoryName = v.Edges.ItemCategory.Name
+			}
+			tkBank.LevelId = v.LevelID
+			tkBank.LevelName = ""
+			if !app2.IsNil(v.Edges.Level) {
+				tkBank.LevelName = v.Edges.Level.Name
+			}
 			tkBank.CreatedAdminName = ""
-			tkBank.ParentItemCategoryName = ""
-			tkBank.ParentItemCategoryId = 0
 			if !app2.IsNil(v.Edges.Admin) {
 				tkBank.CreatedAdminName = v.Edges.Admin.RealName
 			}
-			if !app2.IsNil(v.Edges.ItemCategory.Edges.Parent) {
-				tkBank.ParentItemCategoryName = v.Edges.ItemCategory.Edges.Parent.Name
-				tkBank.ParentItemCategoryId = v.Edges.ItemCategory.Edges.Parent.ID
+			tkBank.Majors = []response.BaseConfig{}
+			tkBank.Cities = []response.BaseConfig{}
+			if !app2.IsNil(v.Edges.CityQuestionBanks) {
+				for _, vc := range v.Edges.CityQuestionBanks {
+					if !app2.IsNil(vc.Edges.City) {
+						cityBasic := response.BaseConfig{}
+						cityBasic.Name = vc.Edges.City.Name
+						cityBasic.Id = vc.Edges.City.ID
+						tkBank.Cities = append(tkBank.Cities, cityBasic)
+					}
+				}
+				for _, vc := range v.Edges.MajorQuestionBanks {
+					if !app2.IsNil(vc.Edges.Major) {
+						majorBasic := response.BaseConfig{}
+						majorBasic.Name = vc.Edges.Major.Name
+						majorBasic.Id = vc.Edges.Major.ID
+						tkBank.Majors = append(tkBank.Majors, majorBasic)
+					}
+				}
 			}
+
 			res.List = append(res.List, tkBank)
 		}
 		return nil

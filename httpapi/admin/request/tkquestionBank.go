@@ -9,7 +9,11 @@ import (
 type SetTkBank struct {
 	IdPtrNillable
 	NamePtrOnly
-	ItemId *int `json:"item_category_id" form:"item_category_id" binding:"required,gte=0"`
+	ItemId    *int  `json:"item_category_id" form:"item_category_id" binding:"required,gte=0"`
+	LevelId   *int  `json:"level_id" form:"level_id" binding:"required,gte=0"`
+	SortOrder int   `json:"sort_order" form:"sort_order"`
+	CityIds   []int `json:"city_ids" form:"city_ids" binding:"required"`
+	MajorIds  []int `json:"major_ids" form:"major_ids" binding:"required"`
 }
 
 type TkBankStatus struct {
@@ -21,6 +25,9 @@ type TkBankStatus struct {
 type TkBankList struct {
 	Name             *string `json:"name" form:"name"`
 	ItemId           *int    `json:"item_category_id" form:"item_category_id"`
+	CityId           *int    `json:"city_id" form:"city_id"`
+	MajorId          *int    `json:"major_id" form:"major_id"`
+	LevelId          *int    `json:"level_id" form:"level_id"`
 	Status           *int    `json:"status" form:"status"`
 	CreatedAdminName *string `json:"created_admin_name" form:"created_admin_name"`
 	PageInfo

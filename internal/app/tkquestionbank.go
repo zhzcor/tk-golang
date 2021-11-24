@@ -23,6 +23,8 @@ import (
 	"tkserver/internal/store/ent/tkknowledgepoint"
 	"tkserver/internal/store/ent/tkquestion"
 	"tkserver/internal/store/ent/tkquestionbank"
+	"tkserver/internal/store/ent/tkquestionbankcity"
+	"tkserver/internal/store/ent/tkquestionbankmajor"
 	"tkserver/internal/store/ent/tkquestionerrorfeedback"
 	"tkserver/internal/store/ent/tkquestionsection"
 	"tkserver/internal/store/ent/tksection"
@@ -44,7 +46,8 @@ const (
 )
 
 //编辑题库
-func (a TkQuestionBank) UpdateTkQuestionBank(ctx context.Context, id, itemId int, name string) (int, error) {
+func (a TkQuestionBank) UpdateTkQuestionBank(ctx context.Context, id, itemId int, name string,
+	levelId int, cityIds, majorIds []int, sortOrder int) (int, error) {
 	s := store.WithContext(ctx)
 	fined, err := s.TkQuestionBank.
 		Query().SoftDelete().
@@ -67,15 +70,52 @@ func (a TkQuestionBank) UpdateTkQuestionBank(ctx context.Context, id, itemId int
 	questionBank, err := s.TkQuestionBank.UpdateOneID(id).
 		SetName(name).
 		SetItemCategoryID(itemId).
+		SetLevelID(levelId).
+		SetSortOrder(sortOrder).
 		Save(ctx)
 	if err != nil {
 		return 0, errorno.NewStoreErr(err)
 	}
+
+	//删除地区、专业
+	_, err = s.TkQuestionBankCity.Delete().Where(tkquestionbankcity.QuestionBankID(id)).Exec(ctx)
+	if err != nil {
+		return 0, errorno.NewStoreErr(err)
+	}
+	_, err = s.TkQuestionBankMajor.Delete().Where(tkquestionbankmajor.QuestionBankID(id)).Exec(ctx)
+	if err != nil {
+		return 0, errorno.NewStoreErr(err)
+	}
+
+	//添加地区、专业
+	bulkCity := make([]*ent.TkQuestionBankCityCreate, len(cityIds))
+	for i, v := range cityIds {
+		bulkCity[i] = s.TkQuestionBankCity.Create().
+			SetQuestionBankID(questionBank.ID).
+			SetCityID(v)
+	}
+	_, err = s.TkQuestionBankCity.CreateBulk(bulkCity...).Save(ctx)
+	if err != nil {
+		return 0, err
+	}
+
+	bulkMajor := make([]*ent.TkQuestionBankMajorCreate, len(majorIds))
+	for i, v := range majorIds {
+		bulkMajor[i] = s.TkQuestionBankMajor.Create().
+			SetQuestionBankID(questionBank.ID).
+			SetMajorID(v)
+	}
+	_, err = s.TkQuestionBankMajor.CreateBulk(bulkMajor...).Save(ctx)
+	if err != nil {
+		return 0, err
+	}
+
 	return questionBank.ID, nil
 }
 
 //添加题库
-func (a TkQuestionBank) AddTkQuestionBank(ctx context.Context, itemId int, name string, adminId int) (int, error) {
+func (a TkQuestionBank) AddTkQuestionBank(ctx context.Context, itemId int, name string,
+	adminId int, levelId int, cityIds, majorIds []int, sortOrder int) (int, error) {
 	s := store.WithContext(ctx)
 	fined, err := s.TkQuestionBank.
 		Query().SoftDelete().
@@ -93,7 +133,9 @@ func (a TkQuestionBank) AddTkQuestionBank(ctx context.Context, itemId int, name 
 	}
 	tkAdd := s.TkQuestionBank.Create().
 		SetName(name).
-		SetItemCategoryID(itemId)
+		SetItemCategoryID(itemId).
+		SetLevelID(levelId).
+		SetSortOrder(sortOrder)
 	if adminId > 0 {
 		tkAdd = tkAdd.SetCreatedAdminID(adminId)
 	}
@@ -101,6 +143,29 @@ func (a TkQuestionBank) AddTkQuestionBank(ctx context.Context, itemId int, name 
 	if err != nil {
 		return 0, errorno.NewStoreErr(err)
 	}
+
+	bulkCity := make([]*ent.TkQuestionBankCityCreate, len(cityIds))
+	for i, v := range cityIds {
+		bulkCity[i] = s.TkQuestionBankCity.Create().
+			SetQuestionBankID(questionBank.ID).
+			SetCityID(v)
+	}
+	_, err = s.TkQuestionBankCity.CreateBulk(bulkCity...).Save(ctx)
+	if err != nil {
+		return 0, err
+	}
+
+	bulkMajor := make([]*ent.TkQuestionBankMajorCreate, len(majorIds))
+	for i, v := range majorIds {
+		bulkMajor[i] = s.TkQuestionBankMajor.Create().
+			SetQuestionBankID(questionBank.ID).
+			SetMajorID(v)
+	}
+	_, err = s.TkQuestionBankMajor.CreateBulk(bulkMajor...).Save(ctx)
+	if err != nil {
+		return 0, err
+	}
+
 	return questionBank.ID, nil
 }
 

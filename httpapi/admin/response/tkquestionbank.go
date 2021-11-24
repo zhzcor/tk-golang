@@ -21,9 +21,31 @@ type TkBankStatistic struct {
 
 //题库列表
 type TkBankListSuccess struct {
-	List      []TkQuestionBank `json:"list"`
-	Page      PageResponse     `json:"page"`
-	Statistic TkBankStatistic  `json:"statistic"`
+	List      []TkQuestionBankDetail `json:"list"`
+	Page      PageResponse           `json:"page"`
+	Statistic TkBankStatistic        `json:"statistic"`
+}
+
+type TkQuestionBankDetail struct {
+	ID               int          `json:"id"`
+	Name             string       `json:"name"`
+	Status           int          `json:"status"`
+	QuestionCount    int          `json:"question_count"`
+	CreatedAt        *time.Time   `json:"created_at"`
+	CreatedAdminID   int          `json:"created_admin_id"`
+	CreatedAdminName string       `json:"created_admin_name"`
+	ItemCategoryID   int          `json:"item_category_id"`
+	ItemCategoryName string       `json:"item_category_name"`
+	LevelId          int          `json:"level_id"`
+	LevelName        string       `json:"level_name"`
+	SortOrder        int          `json:"sort_order"`
+	Cities           []BaseConfig `json:"cities"`
+	Majors           []BaseConfig `json:"majors"`
+}
+
+type BaseConfig struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type TkChapterSection struct {

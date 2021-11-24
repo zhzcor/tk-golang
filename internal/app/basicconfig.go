@@ -23,7 +23,7 @@ type BasicConfig struct {
 func (b BasicConfig) AddCity(ctx context.Context, cityName string, sortOrder int) (int, error) {
 	s := store.WithContext(ctx)
 	fined, err := s.City.
-		Query().
+		Query().SoftDelete().
 		Where(city.Name(cityName)).
 		Exist(ctx)
 	if err != nil {
@@ -46,7 +46,7 @@ func (b BasicConfig) AddCity(ctx context.Context, cityName string, sortOrder int
 func (b BasicConfig) UpdateCity(ctx context.Context, cityName string, id, sortOrder int) (int, error) {
 	s := store.WithContext(ctx)
 	fined, err := s.City.
-		Query().
+		Query().SoftDelete().
 		Where(city.Name(cityName)).
 		Where(city.IDNEQ(id)).
 		Exist(ctx)
@@ -116,7 +116,7 @@ func (b BasicConfig) CityIdExist(ctx context.Context, id int) error {
 func (b BasicConfig) AddLevel(ctx context.Context, levelName string, sortOrder int) (int, error) {
 	s := store.WithContext(ctx)
 	fined, err := s.Level.
-		Query().
+		Query().SoftDelete().
 		Where(level.Name(levelName)).
 		Exist(ctx)
 	if err != nil {
@@ -139,7 +139,7 @@ func (b BasicConfig) AddLevel(ctx context.Context, levelName string, sortOrder i
 func (b BasicConfig) UpdateLevel(ctx context.Context, levelName string, id, sortOrder int) (int, error) {
 	s := store.WithContext(ctx)
 	fined, err := s.Level.
-		Query().
+		Query().SoftDelete().
 		Where(level.Name(levelName)).
 		Where(level.IDNEQ(id)).
 		Exist(ctx)
@@ -196,7 +196,7 @@ func (b BasicConfig) LevelIdExist(ctx context.Context, id int) error {
 func (b BasicConfig) AddItemCategory(ctx context.Context, Name string, sortOrder int) (int, error) {
 	s := store.WithContext(ctx)
 	fined, err := s.ItemCategory.
-		Query().
+		Query().SoftDelete().
 		Where(itemcategory.Name(Name)).
 		Exist(ctx)
 	if err != nil {
@@ -219,7 +219,7 @@ func (b BasicConfig) AddItemCategory(ctx context.Context, Name string, sortOrder
 func (b BasicConfig) UpdateItemCategory(ctx context.Context, Name string, id, sortOrder int) (int, error) {
 	s := store.WithContext(ctx)
 	fined, err := s.ItemCategory.
-		Query().
+		Query().SoftDelete().
 		Where(itemcategory.Name(Name)).
 		Where(itemcategory.IDNEQ(id)).
 		Exist(ctx)
