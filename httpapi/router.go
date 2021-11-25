@@ -135,6 +135,11 @@ func Use(engine *gin.Engine) {
 	basicConfigGroup.POST("/app_version_page_list", ResponseToJSON(admin.GetAppVersionByPage)) //app版本列表（分页）
 	basicConfigGroup.POST("/app_version_del", ResponseToJSON(admin.DelAppVersion))             //app版本删除
 
+	basicConfigGroup.POST("/group_card_set", ResponseToJSON(admin.SetGroupCard))             //添加（编辑）群名片
+	basicConfigGroup.POST("/group_card_del", ResponseToJSON(admin.DelGroupCard))             //删除群名片
+	basicConfigGroup.POST("/group_card_status", ResponseToJSON(admin.SetGroupCardStatus))    //设置群名片状态
+	basicConfigGroup.POST("/group_card_page_list", ResponseToJSON(admin.GetGroupCardByPage)) //群名片列表(分页)
+
 	//管理员管理
 	adminManagerGroup := adminGroup.Group("/manager").Use(AdminAuthMiddleware())
 	//adminManagerGroup.POST("/index_statistic", ResponseToJSON(admin.GetIndexStatistic))     //首页统计

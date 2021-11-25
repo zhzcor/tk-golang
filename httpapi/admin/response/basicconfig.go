@@ -17,6 +17,21 @@ type ItemCategoryListSuccess struct {
 	Page PageResponse `json:"page"`
 }
 
+type GroupCardListSuccess struct {
+	List []GroupCardDetail `json:"list"`
+	Page PageResponse      `json:"page"`
+}
+
+type GroupCardDetail struct {
+	Id            int    `json:"id"`
+	Title         string `json:"title"`
+	SubTitle      string `json:"sub_title"`
+	Status        int    `json:"status"`
+	SortOrder     int    `json:"sort_order"`
+	AttachmentId  int    `json:"attachment_id"`
+	AttachmentUrl string `json:"attachment_url"`
+}
+
 type ItemDetail struct {
 	ent.ItemCategory
 	Children ent.ItemCategories

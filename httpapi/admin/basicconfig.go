@@ -649,6 +649,135 @@ func GetMajorAll(ctx *gin.Context) (interface{}, error) {
 	return majorList, nil
 }
 
+//添加（编辑）群名片
+func SetGroupCard(ctx *gin.Context) (interface{}, error) {
+	var req request.SetGroupCard
+	err := ctx.Bind(&req)
+	if err != nil {
+		return nil, err
+	}
+	bc := app.BasicConfig{}
+	cm := app.Common{}
+	adminId := ctx.GetInt(app.GlobalAdminId)
+	remark := ""
+	err = store.WithTx(ctx, func(ctx context.Context) error {
+		if req.Id > 0 { //编辑
+			_, err := bc.UpdateGroupCard(ctx, req)
+			if err != nil {
+				return err
+			}
+			remark = fmt.Sprintf("%s:%s", "编辑群名片", req.Title)
+		} else {
+			_, err := bc.AddGroupCard(ctx, req)
+			if err != nil {
+				return err
+			}
+			remark = fmt.Sprintf("%s:%s", "添加群名片", req.Title)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	_ = cm.SetOperationLog(ctx, adminId, remark)
+	return nil, nil
+}
+
+//删除群名片
+func DelGroupCard(ctx *gin.Context) (interface{}, error) {
+	var req request.IdOnly
+	err := ctx.Bind(&req)
+	if err != nil {
+		return nil, err
+	}
+	bc := app.BasicConfig{}
+	err = store.WithTx(ctx, func(ctx context.Context) error {
+		err = bc.DelGroupCard(ctx, req.Id)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
+//设置群名片状态
+func SetGroupCardStatus(ctx *gin.Context) (interface{}, error) {
+	var req request.BasicConfigStatus
+	err := ctx.Bind(&req)
+	if err != nil {
+		return nil, err
+	}
+	bc := app.BasicConfig{}
+	err = store.WithTx(ctx, func(ctx context.Context) error {
+		err = bc.SetGroupCardStatus(ctx, req.Id, req.Status)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
+//群名片查询(带分页)
+func GetGroupCardByPage(ctx *gin.Context) (interface{}, error) {
+	var req request.PageInfo
+	err := ctx.Bind(&req)
+	if err != nil {
+		return nil, err
+	}
+	var res response.GroupCardListSuccess
+	err = store.WithTx(ctx, func(ctx context.Context) error {
+		groupCardQuery := store.WithContext(ctx).GroupCard.
+			Query().SoftDelete()
+
+		count, err := groupCardQuery.Count(ctx)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return nil
+			}
+			return err
+		}
+		res.Page.Total = count
+
+		groupCardQuery = groupCardQuery.WithAttachment().
+			ForPage(req.Page, req.PageSize).
+			Order(ent.Asc("sort_order"))
+		list, err := groupCardQuery.All(ctx)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return nil
+			}
+			return err
+		}
+		var detail response.GroupCardDetail
+		for _, v := range list {
+			detail.Id = v.ID
+			detail.Title = v.Title
+			detail.SubTitle = v.SubTitle
+			detail.Status = int(v.Status)
+			detail.SortOrder = v.SortOrder
+			detail.AttachmentId = v.AttachmentID
+			detail.AttachmentUrl = ""
+			if !app2.IsNil(v.Edges.Attachment) {
+				detail.AttachmentUrl = app2.GetOssHost() + v.Edges.Attachment.Filename
+			}
+			res.List = append(res.List, detail)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
 //阿里云oss
 func AuthOss(ctx *gin.Context) (interface{}, error) {
 	var req request.AuthOssRequest
@@ -680,6 +809,9 @@ func AuthOss(ctx *gin.Context) (interface{}, error) {
 			break
 		case "common":
 			dir = "common"
+			break
+		case "qr_code":
+			dir = "qr_code"
 			break
 		default:
 			return errorno.NewErr(errorno.Errno{

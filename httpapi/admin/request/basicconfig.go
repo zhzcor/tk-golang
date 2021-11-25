@@ -11,6 +11,16 @@ type SetBasicTag struct {
 	Desc      string `json:"desc" form:"desc"`
 }
 
+//添加(编辑)群名片
+type SetGroupCard struct {
+	Id           int    `json:"id"  form:"id"`
+	Title        string `json:"title"  form:"title" binding:"required"`
+	SubTitle     string `json:"sub_title" form:"sub_title" binding:"required"`
+	SortOrder    int    `json:"sort_order" form:"sort_order"`
+	Status       int    `json:"status" form:"status" binding:"required"`
+	AttachmentId int    `json:"attachment_id" form:"attachment_id" binding:"required,gte=0"`
+}
+
 //type SetItemCategory struct {
 //	SetBasicTag
 //	//Pid int `json:"pid" form:"pid"`

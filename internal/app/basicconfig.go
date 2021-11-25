@@ -11,6 +11,7 @@ import (
 	"tkserver/internal/store/ent/appversion"
 	"tkserver/internal/store/ent/attachment"
 	"tkserver/internal/store/ent/city"
+	"tkserver/internal/store/ent/groupcard"
 	"tkserver/internal/store/ent/itemcategory"
 	"tkserver/internal/store/ent/level"
 	"tkserver/internal/store/ent/major"
@@ -386,6 +387,105 @@ func CheckDataNotFound(err error) error {
 	}
 	if ent.IsNotFound(err) {
 		return errorno.NewErr(errorno.DataNotExistsError)
+	}
+	return nil
+}
+
+//添加地区
+func (b BasicConfig) AddGroupCard(ctx context.Context, req request.SetGroupCard) (int, error) {
+	s := store.WithContext(ctx)
+	fined, err := s.GroupCard.
+		Query().SoftDelete().
+		Where(groupcard.Title(req.Title)).
+		Exist(ctx)
+	if err != nil {
+		return 0, errorno.NewStoreErr(err)
+	}
+	if fined {
+		return 0, errorno.NewErr(errorno.DataExistsError)
+	}
+	newGroupCard, err := s.GroupCard.Create().
+		SetTitle(req.Title).
+		SetAttachmentID(req.AttachmentId).
+		SetSubTitle(req.SubTitle).
+		SetSortOrder(req.SortOrder).
+		SetStatus(uint8(req.Status)).
+		Save(ctx)
+	if err != nil {
+		return 0, errorno.NewStoreErr(err)
+	}
+	return newGroupCard.ID, nil
+}
+
+//编辑群名片
+func (b BasicConfig) UpdateGroupCard(ctx context.Context, req request.SetGroupCard) (int, error) {
+	s := store.WithContext(ctx)
+	fined, err := s.GroupCard.
+		Query().SoftDelete().
+		Where(groupcard.Title(req.Title)).
+		Where(groupcard.IDNEQ(req.Id)).
+		Exist(ctx)
+	if err != nil {
+		return 0, errorno.NewStoreErr(err)
+	}
+	if fined {
+		return 0, errorno.NewErr(errorno.DataExistsError)
+	}
+	newGroupCard, err := s.GroupCard.UpdateOneID(req.Id).
+		SetTitle(req.Title).
+		SetAttachmentID(req.AttachmentId).
+		SetSubTitle(req.SubTitle).
+		SetSortOrder(req.SortOrder).
+		SetStatus(uint8(req.Status)).
+		Save(ctx)
+	if err != nil {
+		return 0, errorno.NewStoreErr(err)
+	}
+	return newGroupCard.ID, nil
+}
+
+//删除群名片
+func (b BasicConfig) DelGroupCard(ctx context.Context, id int) error {
+	s := store.WithContext(ctx)
+	if errorno := b.GroupCardIdExist(ctx, id); errorno != nil {
+		return errorno
+	}
+	_, err := s.GroupCard.UpdateOneID(id).SoftDelete().Save(ctx)
+	if err != nil {
+		return errorno.NewStoreErr(err)
+	}
+	return nil
+}
+
+//设置群名片状态
+func (b BasicConfig) SetGroupCardStatus(ctx context.Context, id, status int) error {
+	s := store.WithContext(ctx)
+	if errorno := b.GroupCardIdExist(ctx, id); errorno != nil {
+		return errorno
+	}
+	_, err := s.GroupCard.UpdateOneID(id).SetStatus(uint8(status)).Save(ctx)
+	if err != nil {
+		return errorno.NewStoreErr(err)
+	}
+	return nil
+}
+
+//id判断群名片是否存着
+func (b BasicConfig) GroupCardIdExist(ctx context.Context, id int) error {
+	s := store.WithContext(ctx)
+	fined, err := s.GroupCard.
+		Query().
+		Where(groupcard.ID(id)).
+		Where(groupcard.DeletedAtIsNil()).
+		Exist(ctx)
+	if err != nil {
+		return errorno.NewStoreErr(err)
+	}
+	if !fined {
+		return errorno.NewErr(errorno.Errno{
+			Code:    20001,
+			Message: "群名片不存在",
+		})
 	}
 	return nil
 }
