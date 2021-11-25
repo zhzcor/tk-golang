@@ -162,9 +162,9 @@ func GetQuestionBankTag(ctx *gin.Context) (interface{}, error) {
 	}
 
 	s := store.WithContext(ctx)
-	leveList := s.Level.Query().SoftDelete().Where(level.Status(1)).Order(ent.Asc(level.FieldSortOrder)).AllX(ctx)
-	majorList := s.Major.Query().SoftDelete().Where(major.Status(1)).Order(ent.Asc(major.FieldSortOrder)).AllX(ctx)
-	itemList := s.ItemCategory.Query().SoftDelete().Where(itemcategory.Status(1)).Order(ent.Asc(itemcategory.FieldSortOrder)).AllX(ctx)
+	leveList := s.Level.Query().SoftDelete().Where(level.Status(2)).Order(ent.Asc(level.FieldSortOrder)).AllX(ctx)
+	majorList := s.Major.Query().SoftDelete().Where(major.Status(2)).Order(ent.Asc(major.FieldSortOrder)).AllX(ctx)
+	itemList := s.ItemCategory.Query().SoftDelete().Where(itemcategory.Status(2)).Order(ent.Asc(itemcategory.FieldSortOrder)).AllX(ctx)
 
 	if len(leveList) == 0 && len(majorList) == 0 && len(itemList) == 0 {
 		return nil, nil
@@ -275,7 +275,7 @@ func GetGroupCardList(ctx *gin.Context)(interface{},error){
 	}
 	s := store.WithContext(ctx)
 
-	list := s.GroupCard.Query().SoftDelete().Where(groupcard.Status(1)).WithAttachment(func(query *ent.AttachmentQuery) {
+	list := s.GroupCard.Query().SoftDelete().Where(groupcard.Status(2)).WithAttachment(func(query *ent.AttachmentQuery) {
 		query.SoftDelete().Select("id", "filename")
 	}).Order(ent.Asc(groupcard.FieldSortOrder)).AllX(ctx)
 
