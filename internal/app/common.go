@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 	"tkserver/internal/errorno"
 	"tkserver/internal/store"
@@ -277,4 +278,29 @@ func (c Common) GetDiffDescDate(t1, t2 time.Time) (data string) {
 	monthInterval %= 12
 	month = yearInterval*12 + monthInterval*/
 	return
+}
+
+//判断是否登录
+func (c Common) IsUserLogin(context *gin.Context)(uid int,err error){
+	auth := context.GetHeader("Authorization")
+	if auth != "" {
+		authInfo := strings.Split(auth, " ")
+		if len(authInfo) > 1 {
+			authType := authInfo[0]
+			tk := authInfo[1]
+			switch {
+			case authType == "Bearer":
+				userService := UserCenter{}
+				uid, err := userService.CheckToken(tk)
+				if err != nil {
+					return 0,err
+				}
+
+				return uid,nil
+				// do something
+			}
+		}
+	}
+
+	return 0,nil
 }

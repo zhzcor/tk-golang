@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"encoding/xml"
+	sql2 "entgo.io/ent/dialect/sql"
 	"fmt"
 	"io"
 	"math/rand"
@@ -1503,4 +1504,24 @@ func (a TkQuestionBank) SetUserQuestionBankRecord(ctx context.Context, questionB
 	}
 
 	return nil
+}
+
+//获取地区题库默认(排序)
+func (a TkQuestionBank) GetCityBankIds(ctx context.Context, cityId int) ([]ent.TkQuestionBank, error) {
+	var res []ent.TkQuestionBank
+	s := store.WithContext(ctx)
+	cityInfo:= s.TkQuestionBankCity.Query().Where(tkquestionbankcity.CityID(cityId)).WithTkQuestionBank(func(query *ent.TkQuestionBankQuery) {
+		query.SoftDelete().Where(tkquestionbank.Status(1))
+	}).Order(func(s *sql2.Selector) {
+		t := sql2.Table(tkquestionbank.Table)
+		s.Join(t).On(s.C(tkquestionbankcity.FieldQuestionBankID), t.C(tkquestionbank.FieldID))
+		s.OrderBy(t.C(sql2.Desc(tkquestionbank.FieldCreatedAt)))
+	}).AllX(ctx)
+	for _,v :=range cityInfo{
+		if v.Edges.TkQuestionBank !=nil{
+			res = append(res,*v.Edges.TkQuestionBank)
+		}
+	}
+
+	return res,nil
 }
