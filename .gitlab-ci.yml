@@ -40,9 +40,9 @@ deploy_prerelease:
     only:
     - master
     script:
-      - ssh root@182.151.10.143 "ps -ef|grep tkserver | grep -v grep | awk '{print \$2}'| xargs kill -9 " || true
+      - ssh root@182.151.10.143 "supervisorctl stop tkApi"
       - scp  $PWD/bin/tkserver  root@182.151.10.143:~/tkserver/bin/
-      - ssh root@182.151.10.143 "nohup ~/tkserver/bin/tkserver server -l :8088 >/www/wwwlogs/tkserver.log 2>&1 &"
+      - ssh root@182.151.10.143 "supervisorctl start tkApi"
 deploy_release:
     stage: deploy
     only:
