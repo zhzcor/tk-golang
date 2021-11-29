@@ -312,11 +312,10 @@ func GetCourseQuestionBankInfo(ctx *gin.Context) (interface{}, error) {
 
 	//判断是否登录
 	isLoginUid, err := app.Common{}.IsUserLogin(ctx)
-
-	if err != nil {
-		return nil, errorno.NewInternalErr(err)
-	}
 	uid := isLoginUid
+	if err != nil {
+		uid  = 0
+	}
 
 	if req.QuestionId == 0 {
 		c := app.TkQuestionBank{}
