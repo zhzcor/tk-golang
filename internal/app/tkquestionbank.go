@@ -1383,6 +1383,7 @@ func ParseQuestion(rawItems []string) (*request.SetTkQuestion, error) {
 			}
 			rightOptions = append(rightOptions, "</br>")
 			hasRule = true
+			answerWord = ""
 		}
 
 		//解析处理
