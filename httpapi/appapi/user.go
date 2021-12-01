@@ -131,8 +131,8 @@ func UserSmsLogin(ctx *gin.Context) (interface{}, error) {
 	s := store.WithContext(ctx)
 	uc := app.UserCenter{}
 
-	boss := app.BossRequest{}
-	err := ctx.Bind(&req)
+/*	boss := app.BossRequest{}
+*/	err := ctx.Bind(&req)
 	if err != nil {
 		return nil, errorno.NewParamErr(err)
 	}
@@ -155,7 +155,7 @@ func UserSmsLogin(ctx *gin.Context) (interface{}, error) {
 
 		user = info
 		//访问boss是否有用户
-		bossUser, err := boss.BossUserByPhone(req.Phone, config.ServerConfig.BossHost)
+		/*bossUser, err := boss.BossUserByPhone(req.Phone, config.ServerConfig.BossHost)
 		if err != nil {
 			log.Info("request boss by phone:", err)
 		} else {
@@ -164,7 +164,7 @@ func UserSmsLogin(ctx *gin.Context) (interface{}, error) {
 				user = s.User.UpdateOneID(user.ID).SetBossUserID(bossUser.BossUserId).SetIDCard(bossUser.IdCard).
 					SetUsername(bossUser.Username).SetCardType(uint8(bossUser.CardType)).SetPhone(bossUser.Phone).SaveX(ctx)
 			}
-		}
+		}*/
 		isNewUser = 1
 	}
 
