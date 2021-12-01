@@ -1,65 +1,88 @@
 package appapi
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"tkserver/httpapi/appapi/request"
-	/*"tkserver/httpapi/appapi/response"
-	"tkserver/internal/app"*/
+	"tkserver/httpapi/appapi/response"
+	"tkserver/internal/app"
+	"tkserver/internal/store"
+	user2 "tkserver/internal/store/ent/user"
+	app2 "tkserver/pkg/requestparam"
+
 	"tkserver/internal/errorno"
-	/*	"tkserver/internal/store"
-	 */"tkserver/pkg/wechatapplet"
+	"tkserver/pkg/wechatapplet"
 )
 
 // 微信小程序登录
 func AppletWeChatLogin(ctx *gin.Context) (interface{}, error) {
 	var req request.WechatAppletLogin
-	/*	var res response.LoginSuccess
-	 */err := ctx.Bind(&req)
+	var res response.LoginSuccess
+	err := ctx.Bind(&req)
 	if err != nil {
 		return nil, errorno.NewParamErr(err)
 	}
 	// 根据code获取 openID 和 session_key
-/*	wxLoginResp, err := wechatapplet.WXLogin(req.Code)
-	if err != nil {
-		return nil, errorno.NewInternalErr(err)
-	}*/
-
-	dataInfo, err := wechatapplet.Decrypt(req.EncryptedData, "udhmUNhW+wRNOG8mxQJf4g==", req.Iv)
-
-	/*	dataInfo, err := wechatapplet.Decrypt(req.EncryptedData, "SE/BLocg+sMlvcKmxm8vQA==", req.Iv)
-	 */fmt.Printf("%v ", dataInfo)
-
-	/*	user, err := s.User.Query().Where(user2.Phone(dataInfo.PhoneNumber)).First(ctx)
-	 */
+	wxLoginResp, err := wechatapplet.WXLogin(req.Code)
 	if err != nil {
 		return nil, errorno.NewInternalErr(err)
 	}
 
-	return dataInfo, nil
-	/*	var token string
+	dataInfo, err := wechatapplet.Decrypt(req.EncryptedData, wxLoginResp.SessionKey, req.Iv)
 
-		s := store.WithContext(ctx)
-		uc := app.UserCenter{}*/
+	if err != nil {
+		return nil, errorno.NewInternalErr(err)
+	}
+	fmt.Printf("%v ", dataInfo)
 
-	/*	// 保存登录态
-		session := sessions.Default(c)
-		session.Set("openid", wxLoginResp.OpenId)
-		session.Set("sessionKey", wxLoginResp.SessionKey )
+	s := store.WithContext(ctx)
 
-		// 这里用openid和sessionkey的串接 进行MD5之后作为该用户的自定义登录态
-		mySession := GetMD5Encode(wxLoginResp.OpenId + wxLoginResp.SessionKey)
-		// 接下来可以将openid 和 sessionkey, mySession 存储到数据库中,
-		// 但这里要保证mySession 唯一, 以便于用mySession去索引openid 和sessionkey
-		c.String(200, mySession)*/
+	user, err := s.User.Query().Where(user2.Phone(dataInfo.PhoneNumber)).First(ctx)
+	uc := app.UserCenter{}
 
-}
+	if errno := uc.CheckUserNotFound(err); errno != nil {
+		//用户不存在创建角色
+		_, err, info := uc.Create(ctx, dataInfo.PhoneNumber, dataInfo.PhoneNumber)
 
-// 将一个字符串进行MD5加密后返回加密后的字符串
-func GetMD5Encode(data string) string {
-	h := md5.New()
-	h.Write([]byte(data))
-	return hex.EncodeToString(h.Sum(nil))
+		if err != nil {
+			return nil, err
+		}
+
+		user = info
+
+	}
+	var token string
+
+	token, err = uc.MakeToken(ctx, user.ID, struct {
+		Ip       string
+		City     string
+		Province string
+	}{})
+
+	res.UserId = user.ID
+	res.Token = token
+	res.Username = user.Username
+	res.Nickname = user.Nickname
+	res.UUID = user.UUID
+	res.RegFrom = user.RegFrom
+	res.Phone = user.Phone
+	if user.Birthday != nil && !user.Birthday.IsZero() {
+		res.Birthday = user.Birthday
+		res.BirthdayStr = user.Birthday.Format("2006-01-02")
+	}
+
+	res.Sex = user.Sex
+	res.CardType = user.CardType
+	res.Status = user.Status
+	res.FromItemCategoryID = user.FromItemCategoryID
+	res.FromCityID = user.FromCityID
+	res.Status = user.Status
+	res.CreatedAt = user.CreatedAt
+	if user.Avatar != "" {
+		res.Avatar = app2.GetOssHost() + user.Avatar
+	}
+	res.SignRemark = user.SignRemark
+
+	return res, nil
+
 }

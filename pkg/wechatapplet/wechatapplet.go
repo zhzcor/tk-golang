@@ -36,11 +36,11 @@ type WXLoginResp struct {
 	ErrMsg     string `json:"errmsg"`
 }
 
-//手机号
+//用户手机号
 type WxUserInfo struct {
-	PhoneNumber    string `json:"phone_number"`
-	PurePhoneNumber   string `json:"pure_phone_number"`
-	CountryCode  string `json:"country_code`
+	PhoneNumber    string `json:"phoneNumber"`
+	PurePhoneNumber   string `json:"purePhoneNumber"`
+	CountryCode  string `json:"countryCode`
 	/*Gender    int    `json:"gender"`
 	City      string `json:"city"`
 	Province  string `json:"province"`
