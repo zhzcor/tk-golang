@@ -289,7 +289,7 @@ func GetGroupCardList(ctx *gin.Context)(interface{},error){
 		re := response.GroupCardList{}
 		re.Id = v.ID
 		re.Name = v.Title
-		re.Desc = v.Desc
+		re.Desc = v.SubTitle  //副标题
 		if v.Edges.Attachment != nil {
 			re.CodeUrl = app2.GetOssHost() + v.Edges.Attachment.Filename
 		}
@@ -312,11 +312,10 @@ func GetCourseQuestionBankInfo(ctx *gin.Context) (interface{}, error) {
 
 	//判断是否登录
 	isLoginUid, err := app.Common{}.IsUserLogin(ctx)
-
-	if err != nil {
-		return nil, errorno.NewInternalErr(err)
-	}
 	uid := isLoginUid
+	if err != nil {
+		uid  = 0
+	}
 
 	if req.QuestionId == 0 {
 		c := app.TkQuestionBank{}

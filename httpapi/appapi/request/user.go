@@ -56,4 +56,11 @@ type UpdatePhone struct {
 	Phone string `json:"phone" form:"phone" binding:"required"`
 }
 
+type WechatAppletLogin struct {
+	Code string `json:"code" form:"code" binding:"required"`
+	EncryptedData string `json:"encrypted_data" form:"encrypted_data" binding:"required"`
+	Iv string `json:"iv" form:"iv" binding:"required"`
+	CloudID int `json:"cloud_id" form:"cloud_id"`
+}
+
 
