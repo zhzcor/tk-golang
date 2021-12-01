@@ -22,20 +22,23 @@ func AppletWeChatLogin(ctx *gin.Context) (interface{}, error) {
 		return nil, errorno.NewParamErr(err)
 	}
 	// 根据code获取 openID 和 session_key
-	/*	wxLoginResp,err := wechatapplet.WXLogin(req.Code)
-		if err != nil {
-			return nil, errorno.NewInternalErr(err)
-		}*/
+/*	wxLoginResp, err := wechatapplet.WXLogin(req.Code)
+	if err != nil {
+		return nil, errorno.NewInternalErr(err)
+	}*/
 
-	/*	dataInfo,err := wechatapplet.DecryptWXOpenData(wxLoginResp.SessionKey,req.EncryptedData,req.Iv)
+	dataInfo, err := wechatapplet.Decrypt(req.EncryptedData, "udhmUNhW+wRNOG8mxQJf4g==", req.Iv)
+
+	/*	dataInfo, err := wechatapplet.Decrypt(req.EncryptedData, "SE/BLocg+sMlvcKmxm8vQA==", req.Iv)
+	 */fmt.Printf("%v ", dataInfo)
+
+	/*	user, err := s.User.Query().Where(user2.Phone(dataInfo.PhoneNumber)).First(ctx)
 	 */
-	dataInfo, err := wechatapplet.Decrypt(req.EncryptedData, "SE/BLocg+sMlvcKmxm8vQA==", req.Iv)
-	fmt.Printf("%v ", dataInfo)
 	if err != nil {
 		return nil, errorno.NewInternalErr(err)
 	}
 
-	return nil, nil
+	return dataInfo, nil
 	/*	var token string
 
 		s := store.WithContext(ctx)

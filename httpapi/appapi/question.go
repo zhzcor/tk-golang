@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	sql2 "entgo.io/ent/dialect/sql"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"math"
@@ -162,9 +161,9 @@ func GetQuestionBankTag(ctx *gin.Context) (interface{}, error) {
 	}
 
 	s := store.WithContext(ctx)
-	leveList := s.Level.Query().SoftDelete().Where(level.Status(2)).Order(ent.Asc(level.FieldSortOrder)).AllX(ctx)
-	majorList := s.Major.Query().SoftDelete().Where(major.Status(2)).Order(ent.Asc(major.FieldSortOrder)).AllX(ctx)
-	itemList := s.ItemCategory.Query().SoftDelete().Where(itemcategory.Status(2)).Order(ent.Asc(itemcategory.FieldSortOrder)).AllX(ctx)
+	leveList := s.Level.Query().SoftDelete().Order(ent.Asc(level.FieldSortOrder)).AllX(ctx)
+	majorList := s.Major.Query().SoftDelete().Order(ent.Asc(major.FieldSortOrder)).AllX(ctx)
+	itemList := s.ItemCategory.Query().SoftDelete().Order(ent.Asc(itemcategory.FieldSortOrder)).AllX(ctx)
 
 	if len(leveList) == 0 && len(majorList) == 0 && len(itemList) == 0 {
 		return nil, nil
@@ -910,10 +909,6 @@ func GetTkCsQuestionList(ctx *gin.Context) (interface{}, error) {
 			}).WithChildren(func(query *ent.TkQuestionQuery) {
 				query.SoftDelete()
 			})
-		}).Order(func(s *sql2.Selector) {
-			t := sql2.Table(tkquestion.Table)
-			s.Join(t).On(s.C(tkquestionsection.FieldQuestionID), t.C(tkquestion.FieldID))
-			s.OrderBy(t.C(sql2.Asc(tkquestion.FieldType)))
 		}).All(ctx)
 		if err != nil {
 			if err == sql.ErrNoRows {
