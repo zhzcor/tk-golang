@@ -11,9 +11,9 @@ import (
 )
 
 const (
-/*	WxAppletAppId    = "wx326001aaef2af162"
-*/	WxAppletAppId    = "wx33f640141e02040e"
-	WxWxAppletSecret = "db07f9355ef03f416a0dd48be2dbbdd0"
+	WxAppletAppId    = "wx326001aaef2af162"
+/*	WxAppletAppId    = "wx33f640141e02040e"
+*/	WxWxAppletSecret = "db07f9355ef03f416a0dd48be2dbbdd0"
 )
 
 var (
@@ -36,16 +36,17 @@ type WXLoginResp struct {
 	ErrMsg     string `json:"errmsg"`
 }
 
+//手机号
 type WxUserInfo struct {
-	OpenID    string `json:"openId"`
-	UnionID   string `json:"unionId"`
-	NickName  string `json:"nickName"`
-	Gender    int    `json:"gender"`
+	PhoneNumber    string `json:"phone_number"`
+	PurePhoneNumber   string `json:"pure_phone_number"`
+	CountryCode  string `json:"country_code`
+	/*Gender    int    `json:"gender"`
 	City      string `json:"city"`
 	Province  string `json:"province"`
 	Country   string `json:"country"`
 	AvatarURL string `json:"avatarUrl"`
-	Language  string `json:"language"`
+	Language  string `json:"language"`*/
 	Watermark struct {
 		Timestamp int64  `json:"timestamp"`
 		AppID     string `json:"appid"`
