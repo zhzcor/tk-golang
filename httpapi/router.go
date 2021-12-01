@@ -36,6 +36,7 @@ func Use(engine *gin.Engine) {
 	apiRoute := engine.Group("/api")
 	apiRoute.POST("/sms_login", ResponseToJSON(appapi.UserSmsLogin))
 	apiRoute.POST("/pwd_login", ResponseToJSON(appapi.UserPwdLogin))
+	apiRoute.POST("/applet_weChat_login", ResponseToJSON(appapi.AppletWeChatLogin))
 	apiRoute.POST("/user_check_code", ResponseToJSON(appapi.UserCheckCode)) //验证验证码
 	apiRoute.POST("/send_sms", ResponseToJSON(appapi.SendSms))
 	apiRoute.POST("/set_pwd", ResponseToJSON(appapi.SetPwd))

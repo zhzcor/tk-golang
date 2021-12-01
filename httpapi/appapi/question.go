@@ -289,7 +289,7 @@ func GetGroupCardList(ctx *gin.Context)(interface{},error){
 		re := response.GroupCardList{}
 		re.Id = v.ID
 		re.Name = v.Title
-		re.Desc = v.Desc
+		re.Desc = v.SubTitle  //副标题
 		if v.Edges.Attachment != nil {
 			re.CodeUrl = app2.GetOssHost() + v.Edges.Attachment.Filename
 		}
