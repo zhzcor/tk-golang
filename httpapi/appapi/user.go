@@ -321,7 +321,7 @@ func UpdateUserInfo(ctx *gin.Context) (interface{}, error) {
 	uid, ok := ctx.Get("uid")
 	id, _ := uid.(int)
 	if ok == false {
-		return nil, errorno.NewParamErr(errorno.TokenError)
+		return nil, errorno.NewInternalErr(errorno.TokenError)
 	}
 	err := ctx.Bind(&req)
 	if err != nil {
