@@ -61,7 +61,7 @@ type CallbackParam struct {
 func GetPolicyToken(dir string) (PolicyToken, error) {
 	aliyunConfig := config.ServerConfig.Aliyun
 	now := time.Now().Unix()
-	expire_end := now + 30
+	expire_end := now + 600
 	var tokenExpire = get_gmt_iso8601(expire_end)
 	var policyToken PolicyToken
 
