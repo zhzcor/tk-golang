@@ -646,7 +646,7 @@ func (a TkQuestionBank) UpdateTkQuestion(ctx context.Context, req request.SetTkQ
 			return 0, errorno.NewErr(errorno.MaterialQuestionNotFound)
 		}
 		//删除子题目
-		_, err := s.TkQuestion.UpdateOneID(*req.Id).ClearChildren().Save(ctx)
+		_, err := s.TkQuestion.Delete().Where(tkquestion.Pid(*req.Id)).Exec(ctx)
 		if err != nil {
 			return 0, err
 		}
