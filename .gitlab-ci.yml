@@ -49,5 +49,5 @@ deploy_release:
     - release
     script:
       - ssh root@47.106.188.165 "supervisorctl stop tkserver"
-      - scp  $PWD/bin/tkserver  root@47.106.188.165/xueyuan-api.sensmind.com/:~/tkserver/bin/
+      - scp  $PWD/bin/tkserver  root@47.106.188.165/tk-api.sensmind.com/:~/tkserver/bin/
       - ssh root@47.106.188.165 "supervisorctl start tkserver"
