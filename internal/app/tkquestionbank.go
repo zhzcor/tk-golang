@@ -1384,7 +1384,7 @@ func ParseQuestion(rawItems []string) (*request.SetTkQuestion, error) {
 			}
 			rightOptions = append(rightOptions, "</br>")
 			hasRule = true
-			answerWord = ""
+			//answerWord = ""
 		}
 
 		//解析处理
@@ -1511,18 +1511,18 @@ func (a TkQuestionBank) SetUserQuestionBankRecord(ctx context.Context, questionB
 func (a TkQuestionBank) GetCityBankIds(ctx context.Context, cityId int) ([]ent.TkQuestionBank, error) {
 	var res []ent.TkQuestionBank
 	s := store.WithContext(ctx)
-	cityInfo:= s.TkQuestionBankCity.Query().Where(tkquestionbankcity.CityID(cityId)).WithTkQuestionBank(func(query *ent.TkQuestionBankQuery) {
+	cityInfo := s.TkQuestionBankCity.Query().Where(tkquestionbankcity.CityID(cityId)).WithTkQuestionBank(func(query *ent.TkQuestionBankQuery) {
 		query.SoftDelete().Where(tkquestionbank.Status(1))
 	}).Order(func(s *sql2.Selector) {
 		t := sql2.Table(tkquestionbank.Table)
 		s.Join(t).On(s.C(tkquestionbankcity.FieldQuestionBankID), t.C(tkquestionbank.FieldID))
 		s.OrderBy(t.C(sql2.Desc(tkquestionbank.FieldCreatedAt)))
 	}).AllX(ctx)
-	for _,v :=range cityInfo{
-		if v.Edges.TkQuestionBank !=nil{
-			res = append(res,*v.Edges.TkQuestionBank)
+	for _, v := range cityInfo {
+		if v.Edges.TkQuestionBank != nil {
+			res = append(res, *v.Edges.TkQuestionBank)
 		}
 	}
 
-	return res,nil
+	return res, nil
 }
