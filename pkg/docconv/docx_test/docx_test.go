@@ -13,7 +13,7 @@ import (
 	"tkserver/pkg/docconv"
 )
 
-//go:embed 第三方题库题目及试卷导入/马克思主义基本原理概论.docx
+//go:embed 第三方题库题目及试卷导入/管理学与人力资源管理1.docx
 var temp []byte
 
 type SetTkQuestion struct {
@@ -321,7 +321,7 @@ func ParseQuestion(rawItems []string) (*SetTkQuestion, error) {
 			rightOptions = append(rightOptions, "</br>")
 			fmt.Println(len(rightOptions), "---", rightOptions)
 			hasRule = true
-			answerWord = ""
+			//answerWord = ""
 		}
 
 		//解析处理
