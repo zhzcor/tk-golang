@@ -406,7 +406,20 @@ func (a TkQuestionBank) DelTkExamPaper(ctx context.Context, id int) error {
 		return errorno.NewStoreErr(err)
 	}
 
+	_, err = s.TkExamPaperPartition.Update().SoftDelete().
+		Where(tkexampaperpartition.ExamPaperID(id)).
+		ClearExamPartitionLinks().
+		Save(ctx)
+	if err != nil {
+		return errorno.NewStoreErr(err)
+	}
+
 	err = s.TkExamPaper.DeleteOneID(id).Exec(ctx)
+	if err != nil {
+		return errorno.NewStoreErr(err)
+	}
+
+	_, err = s.TkExamPaperPartition.Delete().Where(tkexampaperpartition.ExamPaperID(id)).Exec(ctx)
 	if err != nil {
 		return errorno.NewStoreErr(err)
 	}

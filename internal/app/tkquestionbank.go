@@ -768,6 +768,7 @@ func (a TkQuestionBank) TkQuestionIsUsedByExam(ctx context.Context, id int) erro
 	s := store.WithContext(ctx)
 	fined, err := s.TkExamPartitionQuestionLink.Query().SoftDelete().
 		Where(tkexampartitionquestionlink.HasQuestionWith(tkquestion.ID(id))).
+		Where(tkexampartitionquestionlink.ExamPaperPartitionIDNotNil()).
 		Exist(ctx)
 	if err != nil {
 		return errorno.NewStoreErr(err)
