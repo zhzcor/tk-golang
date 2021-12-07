@@ -767,7 +767,7 @@ func (a TkQuestionBank) TkQuestionIsUsedBySection(ctx context.Context, id int) e
 func (a TkQuestionBank) TkQuestionIsUsedByExam(ctx context.Context, id int) error {
 	s := store.WithContext(ctx)
 	fined, err := s.TkExamPartitionQuestionLink.Query().SoftDelete().
-		Where(tkexampartitionquestionlink.HasQuestionWith(tkquestion.ID(id))).
+		Where(tkexampartitionquestionlink.QuestionID(id)).
 		Where(tkexampartitionquestionlink.ExamPaperPartitionIDNotNil()).
 		Exist(ctx)
 	if err != nil {
