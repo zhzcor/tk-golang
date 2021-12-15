@@ -82,7 +82,7 @@ func TestParse(t *testing.T) {
 						// 默认都是图
 						// 可选上传oss
 						m = "ssss"
-						item.Items = append(item.Items, `<img src="`+m+`" />`)
+						item.Items = append(item.Items, `<img style="max-width:100%;width:100%;" src="`+m+`" />`)
 					}
 
 				}

@@ -1148,7 +1148,7 @@ func GetQuestionRes(f multipart.File) ([]request.SetTkQuestion, error) {
 						}
 						// 默认都是图
 						// 可选上传oss
-						item.Items = append(item.Items, `<img src="`+url+`" />`)
+						item.Items = append(item.Items, `<img style="max-width:100%;width:100%;" src="`+url+`" />`)
 					}
 
 				}
