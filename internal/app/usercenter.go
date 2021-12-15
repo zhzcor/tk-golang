@@ -18,7 +18,7 @@ var jwtKey = []byte("jwtkey1234")
 type UserCenter struct {
 }
 
-func (c UserCenter) Create(ctx context.Context, userName string, pwd string) (int, error, *ent.User) {
+func (c UserCenter) Create(ctx context.Context, userName string, pwd string,regFrom int) (int, error, *ent.User) {
 	s := store.WithContext(ctx)
 	fined, err := store.WithContext(ctx).User.
 		Query().
@@ -38,6 +38,7 @@ func (c UserCenter) Create(ctx context.Context, userName string, pwd string) (in
 			SetUsername(userName).
 			SetPassword(pwd).
 			SetPhone(userName).
+			SetRegFrom(uint8(regFrom)).
 			/*			SetEmail(info.Email).
 						SetNickname(info.NickName).*/
 			Save(ctx)

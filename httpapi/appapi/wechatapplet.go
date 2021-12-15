@@ -42,7 +42,7 @@ func AppletWeChatLogin(ctx *gin.Context) (interface{}, error) {
 
 	if errno := uc.CheckUserNotFound(err); errno != nil {
 		//用户不存在创建角色
-		_, err, info := uc.Create(ctx, dataInfo.PhoneNumber, dataInfo.PhoneNumber)
+		_, err, info := uc.Create(ctx, dataInfo.PhoneNumber, dataInfo.PhoneNumber,4)
 
 		if err != nil {
 			return nil, err
