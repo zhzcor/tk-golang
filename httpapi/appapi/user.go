@@ -130,12 +130,24 @@ func UserSmsLogin(ctx *gin.Context) (interface{}, error) {
 	var res response.LoginSuccess
 	s := store.WithContext(ctx)
 	uc := app.UserCenter{}
-
+    var userAgent = ctx.Request.Header.Get("User-Agent")
 /*	boss := app.BossRequest{}
 */	err := ctx.Bind(&req)
 	if err != nil {
 		return nil, errorno.NewParamErr(err)
 	}
+
+	c := app.Common{}
+
+	reform := c.DoClientAgent(userAgent)
+	RegFrom := 0
+	if reform == "iPhone" {
+		RegFrom = 1
+	}else if reform == "Android"{
+		RegFrom = 2
+	}
+
+	fmt.Printf("%v ", reform)
 
 	if ok := sms.NewSmsService().CheckCode(req.SmsCode, req.Phone); ok != true {
 		return nil, errorno.NewErr(errorno.LoginCodeFailError)
@@ -146,7 +158,7 @@ func UserSmsLogin(ctx *gin.Context) (interface{}, error) {
 	isNewUser := 0
 	if errno := uc.CheckUserNotFound(err); errno != nil {
 		//用户不存在创建角色
-		_, err, info := uc.Create(ctx, req.Phone, req.Phone)
+		_, err, info := uc.Create(ctx, req.Phone, req.Phone,RegFrom)
 
 		if err != nil {
 			return nil, err
