@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	WxAppletAppId    = "wx326001aaef2af162"
+	WxAppletAppId    = "wxceaf74f5c3aece4c"
 /*	WxAppletAppId    = "wx33f640141e02040e"
-*/	WxWxAppletSecret = "db07f9355ef03f416a0dd48be2dbbdd0"
+*/	WxWxAppletSecret = "65a64b973c64623d183b9859dfcd848c"
 )
 
 var (
