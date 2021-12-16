@@ -33,7 +33,7 @@ func UserRegister(ctx *gin.Context) (interface{}, error) {
 	}
 	uc := app.UserCenter{}
 	err = store.WithTx(ctx, func(ctx context.Context) error {
-		uid, err, user := uc.Create(ctx, req.Phone, req.Password)
+		uid, err, user := uc.Create(ctx, req.Phone, req.Password,0)
 		if err != nil {
 			_ = user
 			return err
