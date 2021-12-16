@@ -14,6 +14,7 @@ const (
 	WxAppletAppId    = "wxceaf74f5c3aece4c"
 /*	WxAppletAppId    = "wx33f640141e02040e"
 */	WxWxAppletSecret = "65a64b973c64623d183b9859dfcd848c"
+
 )
 
 var (
