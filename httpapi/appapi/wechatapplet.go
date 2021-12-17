@@ -6,9 +6,11 @@ import (
 	"tkserver/httpapi/appapi/request"
 	"tkserver/httpapi/appapi/response"
 	"tkserver/internal/app"
-	"tkserver/internal/errorno"
 	"tkserver/internal/store"
 	user2 "tkserver/internal/store/ent/user"
+	app2 "tkserver/pkg/requestparam"
+
+	"tkserver/internal/errorno"
 	"tkserver/pkg/wechatapplet"
 )
 
@@ -76,8 +78,9 @@ func AppletWeChatLogin(ctx *gin.Context) (interface{}, error) {
 	res.FromCityID = user.FromCityID
 	res.Status = user.Status
 	res.CreatedAt = user.CreatedAt
-	res.Avatar = user.Avatar
-
+	if user.Avatar != "" {
+		res.Avatar = app2.GetOssHost() + user.Avatar
+	}
 	res.SignRemark = user.SignRemark
 
 	return res, nil
