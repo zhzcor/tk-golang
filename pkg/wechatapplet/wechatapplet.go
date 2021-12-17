@@ -11,10 +11,11 @@ import (
 )
 
 const (
-/*	WxAppletAppId    = "wxceaf74f5c3aece4c"
-*/	WxAppletAppId    = "wx326001aaef2af162"
-	WxWxAppletSecret = "db07f9355ef03f416a0dd48be2dbbdd0"
+	/*	WxAppletAppId    = "wxceaf74f5c3aece4c"
+		WxWxAppletSecret = "db07f9355ef03f416a0dd48be2dbbdd0"*/
 
+	WxAppletAppId    = "wx326001aaef2af162"
+	WxWxAppletSecret = "65a64b973c64623d183b9859dfcd848c"
 )
 
 var (
@@ -23,7 +24,6 @@ var (
 	ErrInvalidPKCS7Data    = errors.New("invalid PKCS7 data")
 	ErrInvalidPKCS7Padding = errors.New("invalid padding on input")
 )
-
 
 type WXUserDataCrypt struct {
 	appID, sessionKey string
@@ -39,9 +39,9 @@ type WXLoginResp struct {
 
 //用户手机号
 type WxUserInfo struct {
-	PhoneNumber    string `json:"phoneNumber"`
-	PurePhoneNumber   string `json:"purePhoneNumber"`
-	CountryCode  string `json:"countryCode`
+	PhoneNumber     string `json:"phoneNumber"`
+	PurePhoneNumber string `json:"purePhoneNumber"`
+	CountryCode     string `json:"countryCode`
 	/*Gender    int    `json:"gender"`
 	City      string `json:"city"`
 	Province  string `json:"province"`
@@ -79,7 +79,6 @@ func WXLogin(code string) (*WXLoginResp, error) {
 	return &wxResp, nil
 }
 
-
 // pkcs7Unpad returns slice of the original data without padding
 func pkcs7Unpad(data []byte, blockSize int) ([]byte, error) {
 	if blockSize <= 0 {
@@ -101,7 +100,7 @@ func pkcs7Unpad(data []byte, blockSize int) ([]byte, error) {
 	return data[:len(data)-n], nil
 }
 
-func Decrypt(encryptedData, sessionKey,iv string) (*WxUserInfo, error) {
+func Decrypt(encryptedData, sessionKey, iv string) (*WxUserInfo, error) {
 	aesKey, err := base64.StdEncoding.DecodeString(sessionKey)
 	if err != nil {
 		return nil, err
