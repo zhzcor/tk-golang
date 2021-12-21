@@ -347,6 +347,7 @@ func UpdateUserInfo(ctx *gin.Context) (interface{}, error) {
 		info.Avatar = app2.GetOssHost() + info.Avatar
 	}
 
+
 	return info, nil
 }
 
