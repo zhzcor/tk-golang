@@ -342,9 +342,10 @@ func UpdateUserInfo(ctx *gin.Context) (interface{}, error) {
 	req.BirthdayTime, _ = time.ParseInLocation("2006-01-02", req.Birthday, time.Local)
 
 	info, _ := app.UserCenter{}.UpdateUser(ctx, id, &req)
-/*	if info.Avatar != "" {
+
+	if info.RegFrom != 4 {
 		info.Avatar = app2.GetOssHost() + info.Avatar
-	}*/
+	}
 
 	return info, nil
 }
