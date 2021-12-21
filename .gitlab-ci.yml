@@ -40,14 +40,14 @@ deploy_prerelease:
     only:
     - master
     script:
-      - ssh root@182.151.10.143 "supervisorctl stop tkApi"
+      - ssh root@182.151.10.143 "supervisorctl stop all"
       - scp  $PWD/bin/tkserver  root@182.151.10.143:~/tkserver/bin/
-      - ssh root@182.151.10.143 "supervisorctl start tkApi"
+      - ssh root@182.151.10.143 "supervisorctl start all"
 deploy_release:
     stage: deploy
     only:
     - release
     script:
-      - ssh root@47.106.188.165 "supervisorctl stop tkserver"
+      - ssh root@47.106.188.165 "supervisorctl stop all"
       - scp  $PWD/bin/tkserver  root@47.106.188.165:/www/wwwroot/tk-api.sensmind.com/
-      - ssh root@47.106.188.165 "supervisorctl start tkserver"
+      - ssh root@47.106.188.165 "supervisorctl start all"
